@@ -1,0 +1,43 @@
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100svh;
+}
+
+textarea {
+    background-color: transparent;
+    border: 1px solid gray;
+    color: white;
+    border-radius: .3em;
+    padding: .2em .5em;
+    font-size: 1.3em;
+    outline: none;
+    transition: border 0.2s;
+}
+
+textarea:focus {
+    border: 1px solid white;
+}
+
+button {
+    margin-top: 2em;
+    font-size: 2em;
+    border: 1px solid gray;
+    padding: 0.2em 0.5em;
+    border-radius: .3em;
+    transition: border 0.2s;
+}
+
+button:hover {
+    border: 1px solid white;
+}
+
+a.back {
+    font-size: 2em;
+    color: white;
+    position: absolute;
+    top: 0;
+    left: .2em;
+}

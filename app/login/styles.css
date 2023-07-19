@@ -1,0 +1,18 @@
+main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100svh;
+}
+
+button {
+    font-size: 3em;
+    border: 1px solid white;
+    padding: 0.2em 0.5em;
+    border-radius: .3em;
+    transition: padding 0.2s cubic-bezier(0, 0, 0, 1);
+}
+
+button:hover {
+    padding: 0.3em 0.6em;
+}
