@@ -11,6 +11,9 @@ export default function Home() {
 
     // wrapped to only run on the client
     useEffect(() => {
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("./sw.js");
+        }
         onAuthStateChanged(auth, (user) => {
             // If the user is not logged in, redirect to the login page
             if (!user) {

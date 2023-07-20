@@ -1,0 +1,17 @@
+{
+    "name": "Journal",
+    "description": "You keep your experiences here",
+    "icons": [
+        {
+            "src": "maskable.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "maskable any"
+        }
+    ],
+    "id": "com.simondmc.journal",
+    "start_url": "https://journal.simondmc.com",
+    "display": "standalone",
+    "theme_color": "#ffffff",
+    "background_color": "#000000"
+}
