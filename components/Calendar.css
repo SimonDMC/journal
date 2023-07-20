@@ -1,0 +1,90 @@
+.calendar {
+    font-size: min(4.3vw, 1.4rem);
+    width: calc(20em + 2px);
+    height: fit-content;
+    border: 1px solid white;
+    margin-bottom: 7rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.top-bar {
+    height: 2em;
+    border-bottom: 1px solid gray;
+}
+
+.week-days {
+    height: 1.2em;
+    border-bottom: 1px solid gray;
+}
+
+.top-bar, .week-days {
+    display: flex;
+    justify-content: center;
+}
+
+.top-bar .inner, .week-days .inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-bar .inner {
+    width: 95%;
+}
+
+.week-days .inner {
+    width: 90%;
+    font-size: .8em;
+}
+
+.top-bar button {
+    border: none;
+    font-size: 1em;
+    padding: 0;
+}
+
+.days {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.day, .offset {
+    width: calc(20em / 7);
+    height: calc(20em / 7);
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.day {
+    outline: 1px solid white;
+    background-color: black;
+}
+
+.day.today-has-entry {
+    background-color: #003300;
+}
+
+.day.today {
+    background-color: #330000;
+}
+
+.day.has-entry {
+    background-color: #222;
+}
+
+.offset.row-1 {
+    background-color: black;
+    /* top outline */
+    box-shadow: 0 -1px 0 #fff;
+}
+
+.offset.row-1:first-of-type {
+    /* left outline */
+    box-shadow: -1px -1px 0 #fff;
+}
+
+span.offset:first-of-type {
+    height: calc(20em / 7 + 1px);
+}

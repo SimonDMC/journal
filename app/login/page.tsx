@@ -3,15 +3,19 @@
 import "./styles.css";
 import { auth, login } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { useEffect } from "react";
 
 export default function Home() {
     let awaitingWrite = false;
-    onAuthStateChanged(auth, (user) => {
-        // If the user is logged in, redirect to the overview page
-        if (user && !awaitingWrite) {
-            window.location.href = "/overview";
-        }
-    });
+    // wrapped to only run on the client
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            // If the user is logged in, redirect to the overview page
+            if (user && !awaitingWrite) {
+                window.location.href = "/overview";
+            }
+        });
+    }, []);
 
     async function loginAndRedirect() {
         awaitingWrite = true;

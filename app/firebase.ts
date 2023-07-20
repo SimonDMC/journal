@@ -54,6 +54,7 @@ export const getEntry = async (date: string) => {
     const userRef = doc(db, "main", `${user.uid}`);
     const docSnap = await getDoc(userRef);
     if (!docSnap.exists()) return false;
+    if (!docSnap.data().entries[date]) return "";
     return docSnap.data().entries[date].text;
 };
 
@@ -75,4 +76,14 @@ export const saveEntry = async (entry: string, date: string) => {
         },
     });
     return true;
+};
+
+// get all journal entries
+export const getEntries = async () => {
+    const user = auth.currentUser;
+    if (!user) return false;
+    const userRef = doc(db, "main", `${user.uid}`);
+    const docSnap = await getDoc(userRef);
+    if (!docSnap.exists()) return false;
+    return docSnap.data().entries;
 };
