@@ -18,6 +18,16 @@ export default function Home({ params }: { params: { date: string } }) {
                 const text = await getEntry(params.date);
                 textarea.value = text;
                 countWords();
+
+                // Autosave every 10 seconds
+                let prevText = textarea.value;
+                setInterval(() => {
+                    const text = textarea.value;
+                    if (text !== prevText) {
+                        saveWithoutNotify(text);
+                        prevText = text;
+                    }
+                }, 10000);
             }
         });
     }, []);
@@ -46,6 +56,13 @@ export default function Home({ params }: { params: { date: string } }) {
         setTimeout(() => {
             saveButton.innerText = "Save";
         }, 1000);
+    }
+
+    async function saveWithoutNotify(text: string) {
+        const res = await saveEntry(text, params.date);
+        if (!res) {
+            alert("Error saving entry");
+        }
     }
 
     return (
