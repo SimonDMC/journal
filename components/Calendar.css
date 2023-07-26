@@ -63,11 +63,11 @@
 }
 
 .day.today-has-entry {
-    background-color: #003300;
+    background-color: #002200;
 }
 
 .day.today {
-    background-color: #330000;
+    background-color: #220000;
 }
 
 .day.has-entry {

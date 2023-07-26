@@ -11,6 +11,7 @@ export default function Calendar(props: { month: string; previousMonth: Function
     }
 
     const monthName = new Date(currentYear, currentMonth, 1).toLocaleString("default", { month: "long" });
+    console.log(Object.keys(props.entries));
 
     return (
         <div className="calendar">
@@ -41,8 +42,8 @@ export default function Calendar(props: { month: string; previousMonth: Function
                     <a
                         className={`day ${
                             // if the day is today and has an entry, add the "today-has-entry" class
-                            // if the day is today and doesn't have an entry, add the "today" class
-                            // if the day is not today and has an entry, add the "has-entry" class (only if entries is empty, otherwise it will be red between page load and the entries loading)
+                            // if the day is today and doesn't have an entry, add the "today" class (only if entries isn't empty, otherwise it will be red between page load and the entries loading)
+                            // if the day is not today and has an entry, add the "has-entry" class
                             // if the day is not today and doesn't have an entry, add no class
                             props.entries[
                                 `${currentYear}-${(currentMonth + 1).toString().padStart(2, "0")}-${(i + 1).toString().padStart(2, "0")}`
@@ -54,7 +55,7 @@ export default function Calendar(props: { month: string; previousMonth: Function
                                 : new Date().toISOString().substring(0, 10) ===
                                       `${currentYear}-${(currentMonth + 1).toString().padStart(2, "0")}-${(i + 1)
                                           .toString()
-                                          .padStart(2, "0")}` && !props.entries
+                                          .padStart(2, "0")}` && Object.keys(props.entries).length > 0
                                 ? "today"
                                 : ""
                         }`}
