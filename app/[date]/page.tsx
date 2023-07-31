@@ -30,6 +30,23 @@ export default function Home({ params }: { params: { date: string } }) {
                 }, 10000);
             }
         });
+
+        // capture ctrl + s
+        const keyDown = (event: KeyboardEvent) => {
+            if (event.key === "s" && event.ctrlKey) {
+                // prevent the browser from opening the save dialog
+                event.preventDefault();
+
+                // save the entry
+                save();
+            }
+        };
+        document.addEventListener("keydown", keyDown);
+
+        // remove listener on unmount
+        return () => {
+            document.removeEventListener("keydown", keyDown);
+        };
     }, []);
 
     function countWords() {

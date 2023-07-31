@@ -11,7 +11,6 @@ export default function Calendar(props: { month: string; previousMonth: Function
     }
 
     const monthName = new Date(currentYear, currentMonth, 1).toLocaleString("default", { month: "long" });
-    console.log(Object.keys(props.entries));
 
     return (
         <div className="calendar">
