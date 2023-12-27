@@ -1,6 +1,6 @@
 "use client";
 
-import { API_URL } from "../page";
+import { API_URL } from "../../util/config";
 import "./styles.css";
 import { useEffect } from "react";
 

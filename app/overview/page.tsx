@@ -3,7 +3,7 @@
 import "./styles.css";
 import { useEffect, useState } from "react";
 import Calendar from "@/components/Calendar";
-import { API_URL } from "../page";
+import { API_URL } from "../../util/config";
 
 export default function Home() {
     const [entries, setEntries] = useState([]);
