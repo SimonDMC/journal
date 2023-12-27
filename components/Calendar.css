@@ -3,7 +3,7 @@
     width: calc(20em + 2px);
     height: fit-content;
     border: 1px solid white;
-    margin-bottom: 7rem;
+    margin-bottom: 3em;
     display: flex;
     flex-direction: column;
 }

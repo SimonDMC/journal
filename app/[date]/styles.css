@@ -12,7 +12,9 @@ textarea {
     color: white;
     border-radius: .3em;
     padding: .2em .5em;
-    font-size: min(1.3em, 2.4vw);
+    font-size: min(1.3em, 4vw);
+    width: min(35em, 90vw);
+    height: 30em;
     outline: none;
     transition: border 0.2s;
 }
@@ -22,7 +24,6 @@ textarea:focus {
 }
 
 button {
-    margin-top: 2em;
     font-size: 2em;
     border: 1px solid gray;
     padding: 0.2em 0.5em;
@@ -40,4 +41,31 @@ a.back {
     position: absolute;
     top: 0;
     left: .2em;
+}
+
+select {
+    font-size: 1.3em;
+    width: 10em;
+    height: fit-content;
+    background-color: transparent;
+    border: 1px solid gray;
+    border-radius: .3em;
+}
+
+option {
+    background-color: black;
+}
+
+.bottom-bar {
+    margin-top: 4em;
+    display: flex;
+    gap: 2em;
+    align-items: center;
+}
+
+@media (max-width: 600px) {
+    .bottom-bar {
+        flex-direction: column;
+        gap: 1em;
+    }
 }

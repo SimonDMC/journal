@@ -1,32 +1,43 @@
 "use client";
 
 import "./styles.css";
-import { auth, getEntries, logout } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import Calendar from "@/components/Calendar";
+import { API_URL } from "../page";
 
 export default function Home() {
     const [entries, setEntries] = useState([]);
+    const [wordCount, setWordCount] = useState(0);
 
     // wrapped to only run on the client
     useEffect(() => {
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("./sw.js");
         }
-        onAuthStateChanged(auth, (user) => {
-            // If the user is not logged in, redirect to the login page
-            if (!user) {
-                window.location.href = "/login";
-            } else {
-                // Load the entries from the database
-                getEntries().then((entries) => {
-                    setEntries(entries);
-                });
-            }
-        });
 
-        document.addEventListener("keydown", (e) => {
+        // check for token in local storage
+        if (!localStorage.getItem("token")) {
+            window.location.href = "/login";
+        }
+        // load entries from database
+        fetch(`${API_URL}/overview`, {
+            headers: {
+                Authorization: localStorage.getItem("token") as string,
+            },
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                setEntries(data.entries);
+                setWordCount(data.totalWords);
+            })
+            .catch((err) => {
+                console.error(err);
+                window.location.href = "/login";
+                localStorage.removeItem("token");
+            });
+
+        const keydown = (e: KeyboardEvent) => {
+            // quick calendar navigation
             if (e.key === "ArrowLeft") {
                 const previous = document.querySelector(".top-bar button:first-child") as HTMLButtonElement;
                 previous.click();
@@ -34,7 +45,18 @@ export default function Home() {
                 const next = document.querySelector(".top-bar button:last-child") as HTMLButtonElement;
                 next.click();
             }
-        });
+
+            // quick today navigation
+            if (e.key === "Enter" || e.key === "t" || e.key === " ") {
+                sendToToday();
+            }
+        };
+        document.addEventListener("keydown", keydown);
+
+        // remove listener on unmount
+        return () => {
+            document.removeEventListener("keydown", keydown);
+        };
     }, []);
 
     function sendToToday() {
@@ -53,6 +75,14 @@ export default function Home() {
         setMonth(month + 1);
     }
 
+    function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+    }
+
+    // https://stackoverflow.com/a/2901298
+    const commaFormat = (x: number) => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
     return (
         <main>
             <Calendar
@@ -65,6 +95,13 @@ export default function Home() {
             <button onClick={logout} className="logout">
                 Log Out
             </button>
+            <div className="stats">
+                <p className="entryCount">Entry Count: {commaFormat(entries.length)}</p>
+                <p className="wordCount">Total Words: {commaFormat(wordCount)}</p>
+            </div>
+            <div className="search">
+                <i className="fa-solid fa-magnifying-glass"></i>
+            </div>
         </main>
     );
 }

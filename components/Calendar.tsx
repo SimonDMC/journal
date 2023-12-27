@@ -1,10 +1,10 @@
 import "./Calendar.css";
-import { useState } from "react";
 
 export default function Calendar(props: { month: string; previousMonth: Function; nextMonth: Function; entries: any }) {
     const currentMonth = new Date(props.month).getMonth();
     const currentYear = new Date(props.month).getFullYear();
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    // calculate the day-of-week offset of the first day of the month
     let firstOffset = new Date(currentYear, currentMonth, 1).getDay() - 1;
     if (firstOffset === -1) {
         firstOffset = 6;
@@ -44,9 +44,9 @@ export default function Calendar(props: { month: string; previousMonth: Function
                             // if the day is today and doesn't have an entry, add the "today" class (only if entries isn't empty, otherwise it will be red between page load and the entries loading)
                             // if the day is not today and has an entry, add the "has-entry" class
                             // if the day is not today and doesn't have an entry, add no class
-                            props.entries[
+                            props.entries.includes(
                                 `${currentYear}-${(currentMonth + 1).toString().padStart(2, "0")}-${(i + 1).toString().padStart(2, "0")}`
-                            ]
+                            )
                                 ? new Date().toISOString().substring(0, 10) ===
                                   `${currentYear}-${(currentMonth + 1).toString().padStart(2, "0")}-${(i + 1).toString().padStart(2, "0")}`
                                     ? "today-has-entry"

@@ -1,19 +1,18 @@
 "use client";
 
-import "./styles.css";
 import { useEffect } from "react";
-import { auth } from "./firebase";
-import { onAuthStateChanged } from "firebase/auth";
+
+export const API_URL = "https://journal.simondmcplayer.workers.dev";
+//export const API_URL = "http://localhost:8787";
 
 export default function Home() {
     useEffect(() => {
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                window.location.href = "/overview";
-            } else {
-                window.location.href = "/login";
-            }
-        });
+        // decide whether to redirect to login or overview
+        if (localStorage.getItem("token")) {
+            window.location.href = "/overview";
+        } else {
+            window.location.href = "/login";
+        }
     }, []);
 
     return <main></main>;

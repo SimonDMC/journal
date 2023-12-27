@@ -14,6 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <meta name="viewport" content="width=device-width, user-scalable=no" />
                 <link rel="icon" href="favicon.png" />
                 <link rel="manifest" href="manifest.json" />
+                <script src="https://kit.fontawesome.com/c7b17cb045.js" crossOrigin="anonymous" async></script>
             </head>
             <body>{children}</body>
         </html>
