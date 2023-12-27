@@ -37,33 +37,31 @@ export default function Calendar(props: { month: string; previousMonth: Function
                     <div className="offset" key={i}></div>
                 ))}
 
-                {Array.from(Array(daysInMonth).keys()).map((_, i) => (
-                    <a
-                        className={`day ${
-                            // if the day is today and has an entry, add the "today-has-entry" class
-                            // if the day is today and doesn't have an entry, add the "today" class (only if entries isn't empty, otherwise it will be red between page load and the entries loading)
-                            // if the day is not today and has an entry, add the "has-entry" class
-                            // if the day is not today and doesn't have an entry, add no class
-                            props.entries.includes(
-                                `${currentYear}-${(currentMonth + 1).toString().padStart(2, "0")}-${(i + 1).toString().padStart(2, "0")}`
-                            )
-                                ? new Date().toISOString().substring(0, 10) ===
-                                  `${currentYear}-${(currentMonth + 1).toString().padStart(2, "0")}-${(i + 1).toString().padStart(2, "0")}`
-                                    ? "today-has-entry"
-                                    : "has-entry"
-                                : new Date().toISOString().substring(0, 10) ===
-                                      `${currentYear}-${(currentMonth + 1).toString().padStart(2, "0")}-${(i + 1)
-                                          .toString()
-                                          .padStart(2, "0")}` && Object.keys(props.entries).length > 0
-                                ? "today"
-                                : ""
-                        }`}
-                        key={i}
-                        href={`/${currentYear}-${(currentMonth + 1).toString().padStart(2, "0")}-${(i + 1).toString().padStart(2, "0")}`}
-                    >
-                        {i + 1}
-                    </a>
-                ))}
+                {Array.from(Array(daysInMonth).keys()).map((_, i) => {
+                    const currentDay = `${currentYear}-${(currentMonth + 1).toString().padStart(2, "0")}-${(i + 1)
+                        .toString()
+                        .padStart(2, "0")}`;
+                    const today = new Date().toISOString().substring(0, 10);
+                    const hasEntry = props.entries.includes(currentDay);
+                    const isToday = today === currentDay;
+                    const entriesNotEmpty = Object.keys(props.entries).length > 0;
+
+                    let dayClass = "";
+                    if (hasEntry && isToday) {
+                        dayClass = "today-has-entry";
+                    } else if (hasEntry) {
+                        dayClass = "has-entry";
+                    } else if (isToday && entriesNotEmpty) {
+                        dayClass = "today";
+                    }
+
+                    return (
+                        <a className={`day ${dayClass}`} key={i} href={`/${currentDay}`}>
+                            {i + 1}
+                        </a>
+                    );
+                })}
+
                 {Array.from(Array(42 - daysInMonth - firstOffset).keys()).map((_, i) => (
                     <span
                         className={`offset ${
