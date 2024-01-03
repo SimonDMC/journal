@@ -44,6 +44,11 @@ export default function Home({ params }: { params: { date: string } }) {
                     location.value = data.location.toString();
                 }
                 countWords();
+
+                // data has been loaded, so enable the textarea
+                textarea.disabled = false;
+                // and focus it
+                textarea.focus();
             })
             .catch((err) => {
                 console.error(err);
@@ -142,7 +147,7 @@ export default function Home({ params }: { params: { date: string } }) {
 
     return (
         <main>
-            <textarea name="entry" id="entry" onKeyUp={countWords}></textarea>
+            <textarea name="entry" id="entry" onKeyUp={countWords} disabled></textarea>
             <p id="word-count">Word Count: 0</p>
 
             <div className="bottom-bar">

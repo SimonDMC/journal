@@ -23,6 +23,10 @@ textarea:focus {
     border: 1px solid white;
 }
 
+textarea:disabled {
+    background-color: #ffffff11;
+}
+
 button {
     font-size: 2em;
     border: 1px solid gray;
