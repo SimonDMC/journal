@@ -41,7 +41,12 @@ export default function Calendar(props: { month: string; previousMonth: Function
                     const currentDay = `${currentYear}-${(currentMonth + 1).toString().padStart(2, "0")}-${(i + 1)
                         .toString()
                         .padStart(2, "0")}`;
-                    const today = new Date().toISOString().substring(0, 10);
+
+                    // calculate today's date by offsetting the current date by the timezone offset
+                    let adjustedTimestamp = Date.now() - new Date().getTimezoneOffset() * 60 * 1000;
+                    // additionally count "today" until 4am the next day
+                    const today = new Date(adjustedTimestamp - 4 * 60 * 60 * 1000).toISOString().substring(0, 10);
+
                     const hasEntry = props.entries.includes(currentDay);
                     const isToday = today === currentDay;
                     const entriesNotEmpty = Object.keys(props.entries).length > 0;
