@@ -19,6 +19,11 @@ textarea {
     transition: border 0.2s;
 }
 
+/* remove scrollbar */
+textarea::-webkit-scrollbar {
+    display: none;
+}
+
 textarea:focus {
     border: 1px solid white;
 }
