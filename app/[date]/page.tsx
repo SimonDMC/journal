@@ -56,12 +56,6 @@ export default function Home({ params }: { params: { date: string } }) {
                 localStorage.removeItem("token");
             });
 
-        const emptyPromise = () => {
-            return new Promise<void>((resolve) => {
-                resolve();
-            });
-        };
-
         const keyDown = async (event: KeyboardEvent) => {
             // exit on esc
             if (event.key === "Escape") {
@@ -90,11 +84,7 @@ export default function Home({ params }: { params: { date: string } }) {
     function countWords() {
         const entry = document.getElementById("entry") as HTMLTextAreaElement;
         const wordCountEl = document.getElementById("word-count") as HTMLParagraphElement;
-        const words = entry.value.split(" ");
-        let wordCount = words.length;
-        if (words[0] === "") {
-            wordCount = 0;
-        }
+        let wordCount = entry.value.split(/\s+/).filter((word) => word !== "").length;
         wordCountEl.innerText = `Word Count: ${wordCount}`;
     }
 
