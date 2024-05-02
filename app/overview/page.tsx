@@ -2,7 +2,7 @@
 
 import "./styles.css";
 import { useEffect, useState } from "react";
-import Calendar from "@/components/Calendar";
+import Calendar, { dayAdjustedTime, today } from "@/components/Calendar";
 import { API_URL } from "../../util/config";
 
 export default function Home() {
@@ -60,12 +60,11 @@ export default function Home() {
     }, []);
 
     function sendToToday() {
-        const today = new Date().toISOString().slice(0, 10);
         window.location.href = `/${today}`;
     }
 
     // js date supports stuff like (2023, -7, 20) or (2023, 54, 20) so no need to worry about going out of bounds
-    const [month, setMonth] = useState(new Date().getMonth() + 1);
+    const [month, setMonth] = useState(dayAdjustedTime.getMonth() + 1);
 
     function previousMonth() {
         setMonth(month - 1);
