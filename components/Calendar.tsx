@@ -19,7 +19,7 @@ export default function Calendar(props: { month: string; previousMonth: Function
     const monthName = new Date(currentYear, currentMonth, 1).toLocaleString("default", { month: "long" });
 
     return (
-        <div className="calendar">
+        <div id="calendar" className="calendar loading">
             <div className="top-bar">
                 <div className="inner">
                     <button onClick={() => props.previousMonth()}>←</button>

@@ -8,6 +8,10 @@
     flex-direction: column;
 }
 
+.calendar.loading {
+    opacity: 0.5;
+}
+
 .top-bar {
     height: 2em;
     border-bottom: 1px solid gray;

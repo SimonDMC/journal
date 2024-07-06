@@ -18,6 +18,18 @@ button:hover {
     border: 1px solid white;
 }
 
+#lastYear {
+    margin-top: .2em;
+    font-size: 1.8em;
+    text-decoration: underline;
+    margin-bottom: -1em;
+}
+
+#lastYear.inactive {
+    color: #333;
+    text-decoration: none;
+}
+
 button.logout {
     position: absolute;
     top: 0.3em;
@@ -32,10 +44,23 @@ button.logout {
     font-size: min(1.6em, 4vw);
 }
 
-.search {
+.controls {
     position: absolute;
     bottom: .3em;
     right: .6em;
+    display: flex;
+    gap: 1.2em;
+}
+
+.controls a {
     font-size: min(2em, 6vw);
     cursor: pointer;
+}
+
+@media (max-width: 500px) {
+    .stats, .controls {
+        margin-bottom: 1.2em;
+        margin-left: .5em;
+        margin-right: .5em;
+    }
 }

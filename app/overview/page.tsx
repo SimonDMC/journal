@@ -5,6 +5,14 @@ import { useEffect, useState } from "react";
 import Calendar, { dayAdjustedTime, today } from "@/components/Calendar";
 import { API_URL } from "../../util/config";
 
+export type JournalEntry = {
+    date: string;
+    content: string;
+    mood?: number;
+    location?: number;
+    word_count: number;
+};
+
 export default function Home() {
     const [entries, setEntries] = useState([]);
     const [wordCount, setWordCount] = useState(0);
@@ -29,6 +37,8 @@ export default function Home() {
             .then((data) => {
                 setEntries(data.entries);
                 setWordCount(data.totalWords);
+                setOneYearAgo();
+                document.getElementById("calendar")?.classList.remove("loading");
             })
             .catch((err) => {
                 console.error(err);
@@ -50,6 +60,12 @@ export default function Home() {
             if (e.key === "Enter" || e.key === "t" || e.key === " ") {
                 sendToToday();
             }
+
+            // quick one year ago navigation
+            if (e.key === "y" || e.key === "l" || e.key === "a") {
+                const lastYear = document.getElementById("lastYear") as HTMLAnchorElement;
+                lastYear.click();
+            }
         };
         document.addEventListener("keydown", keydown);
 
@@ -58,6 +74,25 @@ export default function Home() {
             document.removeEventListener("keydown", keydown);
         };
     }, []);
+
+    function download() {
+        fetch(`${API_URL}/download`, {
+            headers: {
+                Authorization: localStorage.getItem("token") as string,
+            },
+        })
+            .then((res) => res.blob())
+            .then((blob) => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `${today}.json`;
+                a.click();
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }
 
     function sendToToday() {
         window.location.href = `/${today}`;
@@ -72,6 +107,17 @@ export default function Home() {
 
     function nextMonth() {
         setMonth(month + 1);
+    }
+
+    function setOneYearAgo() {
+        const lastYear = new Date(dayAdjustedTime);
+        lastYear.setFullYear(lastYear.getFullYear() - 1);
+        const lastYearString = lastYear.toISOString().substring(0, 10);
+        const lastYearLink = document.getElementById("lastYear") as HTMLAnchorElement;
+        lastYearLink.href = `/${lastYearString}`;
+        if (entries.find((entry) => (entry as JournalEntry).date === lastYearString)) {
+            lastYearLink.classList.remove("inactive");
+        }
     }
 
     function logout() {
@@ -91,6 +137,9 @@ export default function Home() {
                 entries={entries}
             />
             <button onClick={sendToToday}>Today</button>
+            <a href="" id="lastYear" className="inactive">
+                One Year Ago
+            </a>
             <button onClick={logout} className="logout">
                 Log Out
             </button>
@@ -98,8 +147,13 @@ export default function Home() {
                 <p className="entryCount">Entry Count: {commaFormat(entries.length)}</p>
                 <p className="wordCount">Total Words: {commaFormat(wordCount)}</p>
             </div>
-            <div className="search">
-                <i className="fa-solid fa-magnifying-glass"></i>
+            <div className="controls">
+                <a onClick={download}>
+                    <i className="fa-solid fa-download"></i>
+                </a>
+                <a href="/search">
+                    <i className="fa-solid fa-magnifying-glass"></i>
+                </a>
             </div>
         </main>
     );
