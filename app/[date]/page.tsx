@@ -2,9 +2,11 @@
 
 import { API_URL, KEY_GENERATOR } from "../../util/config";
 import "./styles.css";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function Home({ params }: { params: { date: string } }) {
+    const key = useRef<CryptoKey>();
+    const word_count = useRef(0);
     // wrapped to only run on the client
     useEffect(() => {
         // Autosave every 10 seconds
@@ -27,6 +29,15 @@ export default function Home({ params }: { params: { date: string } }) {
         fetch(`${API_URL}/entry/${params.date}`)
             .then((res) => res.json())
             .then(async (data) => {
+                const json = localStorage.getItem("key");
+                if (json) {
+                    const keyBuffer = new Uint8Array(JSON.parse(json));
+                    key.current = await crypto.subtle.importKey("raw", keyBuffer, KEY_GENERATOR, true, ["encrypt", "decrypt"]);
+                } else {
+                    document.getElementById("decryptError")?.classList.remove("hidden");
+                    return;
+                }
+
                 if (data.mood) {
                     mood.value = data.mood.toString();
                 }
@@ -34,24 +45,17 @@ export default function Home({ params }: { params: { date: string } }) {
                     location.value = data.location.toString();
                 }
                 if (data.content) {
-                    // import key
-                    const json = localStorage.getItem("key");
-                    if (json) {
-                        const keyBuffer = new Uint8Array(JSON.parse(json));
-                        const key = await crypto.subtle.importKey("raw", keyBuffer, KEY_GENERATOR, true, ["encrypt", "decrypt"]);
-                        const toDecrypt = new Uint8Array([...atob(data.content)].map((c) => c.charCodeAt(0)));
-                        const iv = toDecrypt.slice(0, 16);
-                        const buffer = toDecrypt.slice(16);
-                        try {
-                            const decrypted = await crypto.subtle.decrypt({ name: "AES-CBC", iv }, key, buffer);
-                            const decryptedText = new TextDecoder().decode(decrypted);
-                            textarea.value = decryptedText;
-                            initialized = true;
-                        } catch (err) {
-                            console.error(err);
-                            document.getElementById("decryptError")?.classList.remove("hidden");
-                        }
-                    } else {
+                    // decrypt entry
+                    const toDecrypt = new Uint8Array([...atob(data.content)].map((c) => c.charCodeAt(0)));
+                    const iv = toDecrypt.slice(0, 16);
+                    const buffer = toDecrypt.slice(16);
+                    try {
+                        const decrypted = await crypto.subtle.decrypt({ name: "AES-CBC", iv }, key.current, buffer);
+                        const decryptedText = new TextDecoder().decode(decrypted);
+                        textarea.value = decryptedText;
+                        initialized = true;
+                    } catch (err) {
+                        console.error(err);
                         document.getElementById("decryptError")?.classList.remove("hidden");
                     }
                 } else {
@@ -99,8 +103,8 @@ export default function Home({ params }: { params: { date: string } }) {
     function countWords() {
         const entry = document.getElementById("entry") as HTMLTextAreaElement;
         const wordCountEl = document.getElementById("word-count") as HTMLParagraphElement;
-        let wordCount = entry.value.split(/\s+/).filter((word) => word !== "").length;
-        wordCountEl.innerText = `Word Count: ${wordCount}`;
+        word_count.current = entry.value.split(/\s+/).filter((word) => word !== "").length;
+        wordCountEl.innerText = `Word Count: ${word_count.current}`;
     }
 
     async function save() {
@@ -131,13 +135,33 @@ export default function Home({ params }: { params: { date: string } }) {
         let moodNum = moodStr === "" ? null : parseInt(moodStr);
         let locationStr = (document.getElementById("location") as HTMLSelectElement).value;
         let locationNum = locationStr === "" ? null : parseInt(locationStr);
+        // encrypt entry
+        const data = new TextEncoder().encode(text);
+        const iv = crypto.getRandomValues(new Uint8Array(16));
+        if (!key.current) {
+            document.getElementById("decryptError")?.classList.remove("hidden");
+            return false;
+        }
+        const encrypted = await crypto.subtle.encrypt({ name: "AES-CBC", iv }, key.current, data);
+        const buffer = new Uint8Array(encrypted);
+        const result = new Uint8Array(iv.length + buffer.length);
+        result.set(iv, 0);
+        result.set(buffer, iv.length);
+        const encryptedContent = btoa(String.fromCharCode(...result));
+
         return new Promise((resolve) => {
             fetch(`${API_URL}/entry/${date}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ content: text, mood: moodNum, location: locationNum }),
+                body: JSON.stringify({
+                    content: encryptedContent,
+                    mood: moodNum,
+                    location: locationNum,
+                    // word count has to be sent because you can't recalculate it once encrypted
+                    word_count: word_count.current,
+                }),
             })
                 .then((res) => {
                     resolve(res.ok);
