@@ -8,7 +8,7 @@ export default function Home() {
     // wrapped to only run on the client
     useEffect(() => {
         // check for token in local storage
-        if (localStorage.getItem("token")) {
+        if (localStorage.getItem("logged-in")) {
             window.location.href = "/overview";
         }
 
@@ -41,7 +41,7 @@ export default function Home() {
                 if (res.ok) {
                     console.log("Logged in.");
 
-                    localStorage.setItem("token", await res.text());
+                    localStorage.setItem("logged-in", "true");
                     window.location.href = "/overview";
                 } else {
                     alert("Incorrect username or password.");

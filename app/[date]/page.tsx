@@ -22,16 +22,8 @@ export default function Home({ params }: { params: { date: string } }) {
             }
         }, 10000);
 
-        // check for token in local storage
-        if (!localStorage.getItem("token")) {
-            window.location.href = "/login";
-        }
         // load entry from database
-        fetch(`${API_URL}/entry/${params.date}`, {
-            headers: {
-                Authorization: localStorage.getItem("token") as string,
-            },
-        })
+        fetch(`${API_URL}/entry/${params.date}`)
             .then((res) => res.json())
             .then((data) => {
                 if (data.content) {
@@ -53,7 +45,6 @@ export default function Home({ params }: { params: { date: string } }) {
             .catch((err) => {
                 console.error(err);
                 window.location.href = "/login";
-                localStorage.removeItem("token");
             });
 
         const keyDown = async (event: KeyboardEvent) => {
@@ -120,7 +111,6 @@ export default function Home({ params }: { params: { date: string } }) {
             fetch(`${API_URL}/entry/${date}`, {
                 method: "POST",
                 headers: {
-                    Authorization: localStorage.getItem("token") as string,
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ content: text, mood: moodNum, location: locationNum }),

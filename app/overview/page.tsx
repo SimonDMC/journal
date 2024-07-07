@@ -24,15 +24,11 @@ export default function Home() {
         }
 
         // check for token in local storage
-        if (!localStorage.getItem("token")) {
+        if (!localStorage.getItem("logged-in")) {
             window.location.href = "/login";
         }
         // load entries from database
-        fetch(`${API_URL}/overview`, {
-            headers: {
-                Authorization: localStorage.getItem("token") as string,
-            },
-        })
+        fetch(`${API_URL}/overview`)
             .then((res) => res.json())
             .then((data) => {
                 setEntries(data.entries);
@@ -42,8 +38,8 @@ export default function Home() {
             })
             .catch((err) => {
                 console.error(err);
+                localStorage.removeItem("logged-in");
                 window.location.href = "/login";
-                localStorage.removeItem("token");
             });
 
         const keydown = (e: KeyboardEvent) => {
@@ -76,11 +72,7 @@ export default function Home() {
     }, []);
 
     function download() {
-        fetch(`${API_URL}/download`, {
-            headers: {
-                Authorization: localStorage.getItem("token") as string,
-            },
-        })
+        fetch(`${API_URL}/download`)
             .then((res) => res.blob())
             .then((blob) => {
                 const url = window.URL.createObjectURL(blob);
@@ -90,6 +82,7 @@ export default function Home() {
                 a.click();
             })
             .catch((err) => {
+                alert("Didn't work :(");
                 console.error(err);
             });
     }
