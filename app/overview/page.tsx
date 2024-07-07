@@ -78,7 +78,7 @@ export default function Home() {
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = `${today}.json`;
+                a.download = `journal-export-${today}.json`;
                 a.click();
             })
             .catch((err) => {
@@ -113,8 +113,11 @@ export default function Home() {
         }
     }
 
-    function logout() {
-        localStorage.removeItem("token");
+    async function logout() {
+        await fetch(`${API_URL}/logout`, {
+            method: "POST",
+        });
+        localStorage.removeItem("logged-in");
         window.location.href = "/login";
     }
 
