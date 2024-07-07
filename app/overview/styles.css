@@ -44,12 +44,33 @@ button.logout {
     font-size: min(1.6em, 4vw);
 }
 
+.key {
+    position: absolute;
+    top: .8em;
+    left: .9em;
+    display: flex;
+    gap: .8em;
+}
+
+.key a {
+    cursor: pointer;
+}
+
+.key-button {
+    font-size: min(2em, 6vw);
+}
+
+.key-arrow {
+    font-size: min(.9em, 3.5vw);
+    translate: -.3em .2em;
+}
+
 .controls {
     position: absolute;
-    bottom: .3em;
-    right: .6em;
+    bottom: calc(.3em * 1.6);
+    right: .9em;
     display: flex;
-    gap: 1.2em;
+    gap: 1.4em;
 }
 
 .controls a {

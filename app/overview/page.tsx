@@ -3,7 +3,7 @@
 import "./styles.css";
 import { useEffect, useState } from "react";
 import Calendar, { dayAdjustedTime, today } from "@/components/Calendar";
-import { API_URL } from "../../util/config";
+import { API_URL, KEY_GENERATOR } from "../../util/config";
 
 export type JournalEntry = {
     date: string;
@@ -113,6 +113,42 @@ export default function Home() {
         }
     }
 
+    function uploadKey() {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".key";
+        input.onchange = async () => {
+            const file = input.files?.[0];
+            if (!file) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async () => {
+                const imported = new Uint8Array(reader.result as ArrayBuffer);
+                localStorage.setItem("key", JSON.stringify(Array.from(imported)));
+                alert("Key imported successfully!");
+            };
+            reader.readAsArrayBuffer(file);
+        };
+        input.click();
+    }
+
+    function downloadKey() {
+        const key = localStorage.getItem("key");
+        if (!key) {
+            alert("No key found.");
+            return;
+        }
+
+        const blob = new Blob([new Uint8Array(JSON.parse(key))], { type: "application/octet-stream" });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "JOURNAL_SECRET.key";
+        a.click();
+    }
+
     async function logout() {
         await fetch(`${API_URL}/logout`, {
             method: "POST",
@@ -136,6 +172,16 @@ export default function Home() {
             <a href="" id="lastYear" className="inactive">
                 One Year Ago
             </a>
+            <div className="key">
+                <a onClick={uploadKey}>
+                    <i className="fa-solid fa-key key-button"></i>
+                    <i className="fa-solid fa-arrow-up key-arrow"></i>
+                </a>
+                <a onClick={downloadKey}>
+                    <i className="fa-solid fa-key key-button"></i>
+                    <i className="fa-solid fa-arrow-down key-arrow"></i>
+                </a>
+            </div>
             <button onClick={logout} className="logout">
                 Log Out
             </button>
