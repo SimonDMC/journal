@@ -27,6 +27,12 @@ export default function Home({ params }: { params: { date: string } }) {
         fetch(`${API_URL}/entry/${params.date}`)
             .then((res) => res.json())
             .then(async (data) => {
+                if (data.mood) {
+                    mood.value = data.mood.toString();
+                }
+                if (data.location) {
+                    location.value = data.location.toString();
+                }
                 if (data.content) {
                     // import key
                     const json = localStorage.getItem("key");
@@ -42,24 +48,23 @@ export default function Home({ params }: { params: { date: string } }) {
                             textarea.value = decryptedText;
                             initialized = true;
                         } catch (err) {
-                            alert("Error decrypting entry");
+                            console.error(err);
+                            document.getElementById("decryptError")?.classList.remove("hidden");
                         }
+                    } else {
+                        document.getElementById("decryptError")?.classList.remove("hidden");
                     }
                 } else {
                     initialized = true;
                 }
-                if (data.mood) {
-                    mood.value = data.mood.toString();
-                }
-                if (data.location) {
-                    location.value = data.location.toString();
-                }
-                countWords();
+                if (initialized) {
+                    // data has been loaded, so enable the textarea
+                    textarea.disabled = false;
+                    // and focus it
+                    textarea.focus();
 
-                // data has been loaded, so enable the textarea
-                textarea.disabled = false;
-                // and focus it
-                textarea.focus();
+                    countWords();
+                }
             })
             .catch((err) => {
                 console.error(err);
@@ -146,6 +151,9 @@ export default function Home({ params }: { params: { date: string } }) {
 
     return (
         <main>
+            <div id="decryptError" className="hidden">
+                Error decrypting entry. Make sure you have imported your key.
+            </div>
             <textarea name="entry" id="entry" onKeyUp={countWords} disabled></textarea>
             <p id="word-count">Word Count: 0</p>
 

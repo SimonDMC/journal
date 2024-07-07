@@ -72,6 +72,18 @@ option {
     align-items: center;
 }
 
+#decryptError {
+    position: absolute;
+    top: 11em;
+    font-size: 2em;
+    width: 18em;
+    text-align: center;
+}
+
+#decryptError.hidden {
+    display: none;
+}
+
 @media (max-width: 600px) {
     .bottom-bar {
         flex-direction: column;
