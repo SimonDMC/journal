@@ -1,6 +1,6 @@
 "use client";
 
-import { API_URL } from "../../util/config";
+import { API_URL, KEY_GENERATOR } from "../../util/config";
 import "./styles.css";
 import { useEffect } from "react";
 
@@ -14,9 +14,10 @@ export default function Home({ params }: { params: { date: string } }) {
         let prevText = textarea.value;
         let prevMood = mood.value;
         let prevLocation = location.value;
+        let initialized = false;
         const autosaveInterval = setInterval(() => {
             const text = textarea.value;
-            if (text !== prevText || mood.value !== prevMood || location.value !== prevLocation) {
+            if (initialized && (text !== prevText || mood.value !== prevMood || location.value !== prevLocation)) {
                 saveWithoutNotify(text);
                 prevText = text;
             }
@@ -25,9 +26,27 @@ export default function Home({ params }: { params: { date: string } }) {
         // load entry from database
         fetch(`${API_URL}/entry/${params.date}`)
             .then((res) => res.json())
-            .then((data) => {
+            .then(async (data) => {
                 if (data.content) {
-                    textarea.value = data.content;
+                    // import key
+                    const json = localStorage.getItem("key");
+                    if (json) {
+                        const keyBuffer = new Uint8Array(JSON.parse(json));
+                        const key = await crypto.subtle.importKey("raw", keyBuffer, KEY_GENERATOR, true, ["encrypt", "decrypt"]);
+                        const toDecrypt = new Uint8Array([...atob(data.content)].map((c) => c.charCodeAt(0)));
+                        const iv = toDecrypt.slice(0, 16);
+                        const buffer = toDecrypt.slice(16);
+                        try {
+                            const decrypted = await crypto.subtle.decrypt({ name: "AES-CBC", iv }, key, buffer);
+                            const decryptedText = new TextDecoder().decode(decrypted);
+                            textarea.value = decryptedText;
+                            initialized = true;
+                        } catch (err) {
+                            alert("Error decrypting entry");
+                        }
+                    }
+                } else {
+                    initialized = true;
                 }
                 if (data.mood) {
                     mood.value = data.mood.toString();
