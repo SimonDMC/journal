@@ -73,8 +73,36 @@ export default function Home() {
 
     function download() {
         fetch(`${API_URL}/download`)
-            .then((res) => res.blob())
-            .then((blob) => {
+            .then((res) => res.json())
+            .then(async (json) => {
+                // decrypt entries
+                const storedKey = localStorage.getItem("key");
+                if (!storedKey) {
+                    alert("No key found.");
+                    return;
+                }
+                const buffer = new Uint8Array(JSON.parse(storedKey));
+                const key = await window.crypto.subtle.importKey("raw", buffer, KEY_GENERATOR, false, ["decrypt"]);
+
+                let failed = false;
+                for (const entry of json.results) {
+                    const data = new Uint8Array([...atob(entry.content)].map((c) => c.charCodeAt(0)));
+                    const iv = data.slice(0, 16);
+                    const encrypted = data.slice(16);
+                    try {
+                        const decrypted = await window.crypto.subtle.decrypt({ name: "AES-CBC", iv }, key, encrypted);
+                        entry.content = new TextDecoder().decode(decrypted);
+                    } catch (err) {
+                        console.error(err);
+                        failed = true;
+                    }
+                }
+
+                if (failed) {
+                    alert("Failed to decrypt some entries.");
+                }
+
+                const blob = new Blob([JSON.stringify(json, null, 2)], { type: "application/json" });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
