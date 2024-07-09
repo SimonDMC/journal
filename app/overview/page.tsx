@@ -4,14 +4,7 @@ import "./styles.css";
 import { useEffect, useState } from "react";
 import Calendar, { dayAdjustedTime, today } from "@/components/Calendar";
 import { API_URL, KEY_GENERATOR } from "../../util/config";
-
-export type JournalEntry = {
-    date: string;
-    content: string;
-    mood?: number;
-    location?: number;
-    word_count: number;
-};
+import { JournalEntry } from "../search/page";
 
 export default function Home() {
     const [entries, setEntries] = useState([]);

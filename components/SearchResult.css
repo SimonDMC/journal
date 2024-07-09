@@ -1,0 +1,35 @@
+.result {
+    background-color: #1b1b1b;
+    border-radius: .5em;
+    padding: .2em .6em;
+    display: block;
+    margin-left: .8em;
+    margin-right: .8em;
+    transition: outline-width .05s;
+    outline: 0px solid #444;
+    margin-bottom: .4em;
+}
+
+.result:hover {
+    outline-width: 2px;
+}
+
+.result .date {
+    font-size: .8em;
+    font-weight: 700;
+}
+
+.result .match {
+    color: #ccc;
+    font-family: monospace;
+}
+
+.result .match .highlight {
+    color: #ffcc00;
+}
+
+.result .match .ellipsis {
+    color: #666;
+    letter-spacing: -.3em;
+    margin-right: .25em;
+}

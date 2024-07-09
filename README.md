@@ -7,10 +7,10 @@ Here's what it looks like:
 
 ## Roadmap
 
--   Search
--   Downloading (backups) from UI
--   Offline mode (basic functionality)
--   Tracking parameter customization
--   Account creation
--   Entry encryption
--   Password reset? (maybe)
+-   [x] Search
+-   [x] Downloading (backups) from UI
+-   [ ] Offline mode (basic functionality)
+-   [ ] Tracking parameter customization
+-   [ ] Account creation
+-   [x] Entry encryption
+-   [ ] Password reset? (maybe)
