@@ -94,7 +94,7 @@ export default function Home() {
         }
 
         const results: SearchResultType[] = [];
-        for (const entry of entries.reverse()) {
+        for (const entry of entries) {
             const matches = entry.content.matchAll(new RegExp(searchValue, "gi"));
             const searchResult = { date: entry.date, matches: [] } as SearchResultType;
             for (const match of matches) {
@@ -127,6 +127,9 @@ export default function Home() {
                 results.push(searchResult);
             }
         }
+
+        // sort results by date
+        results.sort((a, b) => (a.date < b.date ? 1 : -1));
 
         setResults(results);
         resultCount.textContent = `${results.length} result${results.length === 1 ? "" : "s"}`;
