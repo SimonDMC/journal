@@ -98,6 +98,7 @@ export default function Home() {
             const matches = entry.content.matchAll(new RegExp(searchValue, "gi"));
             const searchResult = { date: entry.date, matches: [] } as SearchResultType;
             for (const match of matches) {
+                if (!match.index) continue;
                 // cut context
                 let fromStart = false;
                 let fromEnd = false;
