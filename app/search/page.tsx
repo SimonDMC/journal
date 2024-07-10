@@ -1,7 +1,7 @@
 "use client";
 
 import "./styles.css";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import SearchResult, { SearchResultType } from "@/components/SearchResult";
 import { API_URL, KEY_GENERATOR } from "@/util/config";
 
@@ -16,55 +16,61 @@ export type JournalEntry = {
 export default function Home() {
     const [results, setResults] = useState<SearchResultType[]>([]);
     const [entries, setEntries] = useState<JournalEntry[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [dataLoadingPromise, setDataLoadingPromise] = useState<Promise<void> | null>(null);
 
-    // wrapped to only run on the client
-    useEffect(() => {
+    const fetchAndDecryptEntries = useCallback(async () => {
         // check for token in local storage
         if (!localStorage.getItem("logged-in")) {
             window.location.href = "/login";
+            return;
         }
 
-        // fetch and decrypt entries
-        fetch(`${API_URL}/download`)
-            .then((res) => res.json())
-            .then(async (json) => {
-                // decrypt entries
-                const storedKey = localStorage.getItem("key");
-                if (!storedKey) {
-                    alert("No key found.");
-                    return;
-                }
-                const buffer = new Uint8Array(JSON.parse(storedKey));
-                const key = await window.crypto.subtle.importKey("raw", buffer, KEY_GENERATOR, false, ["decrypt"]);
+        try {
+            const response = await fetch(`${API_URL}/download`);
+            const json = await response.json();
 
-                let failed = false;
-                for (const entry of json.results) {
-                    const data = new Uint8Array([...atob(entry.content)].map((c) => c.charCodeAt(0)));
-                    const iv = data.slice(0, 16);
-                    const encrypted = data.slice(16);
-                    try {
-                        const decrypted = await window.crypto.subtle.decrypt({ name: "AES-CBC", iv }, key, encrypted);
-                        entry.content = new TextDecoder().decode(decrypted);
-                    } catch (err) {
-                        console.error(err);
-                        failed = true;
-                    }
-                }
+            const storedKey = localStorage.getItem("key");
+            if (!storedKey) {
+                alert("No key found.");
+                return;
+            }
 
-                if (failed) {
-                    alert("Failed to decrypt some entries.");
-                }
+            // decrypt entries
+            const buffer = new Uint8Array(JSON.parse(storedKey));
+            const key = await window.crypto.subtle.importKey("raw", buffer, KEY_GENERATOR, false, ["decrypt"]);
 
-                setEntries(json.results);
-                const searchField = document.getElementById("search-field") as HTMLInputElement;
-                searchField.disabled = false;
-                searchField.focus();
-            })
-            .catch((err) => {
-                console.error(err);
-                localStorage.removeItem("logged-in");
-                window.location.href = "/login";
-            });
+            let failed = false;
+            for (const entry of json.results) {
+                const data = new Uint8Array([...atob(entry.content)].map((c) => c.charCodeAt(0)));
+                const iv = data.slice(0, 16);
+                const encrypted = data.slice(16);
+                try {
+                    const decrypted = await window.crypto.subtle.decrypt({ name: "AES-CBC", iv }, key, encrypted);
+                    entry.content = new TextDecoder().decode(decrypted);
+                } catch (err) {
+                    console.error(err);
+                    failed = true;
+                }
+            }
+
+            if (failed) {
+                alert("Failed to decrypt some entries.");
+            }
+
+            setEntries(json.results);
+            setIsLoading(false);
+        } catch (err) {
+            console.error(err);
+            localStorage.removeItem("logged-in");
+            window.location.href = "/login";
+        }
+    }, []);
+
+    // wrapped to only run on the client
+    useEffect(() => {
+        const loadingPromise = fetchAndDecryptEntries();
+        setDataLoadingPromise(loadingPromise);
 
         const keyDown = async (event: KeyboardEvent) => {
             // exit on esc
@@ -74,7 +80,7 @@ export default function Home() {
             }
         };
         document.addEventListener("keydown", keyDown);
-    }, []);
+    }, [fetchAndDecryptEntries]);
 
     const search = async () => {
         const searchField = document.getElementById("search-field") as HTMLInputElement;
@@ -85,6 +91,10 @@ export default function Home() {
             setResults([]);
             resultCount.textContent = "";
             return;
+        }
+
+        if (isLoading && dataLoadingPromise) {
+            await dataLoadingPromise;
         }
 
         // extra context for mobile
@@ -98,7 +108,7 @@ export default function Home() {
             const matches = entry.content.matchAll(new RegExp(searchValue, "gi"));
             const searchResult = { date: entry.date, matches: [] } as SearchResultType;
             for (const match of matches) {
-                if (!match.index) continue;
+                if (match.index === undefined) continue;
                 // cut context
                 let fromStart = false;
                 let fromEnd = false;
@@ -112,6 +122,8 @@ export default function Home() {
                 }
                 if (endIndex > entry.content.length) {
                     startIndex -= endIndex - entry.content.length + 2;
+                    // edge case where the whole entry is shorter than the context window
+                    startIndex = Math.max(0, startIndex);
                     endIndex = entry.content.length;
                     fromEnd = true;
                 }
@@ -138,7 +150,7 @@ export default function Home() {
     return (
         <main>
             <div className="search-wrap">
-                <input id="search-field" placeholder="Search..." onInput={search} disabled />
+                <input id="search-field" placeholder="Search..." onInput={search} autoFocus />
                 <div id="search-icon">
                     <i className="fas fa-search"></i>
                 </div>
