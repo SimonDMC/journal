@@ -1,15 +1,14 @@
 "use client";
 
 import "./styles.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Calendar, { dayAdjustedTime, today } from "@/components/Calendar";
 import { API_URL, KEY_GENERATOR } from "../../util/config";
-import { JournalEntry } from "../search/page";
-import useStateWithCallback from "use-state-with-callback";
 
 export default function Home() {
     const [entries, setEntries] = useState([]);
-    const [wordCount, setWordCount] = useStateWithCallback(0, () => setOneYearAgo());
+    const [wordCount, setWordCount] = useState(0);
+    const entriesLoaded = useRef(false);
 
     // wrapped to only run on the client
     useEffect(() => {
@@ -63,6 +62,14 @@ export default function Home() {
             document.removeEventListener("keydown", keydown);
         };
     }, []);
+
+    useEffect(() => {
+        if (entriesLoaded.current) {
+            setOneYearAgo();
+        } else {
+            entriesLoaded.current = true;
+        }
+    }, [entries]);
 
     function download() {
         fetch(`${API_URL}/download`)
