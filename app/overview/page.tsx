@@ -5,10 +5,11 @@ import { useEffect, useState } from "react";
 import Calendar, { dayAdjustedTime, today } from "@/components/Calendar";
 import { API_URL, KEY_GENERATOR } from "../../util/config";
 import { JournalEntry } from "../search/page";
+import useStateWithCallback from "use-state-with-callback";
 
 export default function Home() {
     const [entries, setEntries] = useState([]);
-    const [wordCount, setWordCount] = useState(0);
+    const [wordCount, setWordCount] = useStateWithCallback(0, () => setOneYearAgo());
 
     // wrapped to only run on the client
     useEffect(() => {
@@ -26,7 +27,6 @@ export default function Home() {
             .then((data) => {
                 setEntries(data.entries);
                 setWordCount(data.totalWords);
-                setOneYearAgo();
                 document.getElementById("calendar")?.classList.remove("loading");
             })
             .catch((err) => {
@@ -129,7 +129,7 @@ export default function Home() {
         const lastYearString = lastYear.toISOString().substring(0, 10);
         const lastYearLink = document.getElementById("lastYear") as HTMLAnchorElement;
         lastYearLink.href = `/${lastYearString}`;
-        if (entries.find((entry) => (entry as JournalEntry).date === lastYearString)) {
+        if (entries.find((entry) => entry === lastYearString)) {
             lastYearLink.classList.remove("inactive");
         }
     }
