@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import SearchResult, { SearchResultType } from "@/components/SearchResult";
 import { API_URL, KEY_GENERATOR } from "@/util/config";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export type JournalEntry = {
     date: string;
