@@ -5,6 +5,7 @@ import { API_URL, KEY_GENERATOR } from "../../util/config";
 import "./styles.css";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
+import { today } from "@/components/Calendar";
 
 export default function Home({ params }: { params: { date: string } }) {
     const key = useRef<CryptoKey>();
@@ -68,8 +69,10 @@ export default function Home({ params }: { params: { date: string } }) {
                 if (initialized) {
                     // data has been loaded, so enable the textarea
                     textarea.disabled = false;
-                    // and focus it
-                    textarea.focus();
+                    // and focus it if it's today
+                    if (today === params.date) {
+                        textarea.focus();
+                    }
 
                     countWords();
                 }
