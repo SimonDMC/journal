@@ -1,3 +1,4 @@
+import Link from "next/link";
 import "./SearchResult.css";
 
 export type SearchResultType = {
@@ -15,7 +16,7 @@ type SearchMatch = {
 
 export default function SearchResult(props: SearchResultType) {
     return (
-        <a className="result" href={`/${props.date}`}>
+        <Link className="result" href={`/${props.date}`}>
             <div className="date">{props.date}</div>
             {props.matches.map((result: SearchMatch) => (
                 <div className="match" key={result.startIndex}>
@@ -26,6 +27,6 @@ export default function SearchResult(props: SearchResultType) {
                     {result.fromEnd || <span className="ellipsis">...</span>}
                 </div>
             ))}
-        </a>
+        </Link>
     );
 }

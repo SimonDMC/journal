@@ -4,11 +4,15 @@ import "./styles.css";
 import { useEffect, useRef, useState } from "react";
 import Calendar, { dayAdjustedTime, today } from "@/components/Calendar";
 import { API_URL, KEY_GENERATOR } from "../../util/config";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
     const [entries, setEntries] = useState([]);
     const [wordCount, setWordCount] = useState(0);
+    const [oneYearAgo, setOneYearAgo] = useState("");
     const entriesLoaded = useRef(false);
+    const router = useRouter();
 
     // wrapped to only run on the client
     useEffect(() => {
@@ -18,7 +22,7 @@ export default function Home() {
 
         // check for token in local storage
         if (!localStorage.getItem("logged-in")) {
-            window.location.href = "/login";
+            router.push("/login");
         }
         // load entries from database
         fetch(`${API_URL}/overview`)
@@ -31,7 +35,7 @@ export default function Home() {
             .catch((err) => {
                 console.error(err);
                 localStorage.removeItem("logged-in");
-                window.location.href = "/login";
+                router.push("/login");
             });
 
         const keydown = (e: KeyboardEvent) => {
@@ -54,6 +58,11 @@ export default function Home() {
                 const lastYear = document.getElementById("lastYear") as HTMLAnchorElement;
                 lastYear.click();
             }
+
+            // close app on escape (PWA)
+            if (e.key === "Escape") {
+                window.close();
+            }
         };
         document.addEventListener("keydown", keydown);
 
@@ -65,7 +74,14 @@ export default function Home() {
 
     useEffect(() => {
         if (entriesLoaded.current) {
-            setOneYearAgo();
+            const lastYear = new Date(dayAdjustedTime);
+            lastYear.setFullYear(lastYear.getFullYear() - 1);
+            const lastYearString = lastYear.toISOString().substring(0, 10);
+            setOneYearAgo(lastYearString);
+            const lastYearLink = document.getElementById("lastYear") as HTMLAnchorElement;
+            if (entries.find((entry) => entry === lastYearString)) {
+                lastYearLink.classList.remove("inactive");
+            }
         } else {
             entriesLoaded.current = true;
         }
@@ -116,7 +132,7 @@ export default function Home() {
     }
 
     function sendToToday() {
-        window.location.href = `/${today}`;
+        router.push(`/${today}`);
     }
 
     // js date supports stuff like (2023, -7, 20) or (2023, 54, 20) so no need to worry about going out of bounds
@@ -128,17 +144,6 @@ export default function Home() {
 
     function nextMonth() {
         setMonth(month + 1);
-    }
-
-    function setOneYearAgo() {
-        const lastYear = new Date(dayAdjustedTime);
-        lastYear.setFullYear(lastYear.getFullYear() - 1);
-        const lastYearString = lastYear.toISOString().substring(0, 10);
-        const lastYearLink = document.getElementById("lastYear") as HTMLAnchorElement;
-        lastYearLink.href = `/${lastYearString}`;
-        if (entries.find((entry) => entry === lastYearString)) {
-            lastYearLink.classList.remove("inactive");
-        }
     }
 
     function uploadKey() {
@@ -182,7 +187,7 @@ export default function Home() {
             method: "POST",
         });
         localStorage.removeItem("logged-in");
-        window.location.href = "/login";
+        router.push("/login");
     }
 
     // https://stackoverflow.com/a/2901298
@@ -197,9 +202,9 @@ export default function Home() {
                 entries={entries}
             />
             <button onClick={sendToToday}>Today</button>
-            <a href="" id="lastYear" className="inactive">
+            <Link href={`/${oneYearAgo}`} id="lastYear" className="inactive">
                 One Year Ago
-            </a>
+            </Link>
             <div className="key">
                 <a onClick={uploadKey}>
                     <i className="fa-solid fa-key key-button"></i>
@@ -221,9 +226,9 @@ export default function Home() {
                 <a onClick={download}>
                     <i className="fa-solid fa-download"></i>
                 </a>
-                <a href="/search">
+                <Link href="/search">
                     <i className="fa-solid fa-magnifying-glass"></i>
-                </a>
+                </Link>
             </div>
         </main>
     );

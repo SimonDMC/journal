@@ -1,3 +1,4 @@
+import Link from "next/link";
 import "./Calendar.css";
 
 // calculate today's date by offsetting the current date by the timezone offset
@@ -62,9 +63,9 @@ export default function Calendar(props: { month: string; previousMonth: Function
                     }
 
                     return (
-                        <a className={`day ${dayClass}`} key={i} href={`/${currentDay}`}>
+                        <Link className={`day ${dayClass}`} key={i} href={`/${currentDay}`}>
                             {i + 1}
-                        </a>
+                        </Link>
                     );
                 })}
 

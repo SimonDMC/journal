@@ -1,12 +1,16 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { API_URL, KEY_GENERATOR } from "../../util/config";
 import "./styles.css";
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 
 export default function Home({ params }: { params: { date: string } }) {
     const key = useRef<CryptoKey>();
     const word_count = useRef(0);
+    const router = useRouter();
+
     // wrapped to only run on the client
     useEffect(() => {
         // Autosave every 10 seconds
@@ -72,13 +76,13 @@ export default function Home({ params }: { params: { date: string } }) {
             })
             .catch((err) => {
                 console.error(err);
-                window.location.href = "/login";
+                router.push("/login");
             });
 
         const keyDown = async (event: KeyboardEvent) => {
             // exit on esc
             if (event.key === "Escape") {
-                window.location.href = "/overview";
+                router.push("/overview");
                 event.preventDefault();
             }
 
@@ -205,9 +209,9 @@ export default function Home({ params }: { params: { date: string } }) {
                     <option value="4">Not home!</option>
                 </select>
             </div>
-            <a href="/overview" className="back">
+            <Link href="/overview" className="back">
                 ←
-            </a>
+            </Link>
         </main>
     );
 }

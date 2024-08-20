@@ -1,15 +1,18 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { API_URL } from "../../util/config";
 import "./styles.css";
 import { useEffect } from "react";
 
 export default function Home() {
+    const router = useRouter();
+
     // wrapped to only run on the client
     useEffect(() => {
         // check for token in local storage
         if (localStorage.getItem("logged-in")) {
-            window.location.href = "/overview";
+            router.push("/overview");
         }
 
         // add event listener to login on enter
@@ -42,7 +45,7 @@ export default function Home() {
                     console.log("Logged in.");
 
                     localStorage.setItem("logged-in", "true");
-                    window.location.href = "/overview";
+                    router.push("/overview");
                 } else {
                     alert("Incorrect username or password.");
                 }

@@ -1,9 +1,10 @@
 "use client";
 
 import "./styles.css";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import SearchResult, { SearchResultType } from "@/components/SearchResult";
 import { API_URL, KEY_GENERATOR } from "@/util/config";
+import { useRouter } from "next/navigation";
 
 export type JournalEntry = {
     date: string;
@@ -18,11 +19,12 @@ export default function Home() {
     const [entries, setEntries] = useState<JournalEntry[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [dataLoadingPromise, setDataLoadingPromise] = useState<Promise<void> | null>(null);
+    const router = useRouter();
 
     const fetchAndDecryptEntries = useCallback(async () => {
         // check for token in local storage
         if (!localStorage.getItem("logged-in")) {
-            window.location.href = "/login";
+            router.push("/login");
             return;
         }
 
@@ -63,7 +65,7 @@ export default function Home() {
         } catch (err) {
             console.error(err);
             localStorage.removeItem("logged-in");
-            window.location.href = "/login";
+            router.push("/login");
         }
     }, []);
 
@@ -75,7 +77,7 @@ export default function Home() {
         const keyDown = async (event: KeyboardEvent) => {
             // exit on esc
             if (event.key === "Escape") {
-                window.location.href = "/overview";
+                router.push("/overview");
                 event.preventDefault();
             }
         };
@@ -161,9 +163,9 @@ export default function Home() {
                     ))}
                 </div>
             </div>
-            <a href="/overview" className="back">
+            <Link href="/overview" className="back">
                 ←
-            </a>
+            </Link>
         </main>
     );
 }
