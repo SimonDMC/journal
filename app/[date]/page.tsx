@@ -198,7 +198,9 @@ export default function Home({ params }: { params: { date: string } }) {
                     <option value="6">6 - Great</option>
                     <option value="7">7 - Best day ever</option>
                 </select>
-                <button onClick={save}>Save</button>
+                <button onClick={save} id="save-button">
+                    Save
+                </button>
                 <select name="location" id="location" defaultValue="">
                     <option value="" disabled hidden>
                         Location

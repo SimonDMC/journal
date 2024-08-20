@@ -151,7 +151,7 @@ export default function Home() {
     };
 
     return (
-        <main>
+        <main className="search">
             <div className="search-wrap">
                 <input id="search-field" placeholder="Search..." onInput={search} autoFocus />
                 <div id="search-icon">

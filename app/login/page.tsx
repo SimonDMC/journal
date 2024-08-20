@@ -67,7 +67,7 @@ export default function Home() {
     }
 
     return (
-        <main>
+        <main className="login">
             <div className="container">
                 <div className="input">
                     <label htmlFor="username">Username: </label>
@@ -78,7 +78,9 @@ export default function Home() {
                     <input type="password" name="password" id="password" />
                 </div>
             </div>
-            <button onClick={login}>Login</button>
+            <button onClick={login} id="login-button">
+                Login
+            </button>
             <div className="info" onClick={openInfo}>
                 ?
             </div>

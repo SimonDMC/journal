@@ -32,7 +32,7 @@ textarea:disabled {
     background-color: #ffffff11;
 }
 
-button {
+#save-button {
     font-size: 2em;
     border: 1px solid gray;
     padding: 0.2em 0.5em;
@@ -40,7 +40,7 @@ button {
     transition: border 0.2s;
 }
 
-button:hover {
+#save-button:hover {
     border: 1px solid white;
 }
 

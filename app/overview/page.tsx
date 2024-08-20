@@ -58,11 +58,6 @@ export default function Home() {
                 const lastYear = document.getElementById("lastYear") as HTMLAnchorElement;
                 lastYear.click();
             }
-
-            // close app on escape (PWA)
-            if (e.key === "Escape") {
-                window.close();
-            }
         };
         document.addEventListener("keydown", keydown);
 
