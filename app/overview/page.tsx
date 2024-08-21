@@ -16,14 +16,14 @@ export default function Home() {
 
     // wrapped to only run on the client
     useEffect(() => {
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("./sw.js");
-        }
-
         // check for token in local storage
         if (!localStorage.getItem("logged-in")) {
             router.push("/login");
         }
+
+        const month = sessionStorage.getItem("month");
+        if (month) setMonth(parseInt(month));
+
         // load entries from database
         fetch(`${API_URL}/overview`)
             .then((res) => res.json())
@@ -140,10 +140,12 @@ export default function Home() {
 
     function previousMonth() {
         setMonth(month - 1);
+        sessionStorage.setItem("month", (month - 1).toString());
     }
 
     function nextMonth() {
         setMonth(month + 1);
+        sessionStorage.setItem("month", (month + 1).toString());
     }
 
     function uploadKey() {
