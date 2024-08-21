@@ -10,7 +10,7 @@
         }
     ],
     "id": "com.simondmc.journal",
-    "start_url": "https://journal.simondmc.com",
+    "start_url": "https://journal.simondmc.com/overview",
     "display": "standalone",
     "theme_color": "#ffffff",
     "background_color": "#000000"
