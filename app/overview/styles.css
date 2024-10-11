@@ -6,23 +6,15 @@ main {
     height: 100svh;
 }
 
-button {
-    font-size: 3em;
-    border: 1px solid gray;
-    padding: 0.2em 0.5em;
-    border-radius: .3em;
-    transition: border 0.2s;
+.nav-link {
+    color: #ccc;
+    font-size: 2em;
+    font-weight: 400;
+    transition: color .3s;
 }
 
-button:hover {
-    border: 1px solid white;
-}
-
-#lastYear {
-    margin-top: .2em;
-    font-size: 1.8em;
-    text-decoration: underline;
-    margin-bottom: -1em;
+.nav-link:hover {
+    color: #fff;
 }
 
 #lastYear.inactive {
@@ -30,11 +22,12 @@ button:hover {
     text-decoration: none;
 }
 
-button.logout {
+.logout {
     position: absolute;
     top: 0.3em;
     right: 0.3em;
     font-size: min(2em, 6vw);
+    cursor: pointer;
 }
 
 .stats {

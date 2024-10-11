@@ -23,9 +23,15 @@ export default function Calendar(props: { month: string; previousMonth: Function
         <div id="calendar" className="calendar loading">
             <div className="top-bar">
                 <div className="inner">
-                    <button onClick={() => props.previousMonth()}>←</button>
-                    {monthName} {currentYear}
-                    <button onClick={() => props.nextMonth()}>→</button>
+                    <button onClick={() => props.previousMonth()}>
+                        <i className="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <span>
+                        {monthName} {currentYear}
+                    </span>
+                    <button onClick={() => props.nextMonth()}>
+                        <i className="fa-solid fa-arrow-right"></i>
+                    </button>
                 </div>
             </div>
             <div className="week-days">
@@ -53,17 +59,16 @@ export default function Calendar(props: { month: string; previousMonth: Function
                     const isToday = today === currentDay;
                     const entriesNotEmpty = Object.keys(props.entries).length > 0;
 
-                    let dayClass = "";
-                    if (hasEntry && isToday) {
-                        dayClass = "today-has-entry";
-                    } else if (hasEntry) {
-                        dayClass = "has-entry";
-                    } else if (isToday && entriesNotEmpty) {
-                        dayClass = "today";
+                    let classes: string[] = [];
+                    if (hasEntry) {
+                        classes.push("has-entry");
+                    }
+                    if (isToday) {
+                        classes.push("today");
                     }
 
                     return (
-                        <Link className={`day ${dayClass}`} key={i} href={`/${currentDay}`}>
+                        <Link className={`day ${classes.join(" ")}`} key={i} href={`/${currentDay}`}>
                             {i + 1}
                         </Link>
                     );

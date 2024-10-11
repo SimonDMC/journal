@@ -1,11 +1,13 @@
 .calendar {
-    font-size: min(4.3vw, 1.4rem);
-    width: calc(20em + 2px);
+    font-size: min(4.2vw, 1.5rem);
+    width: calc(21.6em + 12px);
     height: fit-content;
-    border: 1px solid white;
-    margin-bottom: 3em;
+    outline: 2px solid #555;
+    margin-bottom: 2em;
     display: flex;
     flex-direction: column;
+    border-radius: .3em;
+    padding: .8em;
 }
 
 .calendar.loading {
@@ -13,13 +15,15 @@
 }
 
 .top-bar {
-    height: 2em;
-    border-bottom: 1px solid gray;
+    height: 2.5em;
+    margin-bottom: 1.3em;
 }
 
 .week-days {
-    height: 1.2em;
-    border-bottom: 1px solid gray;
+    height: 1em;
+    margin-bottom: .3em;
+    color: #777;
+    cursor: default;
 }
 
 .top-bar, .week-days {
@@ -31,10 +35,20 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-weight: 600;
 }
 
 .top-bar .inner {
     width: 95%;
+    font-size: 1.1em;
+}
+
+.top-bar span {
+    font-size: 1.2em;
+}
+
+.top-bar button {
+    outline: none;
 }
 
 .week-days .inner {
@@ -51,6 +65,7 @@
 .days {
     display: flex;
     flex-wrap: wrap;
+    gap: 2px;
 }
 
 .day, .offset {
@@ -62,31 +77,24 @@
 }
 
 .day {
-    outline: 1px solid white;
-    background-color: black;
+    background-color: #1b1b1b;
+    transition: filter .3s;
+    border-radius: .2em;
 }
 
-.day.today-has-entry {
-    background-color: #003300;
+.day:hover {
+    /* using a brightness filter instead of background color allows 
+    transition fade without impacting color changes from month switching */
+    filter: brightness(1.5);
 }
 
 .day.today {
-    background-color: #330000;
+    outline: 2px solid #888;
+    z-index: 1;
 }
 
 .day.has-entry {
-    background-color: #222;
-}
-
-.offset.row-1 {
-    background-color: black;
-    /* top outline */
-    box-shadow: 0 -1px 0 #fff;
-}
-
-.offset.row-1:first-of-type {
-    /* left outline */
-    box-shadow: -1px -1px 0 #fff;
+    background-color: #333;
 }
 
 span.offset:first-of-type {

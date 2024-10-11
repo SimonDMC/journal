@@ -50,7 +50,8 @@ export default function Home() {
 
             // quick today navigation
             if (e.key === "Enter" || e.key === "t" || e.key === " ") {
-                sendToToday();
+                const today = document.getElementById("today") as HTMLAnchorElement;
+                today.click();
             }
 
             // quick one year ago navigation
@@ -131,10 +132,6 @@ export default function Home() {
             });
     }
 
-    function sendToToday() {
-        router.push(`/${today}`);
-    }
-
     // js date supports stuff like (2023, -7, 20) or (2023, 54, 20) so no need to worry about going out of bounds
     const [month, setMonth] = useState(dayAdjustedTime.getMonth() + 1);
 
@@ -203,8 +200,10 @@ export default function Home() {
                 nextMonth={nextMonth}
                 entries={entries}
             />
-            <button onClick={sendToToday}>Today</button>
-            <Link href={`/${oneYearAgo}`} id="lastYear" className="inactive">
+            <Link href={`/${today}`} id="today" className="nav-link">
+                Today
+            </Link>
+            <Link href={`/${oneYearAgo}`} id="lastYear" className="nav-link inactive">
                 One Year Ago
             </Link>
             <div className="key">
@@ -217,9 +216,7 @@ export default function Home() {
                     <i className="fa-solid fa-arrow-down key-arrow"></i>
                 </a>
             </div>
-            <button onClick={logout} className="logout">
-                Log Out
-            </button>
+            <i onClick={logout} className="fa-solid fa-arrow-right-from-bracket logout"></i>
             <div className="stats">
                 <p className="entryCount">Entry Count: {commaFormat(entries.length)}</p>
                 <p className="wordCount">Total Words: {commaFormat(wordCount)}</p>
