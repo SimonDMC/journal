@@ -10,9 +10,13 @@ export default function Home() {
 
     // wrapped to only run on the client
     useEffect(() => {
-        // check for token in local storage
-        if (localStorage.getItem("logged-in")) {
+        // check login status
+        if (localStorage.getItem("logged-in") && sessionStorage.getItem("codeword")) {
             router.push("/overview");
+        } else if (localStorage.getItem("logged-in")) {
+            router.push("/codeword");
+        } else {
+            sessionStorage.removeItem("codeword");
         }
 
         // add event listener to login on enter
@@ -45,13 +49,14 @@ export default function Home() {
                     console.log("Logged in.");
 
                     localStorage.setItem("logged-in", "true");
-                    router.push("/overview");
+                    router.push("/codeword");
                 } else {
                     alert("Incorrect username or password.");
                 }
             })
             .catch((err) => {
                 alert("Something went wrong. Please try again later.");
+                console.error(err);
             });
     }
 

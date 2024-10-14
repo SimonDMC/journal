@@ -23,14 +23,15 @@ export default function Home() {
     const router = useRouter();
 
     const fetchAndDecryptEntries = useCallback(async () => {
-        // check for token in local storage
+        // check login status
         if (!localStorage.getItem("logged-in")) {
             router.push("/login");
-            return;
+        } else if (!sessionStorage.getItem("codeword")) {
+            router.push("/codeword");
         }
 
         try {
-            const response = await fetch(`${API_URL}/download`);
+            const response = await fetch(`${API_URL}/download?codeword=${sessionStorage.getItem("codeword")}`);
             const json = await response.json();
 
             const storedKey = localStorage.getItem("key");

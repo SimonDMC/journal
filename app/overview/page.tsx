@@ -16,16 +16,18 @@ export default function Home() {
 
     // wrapped to only run on the client
     useEffect(() => {
-        // check for token in local storage
+        // check login status
         if (!localStorage.getItem("logged-in")) {
             router.push("/login");
+        } else if (!sessionStorage.getItem("codeword")) {
+            router.push("/codeword");
         }
 
         const month = sessionStorage.getItem("month");
         if (month) setMonth(parseInt(month));
 
         // load entries from database
-        fetch(`${API_URL}/overview`)
+        fetch(`${API_URL}/overview?codeword=${sessionStorage.getItem("codeword")}`)
             .then((res) => res.json())
             .then((data) => {
                 setEntries(data.entries);
@@ -89,7 +91,7 @@ export default function Home() {
     }, [entries]);
 
     function download() {
-        fetch(`${API_URL}/download`)
+        fetch(`${API_URL}/download?codeword=${sessionStorage.getItem("codeword")}`)
             .then((res) => res.json())
             .then(async (json) => {
                 // decrypt entries
@@ -186,6 +188,7 @@ export default function Home() {
             method: "POST",
         });
         localStorage.removeItem("logged-in");
+        sessionStorage.removeItem("codeword");
         router.push("/login");
     }
 

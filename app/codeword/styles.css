@@ -1,0 +1,26 @@
+#codeword {
+    position: absolute;
+    top: 0;
+    opacity: 0;
+}
+
+.codeword {
+    height: 100svh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#codeword-display {
+    font-size: 8em;
+    font-family: monospace;
+}
+
+.logout {
+    position: absolute;
+    top: 0.3em;
+    right: 0.3em;
+    font-size: min(2em, 6vw);
+    cursor: pointer;
+}

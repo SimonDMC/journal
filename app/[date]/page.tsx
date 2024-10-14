@@ -14,6 +14,13 @@ export default function Home({ params }: { params: { date: string } }) {
 
     // wrapped to only run on the client
     useEffect(() => {
+        // check login status
+        if (!localStorage.getItem("logged-in")) {
+            router.push("/login");
+        } else if (!sessionStorage.getItem("codeword")) {
+            router.push("/codeword");
+        }
+
         // Autosave every 10 seconds
         const textarea = document.getElementById("entry") as HTMLTextAreaElement;
         const mood = document.getElementById("mood") as HTMLSelectElement;
@@ -31,7 +38,7 @@ export default function Home({ params }: { params: { date: string } }) {
         }, 10000);
 
         // load entry from database
-        fetch(`${API_URL}/entry/${params.date}`)
+        fetch(`${API_URL}/entry/${params.date}?codeword=${sessionStorage.getItem("codeword")}`)
             .then((res) => res.json())
             .then(async (data) => {
                 const json = localStorage.getItem("key");
@@ -76,10 +83,6 @@ export default function Home({ params }: { params: { date: string } }) {
 
                     countWords();
                 }
-            })
-            .catch((err) => {
-                console.error(err);
-                router.push("/login");
             });
 
         const keyDown = async (event: KeyboardEvent) => {
@@ -157,7 +160,7 @@ export default function Home({ params }: { params: { date: string } }) {
         const encryptedContent = btoa(String.fromCharCode(...result));
 
         return new Promise((resolve) => {
-            fetch(`${API_URL}/entry/${date}`, {
+            fetch(`${API_URL}/entry/${date}?codeword=${sessionStorage.getItem("codeword")}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
