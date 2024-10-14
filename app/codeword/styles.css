@@ -10,6 +10,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 
 #codeword-display {
@@ -23,4 +24,11 @@
     right: 0.3em;
     font-size: min(2em, 6vw);
     cursor: pointer;
+}
+
+@media (max-width: 425px) {
+    .codeword {
+        justify-content: flex-start;
+        padding-top: 25%;
+    }
 }
