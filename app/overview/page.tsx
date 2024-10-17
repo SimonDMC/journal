@@ -40,8 +40,9 @@ export default function Home() {
                 router.push("/login");
             });
 
+        // keybinds
         const keydown = (e: KeyboardEvent) => {
-            // quick calendar navigation
+            // calendar navigation
             if (e.key === "ArrowLeft") {
                 const previous = document.querySelector(".top-bar button:first-child") as HTMLButtonElement;
                 previous.click();
@@ -50,21 +51,22 @@ export default function Home() {
                 next.click();
             }
 
-            // quick today navigation
+            // today
             if (e.key === "Enter" || e.key === "t" || e.key === " ") {
                 const today = document.getElementById("today") as HTMLAnchorElement;
                 today.click();
             }
 
-            // quick one year ago navigation
-            if (e.key === "y" || e.key === "l" || e.key === "a") {
+            // one year ago
+            if (e.key === "y") {
                 const lastYear = document.getElementById("lastYear") as HTMLAnchorElement;
                 lastYear.click();
             }
 
-            // close app on escape (PWA)
-            if (e.key === "Escape") {
-                window.close();
+            // search
+            if (e.key === "s" || e.key === "f") {
+                const search = document.getElementById("search") as HTMLAnchorElement;
+                search.click();
             }
         };
         document.addEventListener("keydown", keydown);
@@ -228,7 +230,7 @@ export default function Home() {
                 <a onClick={download}>
                     <i className="fa-solid fa-download"></i>
                 </a>
-                <Link href="/search">
+                <Link href="/search" id="search">
                     <i className="fa-solid fa-magnifying-glass"></i>
                 </Link>
             </div>
