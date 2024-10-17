@@ -137,6 +137,8 @@ export default function Home() {
                     endIndex: match.index + searchValue.length - startIndex,
                     fromStart,
                     fromEnd,
+                    absoluteStartIndex: match.index,
+                    absoluteEndIndex: match.index + searchValue.length,
                 });
             }
             if (searchResult.matches.length > 0) {

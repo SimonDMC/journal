@@ -22,6 +22,7 @@
 .result .match {
     color: #ccc;
     font-family: monospace;
+    display: block;
 }
 
 .result .match .highlight {

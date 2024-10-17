@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { API_URL, KEY_GENERATOR } from "../../util/config";
 import "./styles.css";
 import { useEffect, useRef } from "react";
@@ -11,6 +11,7 @@ export default function Home({ params }: { params: { date: string } }) {
     const key = useRef<CryptoKey>();
     const word_count = useRef(0);
     const router = useRouter();
+    const searchParams = useSearchParams();
 
     // wrapped to only run on the client
     useEffect(() => {
@@ -83,6 +84,16 @@ export default function Home({ params }: { params: { date: string } }) {
                     // and focus it if it's today
                     if (today === params.date) {
                         textarea.focus();
+                    }
+
+                    // select occurrence if linked from search
+                    const startIndex = searchParams.get("s");
+                    const endIndex = searchParams.get("e");
+                    if (startIndex && endIndex) {
+                        textarea.focus();
+
+                        textarea.selectionStart = parseInt(startIndex);
+                        textarea.selectionEnd = parseInt(endIndex);
                     }
 
                     countWords();
