@@ -21,7 +21,6 @@ export default function Home({ params }: { params: { date: string } }) {
             router.push("/codeword");
         }
 
-        // Autosave every 10 seconds
         const textarea = document.getElementById("entry") as HTMLTextAreaElement;
         const mood = document.getElementById("mood") as HTMLSelectElement;
         const location = document.getElementById("location") as HTMLSelectElement;
@@ -29,13 +28,18 @@ export default function Home({ params }: { params: { date: string } }) {
         let prevMood = mood.value;
         let prevLocation = location.value;
         let initialized = false;
-        const autosaveInterval = setInterval(() => {
-            const text = textarea.value;
-            if (initialized && (text !== prevText || mood.value !== prevMood || location.value !== prevLocation)) {
-                saveWithoutNotify(text);
-                prevText = text;
-            }
-        }, 10000);
+
+        // Autosave every 10 seconds if on today's entry
+        let autosaveInterval: NodeJS.Timer;
+        if (today === params.date) {
+            autosaveInterval = setInterval(() => {
+                const text = textarea.value;
+                if (initialized && (text !== prevText || mood.value !== prevMood || location.value !== prevLocation)) {
+                    saveWithoutNotify(text);
+                    prevText = text;
+                }
+            }, 10000);
+        }
 
         // load entry from database
         fetch(`${API_URL}/entry/${params.date}?codeword=${sessionStorage.getItem("codeword")}`)
@@ -188,11 +192,11 @@ export default function Home({ params }: { params: { date: string } }) {
             <div id="decryptError" className="hidden">
                 Error decrypting entry. Make sure you have imported your key.
             </div>
-            <textarea name="entry" id="entry" onKeyUp={countWords} disabled></textarea>
+            <textarea title="Entry Content" name="entry" id="entry" onKeyUp={countWords} disabled></textarea>
             <p id="word-count">Word Count: 0</p>
 
             <div className="bottom-bar">
-                <select name="mood" id="mood" defaultValue="">
+                <select title="Mood" name="mood" id="mood" defaultValue="">
                     <option value="" disabled hidden>
                         Mood
                     </option>
@@ -204,10 +208,10 @@ export default function Home({ params }: { params: { date: string } }) {
                     <option value="6">6 - Great</option>
                     <option value="7">7 - Best day ever</option>
                 </select>
-                <button onClick={save} id="save-button">
+                <button type="button" onClick={save} id="save-button">
                     Save
                 </button>
-                <select name="location" id="location" defaultValue="">
+                <select title="Location" name="location" id="location" defaultValue="">
                     <option value="" disabled hidden>
                         Location
                     </option>
