@@ -14,7 +14,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <meta name="viewport" content="width=device-width, user-scalable=no" />
                 <link rel="icon" href="favicon.png" />
                 <link rel="manifest" href="/manifest.json" />
-                <script src="https://kit.fontawesome.com/c7b17cb045.js" crossOrigin="anonymous" async></script>
+                <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/js/all.min.js" defer></script>
+                <link
+                    rel="stylesheet"
+                    href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/fontawesome.min.css"
+                ></link>
             </head>
             <body>{children}</body>
         </html>

@@ -81,6 +81,7 @@ export default function Home({ params }: { params: { date: string } }) {
                 if (initialized) {
                     // data has been loaded, so enable the textarea
                     textarea.disabled = false;
+                    document.querySelector(".content")?.classList.remove("loading");
                     // and focus it if it's today
                     if (today === params.date) {
                         textarea.focus();
@@ -199,42 +200,47 @@ export default function Home({ params }: { params: { date: string } }) {
     }
 
     return (
-        <main>
+        <main className="date">
+            <div className="sidebar invis"></div>
             <div id="decryptError" className="hidden">
                 Error decrypting entry. Make sure you have imported your key.
             </div>
-            <textarea title="Entry Content" name="entry" id="entry" onKeyUp={countWords} disabled></textarea>
-            <p id="word-count">Word Count: 0</p>
-
-            <div className="bottom-bar">
-                <select title="Mood" name="mood" id="mood" defaultValue="">
-                    <option value="" disabled hidden>
-                        Mood
-                    </option>
-                    <option value="1">1 - Worst day ever</option>
-                    <option value="2">2 - Awful</option>
-                    <option value="3">3 - Bad</option>
-                    <option value="4">4 - Average</option>
-                    <option value="5">5 - Good</option>
-                    <option value="6">6 - Great</option>
-                    <option value="7">7 - Best day ever</option>
-                </select>
+            <div className="content loading">
+                <div className="line"></div>
+                <textarea name="entry" id="entry" onKeyUp={countWords} disabled></textarea>
+            </div>
+            <Link href="/overview" className="back">
+                <i className="fa-solid fa-arrow-left"></i>
+            </Link>
+            <div className="bubble">
+                <p id="word-count">Word Count: 0</p>
+                <div className="selections">
+                    <select title="Mood" name="mood" id="mood" defaultValue="">
+                        <option value="" disabled hidden>
+                            Mood
+                        </option>
+                        <option value="1">1 - Worst day ever</option>
+                        <option value="2">2 - Awful</option>
+                        <option value="3">3 - Bad</option>
+                        <option value="4">4 - Average</option>
+                        <option value="5">5 - Good</option>
+                        <option value="6">6 - Great</option>
+                        <option value="7">7 - Best day ever</option>
+                    </select>
+                    <select title="Location" name="location" id="location" defaultValue="">
+                        <option value="" disabled hidden>
+                            Location
+                        </option>
+                        <option value="1">Mom&apos;s</option>
+                        <option value="2">Dad&apos;s</option>
+                        <option value="3">Cottage</option>
+                        <option value="4">Not home!</option>
+                    </select>
+                </div>
                 <button type="button" onClick={save} id="save-button">
                     Save
                 </button>
-                <select title="Location" name="location" id="location" defaultValue="">
-                    <option value="" disabled hidden>
-                        Location
-                    </option>
-                    <option value="1">Mom&apos;s</option>
-                    <option value="2">Dad&apos;s</option>
-                    <option value="3">Cottage</option>
-                    <option value="4">Not home!</option>
-                </select>
             </div>
-            <Link href="/overview" className="back">
-                ←
-            </Link>
         </main>
     );
 }

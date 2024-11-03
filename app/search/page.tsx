@@ -168,7 +168,7 @@ export default function Home() {
                 </div>
             </div>
             <Link href="/overview" className="back">
-                ←
+                <i className="fa-solid fa-arrow-left"></i>
             </Link>
         </main>
     );

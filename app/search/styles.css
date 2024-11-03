@@ -69,8 +69,8 @@ a.back {
     font-size: 2rem;
     color: white;
     position: absolute;
-    top: 0;
-    left: .2em;
+    top: .2em;
+    left: .5em;
 }
 
 @media (max-width: 600px) {
