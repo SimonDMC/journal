@@ -71,6 +71,13 @@ main {
     cursor: pointer;
 }
 
+#keyless-bar {
+    font-size: 1.5em;
+    margin-bottom: 2em;
+    padding: .2em 3em;
+    background: linear-gradient(90deg, #000 0%, #300 20%, #300 80%, #000 100%);
+}
+
 @media (max-width: 500px) {
     .stats, .controls {
         margin-bottom: 1.2em;

@@ -6,6 +6,7 @@ import Calendar, { dayAdjustedTime, today } from "@/components/Calendar";
 import { API_URL, KEY_GENERATOR } from "../../util/config";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Slide, toast } from "react-toastify";
 
 export default function Home() {
     const [entries, setEntries] = useState([]);
@@ -21,6 +22,11 @@ export default function Home() {
             router.push("/login");
         } else if (!sessionStorage.getItem("codeword")) {
             router.push("/codeword");
+        }
+
+        // check key status
+        if (!localStorage.getItem("key")) {
+            document.getElementById("keyless-bar")?.classList.remove("hidden");
         }
 
         const month = sessionStorage.getItem("month");
@@ -99,7 +105,11 @@ export default function Home() {
                 // decrypt entries
                 const storedKey = localStorage.getItem("key");
                 if (!storedKey) {
-                    alert("No key found.");
+                    toast.error("No key has been imported.", {
+                        position: "top-right",
+                        theme: "dark",
+                        transition: Slide,
+                    });
                     return;
                 }
                 const buffer = new Uint8Array(JSON.parse(storedKey));
@@ -120,7 +130,11 @@ export default function Home() {
                 }
 
                 if (failed) {
-                    alert("Failed to decrypt some entries.");
+                    toast.warn("Failed to decrypt some entries.", {
+                        position: "top-right",
+                        theme: "dark",
+                        transition: Slide,
+                    });
                 }
 
                 const blob = new Blob([JSON.stringify(json, null, 2)], { type: "application/json" });
@@ -131,7 +145,11 @@ export default function Home() {
                 a.click();
             })
             .catch((err) => {
-                alert("Didn't work :(");
+                toast.error("Something went wrong :(", {
+                    position: "top-right",
+                    theme: "dark",
+                    transition: Slide,
+                });
                 console.error(err);
             });
     }
@@ -163,7 +181,12 @@ export default function Home() {
             reader.onload = async () => {
                 const imported = new Uint8Array(reader.result as ArrayBuffer);
                 localStorage.setItem("key", JSON.stringify(Array.from(imported)));
-                alert("Key imported successfully!");
+                toast.success("Key imported successfully!", {
+                    position: "top-right",
+                    theme: "dark",
+                    transition: Slide,
+                });
+                document.getElementById("keyless-bar")?.classList.add("hidden");
             };
             reader.readAsArrayBuffer(file);
         };
@@ -173,7 +196,11 @@ export default function Home() {
     function downloadKey() {
         const key = localStorage.getItem("key");
         if (!key) {
-            alert("No key found.");
+            toast.error("No key has been imported.", {
+                position: "top-right",
+                theme: "dark",
+                transition: Slide,
+            });
             return;
         }
 
@@ -199,6 +226,9 @@ export default function Home() {
 
     return (
         <main>
+            <div id="keyless-bar" className="hidden">
+                Warning: Missing Key
+            </div>
             <Calendar
                 month={new Date(new Date().getFullYear(), month, 1).toISOString().substring(0, 10)}
                 previousMonth={previousMonth}

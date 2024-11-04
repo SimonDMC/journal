@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { API_URL } from "../../util/config";
 import "./styles.css";
 import { useEffect } from "react";
+import { Slide, toast } from "react-toastify";
 
 export default function Home() {
     const router = useRouter();
@@ -51,11 +52,19 @@ export default function Home() {
                     localStorage.setItem("logged-in", "true");
                     router.push("/codeword");
                 } else {
-                    alert("Incorrect username or password.");
+                    toast.error("Incorrect username or password.", {
+                        position: "top-right",
+                        theme: "dark",
+                        transition: Slide,
+                    });
                 }
             })
             .catch((err) => {
-                alert("Something went wrong. Please try again later.");
+                toast.error("Something went wrong. Please try again later.", {
+                    position: "top-right",
+                    theme: "dark",
+                    transition: Slide,
+                });
                 console.error(err);
             });
     }

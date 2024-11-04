@@ -106,9 +106,11 @@ option {
 
 #decryptError {
     position: absolute;
-    top: 11em;
-    font-size: 2em;
-    width: 18em;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    font-size: min(2em, 6vw);
+    width: min(30em, 95vw);
     text-align: center;
 }
 

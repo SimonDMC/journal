@@ -6,6 +6,7 @@ import SearchResult, { SearchResultType } from "@/components/SearchResult";
 import { API_URL, KEY_GENERATOR } from "@/util/config";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Slide, toast } from "react-toastify";
 
 export type JournalEntry = {
     date: string;
@@ -36,7 +37,11 @@ export default function Home() {
 
             const storedKey = localStorage.getItem("key");
             if (!storedKey) {
-                alert("No key found.");
+                toast.error("No key has been imported.", {
+                    position: "top-right",
+                    theme: "dark",
+                    transition: Slide,
+                });
                 return;
             }
 
@@ -59,7 +64,11 @@ export default function Home() {
             }
 
             if (failed) {
-                alert("Failed to decrypt some entries.");
+                toast.warn("Failed to decrypt some entries.", {
+                    position: "top-right",
+                    theme: "dark",
+                    transition: Slide,
+                });
             }
 
             setEntries(json.results);

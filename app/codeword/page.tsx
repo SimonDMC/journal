@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { API_URL } from "../../util/config";
 import "./styles.css";
 import { KeyboardEventHandler, useEffect } from "react";
+import { Slide, toast } from "react-toastify";
 
 export default function Home() {
     const router = useRouter();
@@ -55,7 +56,11 @@ export default function Home() {
                     }
                 })
                 .catch((err) => {
-                    alert("Something went wrong. Please try again later.");
+                    toast.error("Something went wrong. Please try again later.", {
+                        position: "top-right",
+                        theme: "dark",
+                        transition: Slide,
+                    });
                     console.error(err);
                 });
         }

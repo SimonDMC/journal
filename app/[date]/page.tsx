@@ -6,6 +6,7 @@ import "./styles.css";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { today } from "@/components/Calendar";
+import { Slide, toast } from "react-toastify";
 
 export default function Home({ params }: { params: { date: string } }) {
     const key = useRef<CryptoKey>();
@@ -152,7 +153,11 @@ export default function Home({ params }: { params: { date: string } }) {
         console.log("Autosaving...");
         const res = await saveEntry(text, params.date);
         if (!res) {
-            alert("Error saving entry");
+            toast.error("Error saving entry.", {
+                position: "top-right",
+                theme: "dark",
+                transition: Slide,
+            });
         }
     }
 
