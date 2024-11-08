@@ -78,10 +78,18 @@ main {
     background: linear-gradient(90deg, #000 0%, #300 20%, #300 80%, #000 100%);
 }
 
+.hidden {
+    display: none;
+}
+
 @media (max-width: 500px) {
     .stats, .controls {
         margin-bottom: 1.2em;
         margin-left: .5em;
         margin-right: .5em;
+    }
+
+    #keyless-bar {
+        margin-bottom: .5em;
     }
 }

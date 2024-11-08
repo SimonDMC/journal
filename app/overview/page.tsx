@@ -27,6 +27,8 @@ export default function Home() {
         // check key status
         if (!localStorage.getItem("key")) {
             document.getElementById("keyless-bar")?.classList.remove("hidden");
+            document.querySelector(".stats")?.classList.add("hidden");
+            document.querySelector(".controls")?.classList.add("hidden");
         }
 
         const month = sessionStorage.getItem("month");
@@ -187,6 +189,8 @@ export default function Home() {
                     transition: Slide,
                 });
                 document.getElementById("keyless-bar")?.classList.add("hidden");
+                document.querySelector(".stats")?.classList.remove("hidden");
+                document.querySelector(".controls")?.classList.remove("hidden");
             };
             reader.readAsArrayBuffer(file);
         };

@@ -118,9 +118,28 @@ option {
     display: none;
 }
 
-@media (max-width: 600px) {
-    .bottom-bar {
-        flex-direction: column;
-        gap: 1em;
+@media (max-width: 1350px) {
+    main.date {
+        justify-content: flex-start;
+    }
+
+    .content {
+        margin-bottom: 12em;
+        margin-top: 3em;
+    }
+}
+
+@media (max-width: 700px) {
+    .bubble {
+        position: relative;
+        width: 90%;
+        bottom: unset;
+        right: unset;
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+
+    .content {
+        margin-bottom: unset;
     }
 }

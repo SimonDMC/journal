@@ -100,3 +100,9 @@
 span.offset:first-of-type {
     height: calc(20em / 7 + 1px);
 }
+
+@media (max-width: 600px) {
+    .calendar {
+        margin-bottom: .8em;
+    }
+}
