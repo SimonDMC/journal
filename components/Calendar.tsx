@@ -1,6 +1,5 @@
 import Link from "next/link";
 import "./Calendar.css";
-import { useEffect, useState } from "react";
 
 // calculate today's date by offsetting the current date by the timezone offset
 let adjustedTimestamp = Date.now() - new Date().getTimezoneOffset() * 60 * 1000;
@@ -20,19 +19,20 @@ export default function Calendar(props: { month: string; previousMonth: Function
 
     const monthName = new Date(currentYear, currentMonth, 1).toLocaleString("default", { month: "long" });
 
-    const [touchStartX, setTouchStartX] = useState(0);
-    const [touchEndX, setTouchEndX] = useState(0);
+    let touchStartX: number;
+    let touchEndX: number;
 
     const touchStart = (event: React.TouchEvent) => {
-        setTouchStartX(event.changedTouches[0].screenX);
+        touchStartX = event.changedTouches[0].screenX;
     };
 
     const touchEnd = (event: React.TouchEvent) => {
-        setTouchEndX(event.changedTouches[0].screenX);
-        if (touchEndX - 10 > touchStartX) {
+        touchEndX = event.changedTouches[0].screenX;
+        if (Math.abs(touchEndX - touchStartX) < 20) return;
+        if (touchEndX > touchStartX) {
             props.previousMonth();
         }
-        if (touchStartX - 10 > touchEndX) {
+        if (touchStartX > touchEndX) {
             props.nextMonth();
         }
     };

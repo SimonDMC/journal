@@ -12,11 +12,11 @@ export default function Home() {
     // wrapped to only run on the client
     useEffect(() => {
         // check login status
-        /* if (localStorage.getItem("logged-in") && sessionStorage.getItem("codeword")) {
+        if (localStorage.getItem("logged-in") && sessionStorage.getItem("codeword")) {
             router.push("/overview");
         } else if (localStorage.getItem("logged-in")) {
             router.push("/codeword");
-        } */
+        }
     });
 
     function selectInput() {
