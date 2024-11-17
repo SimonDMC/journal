@@ -14,8 +14,8 @@ export default function Home() {
         // check login status
         if (localStorage.getItem("logged-in") && sessionStorage.getItem("codeword")) {
             router.push("/overview");
-        } else if (localStorage.getItem("logged-in")) {
-            router.push("/codeword");
+        } else if (!localStorage.getItem("logged-in")) {
+            router.push("/login");
         }
     });
 
@@ -53,6 +53,12 @@ export default function Home() {
                     } else {
                         display.innerText = "x";
                         input.value = "";
+
+                        // probably missing cookie or something, log out
+                        if (res.status == 401) {
+                            localStorage.removeItem("logged-in");
+                            router.push("/login");
+                        }
                     }
                 })
                 .catch((err) => {
