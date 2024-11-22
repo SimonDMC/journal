@@ -9,7 +9,7 @@ import { today } from "@/components/Calendar";
 import { Slide, toast } from "react-toastify";
 import dynamic from "next/dynamic";
 
-const Editor = dynamic(() => import("../../components/Editor"), { ssr: false });
+const Editor = dynamic(() => import("../../components/Editor.tsx"), { ssr: false });
 
 export default function Home({ params }: { params: { date: string } }) {
     const key = useRef<CryptoKey>();
@@ -39,11 +39,20 @@ export default function Home({ params }: { params: { date: string } }) {
         let autosaveInterval: NodeJS.Timer;
         if (today === params.date) {
             autosaveInterval = setInterval(() => {
-                const textarea = document.querySelector(".ck-content p") as HTMLElement;
-                const text = textarea?.innerHTML;
+                const text = contentRef.current;
+                if (!prevText) {
+                    prevText = text;
+                    return;
+                }
                 if (initialized && text && (text !== prevText || mood.value !== prevMood || location.value !== prevLocation)) {
+                    /* console.log(text, prevText);
+                    console.log(mood.value, prevMood);
+                    console.log(location.value, prevLocation); */
+
                     saveWithoutNotify(text);
                     prevText = text;
+                    prevMood = mood.value;
+                    prevLocation = location.value;
                 }
             }, 10000);
         }
@@ -78,32 +87,13 @@ export default function Home({ params }: { params: { date: string } }) {
                         contentRef.current = decryptedText;
                         setInitialContent(decryptedText);
                         initialized = true;
+                        countWords();
                     } catch (err) {
                         console.error(err);
                         document.getElementById("decryptError")?.classList.remove("hidden");
                     }
                 } else {
                     initialized = true;
-                }
-                if (initialized) {
-                    const textarea = document.querySelector(".ck-content p") as HTMLElement;
-
-                    // focus it if it's today
-                    if (today === params.date && textarea) {
-                        textarea.focus();
-                    }
-
-                    // select occurrence if linked from search
-                    const startIndex = searchParams.get("s");
-                    const endIndex = searchParams.get("e");
-                    if (startIndex && endIndex) {
-                        textarea.focus();
-
-                        textarea.selectionStart = parseInt(startIndex);
-                        textarea.selectionEnd = parseInt(endIndex);
-                    }
-
-                    countWords();
                 }
             });
 
@@ -144,8 +134,7 @@ export default function Home({ params }: { params: { date: string } }) {
     }
 
     async function save() {
-        const textarea = document.querySelector(".ck-content p") as HTMLElement;
-        const text = textarea.innerHTML;
+        const text = contentRef.current;
         const result = await saveEntry(text, params.date);
         const saveButton = document.querySelector("button") as HTMLButtonElement;
         if (result) {
@@ -221,7 +210,7 @@ export default function Home({ params }: { params: { date: string } }) {
             </div>
             <div className="content">
                 <div className="line"></div>
-                <Editor content={initialContent} onKeyUp={countWords} setContent={handleContentChange} />
+                <Editor content={initialContent} onKeyUp={countWords} setContent={handleContentChange} date={params.date} />
             </div>
             <Link href="/overview" className="back">
                 <i className="fa-solid fa-arrow-left"></i>
