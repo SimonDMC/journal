@@ -12,7 +12,7 @@ main.date {
     height: 35em;
     position: relative;
     font-size: min(1.3em, 4vw);
-    transition: opacity .2s;
+    transition: opacity 0.2s;
 }
 
 .content.loading {
@@ -23,7 +23,7 @@ textarea {
     line-height: 1.8em;
     background-color: transparent;
     color: white;
-    padding: .2em .5em;
+    padding: 0.2em 0.5em;
     padding-left: 3em;
     outline: none;
     transition: border 0.2s;
@@ -35,6 +35,7 @@ textarea {
     background-attachment: local;
     background-position: 0 1.6em;
     resize: none;
+    font-feature-settings: "ss03" on;
 }
 
 /* remove scrollbar */
@@ -45,10 +46,10 @@ textarea::-webkit-scrollbar {
 .line {
     width: 2px;
     position: absolute;
-    height: calc(100% - .5em);
+    height: calc(100% - 0.5em);
     background-color: #333;
     margin-left: 2em;
-    margin-top: .5em;
+    margin-top: 0.5em;
     z-index: 1;
 }
 
@@ -56,14 +57,14 @@ a.back {
     font-size: 2em;
     color: white;
     position: absolute;
-    top: .2em;
-    left: .5em;
+    top: 0.2em;
+    left: 0.5em;
 }
 
 .bubble {
     font-size: 1.3em;
     border: 2px solid #222;
-    background-color: #0F0F0F;
+    background-color: #0f0f0f;
     border-radius: 1em;
     padding: 1em;
     display: flex;
@@ -90,17 +91,17 @@ select {
 button {
     width: fit-content;
     border: 2px solid #333;
-    padding: .2em .6em;
-    border-radius: .3em;
-    transition: background-color .2s;
+    padding: 0.2em 0.6em;
+    border-radius: 0.3em;
+    transition: background-color 0.2s;
 }
 
 button:hover {
-    background-color: #1B1B1B;
+    background-color: #1b1b1b;
 }
 
 option {
-    background-color: #0F0F0F;
+    background-color: #0f0f0f;
     color: #ccc;
 }
 
@@ -116,6 +117,12 @@ option {
 
 #decryptError.hidden {
     display: none;
+}
+
+/* remove ckeditor logo */
+
+.ck-powered-by-balloon {
+    display: none !important;
 }
 
 @media (max-width: 1350px) {
