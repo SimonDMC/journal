@@ -86,6 +86,7 @@ export default function Home({ params }: { params: { date: string } }) {
                         const decryptedText = new TextDecoder().decode(decrypted);
                         contentRef.current = decryptedText;
                         setInitialContent(decryptedText);
+
                         initialized = true;
                         countWords();
                     } catch (err) {

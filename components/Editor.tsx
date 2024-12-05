@@ -88,6 +88,13 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
         if (lastLineRect.bottom > contentRect.bottom) lastChild!.scrollIntoView();
     };
 
+    function handleLineBreaks(text: string) {
+        return text
+            .split("\n")
+            .map((line) => `<p>${line}</p>`)
+            .join("");
+    }
+
     return (
         <CKEditor
             editor={BalloonEditor}
@@ -97,8 +104,6 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
 
                 const model = editor.model.document;
                 const setDataCallback = () => {
-                    console.log("does this run", props.content);
-
                     // focus it if it's today
                     if (today === props.date) {
                         const editorEl = document.querySelector(".ck-content") as HTMLElement;
@@ -118,7 +123,7 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
                 model.on("change:data", setDataCallback);
 
                 // set data if already loaded
-                if (props.content) editor.setData(props.content);
+                if (props.content) editor.setData(handleLineBreaks(props.content));
                 // or focus if theres nothing
                 if (props.content == "") setDataCallback();
 
