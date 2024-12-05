@@ -97,6 +97,8 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
 
                 const model = editor.model.document;
                 const setDataCallback = () => {
+                    console.log("does this run", props.content);
+
                     // focus it if it's today
                     if (today === props.date) {
                         const editorEl = document.querySelector(".ck-content") as HTMLElement;

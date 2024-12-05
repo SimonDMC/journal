@@ -19,8 +19,26 @@ main.date {
     opacity: 0;
 }
 
+.ck-body-wrapper {
+    --ck-color-panel-background: #0f0f0f;
+    --ck-color-toolbar-background: var(--ck-color-panel-background);
+    --ck-color-panel-border: #222;
+    --ck-color-toolbar-border: var(--ck-color-panel-border);
+    --ck-balloon-border-width: 2px;
+    --ck-color-text: #ccc;
+    --ck-color-button-default-hover-background: var(--ck-color-panel-border);
+    --ck-color-button-default-active-background: var(--ck-color-button-on-background);
+    --ck-color-button-on-background: var(--ck-color-panel-border);
+    --ck-color-button-on-hover-background: #333;
+    --ck-color-button-on-active-background: var(--ck-color-button-on-hover-background);
+    --ck-color-button-on-color: #eee;
+    --ck-focus-ring: none;
+    --ck-focus-outer-shadow: none;
+}
+
 .ck-content {
     --ck-spacing-large: 0.25em;
+
     border: none !important;
     line-height: 1.8em;
     color: white;

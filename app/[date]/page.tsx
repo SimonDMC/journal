@@ -66,7 +66,7 @@ export default function Home({ params }: { params: { date: string } }) {
                     const keyBuffer = new Uint8Array(JSON.parse(json));
                     key.current = await crypto.subtle.importKey("raw", keyBuffer, KEY_GENERATOR, true, ["encrypt", "decrypt"]);
                 } else {
-                    document.getElementById("decryptError")?.classList.remove("hidden");
+                    showDecryptionError();
                     return;
                 }
 
@@ -90,7 +90,7 @@ export default function Home({ params }: { params: { date: string } }) {
                         countWords();
                     } catch (err) {
                         console.error(err);
-                        document.getElementById("decryptError")?.classList.remove("hidden");
+                        showDecryptionError();
                     }
                 } else {
                     initialized = true;
@@ -126,6 +126,13 @@ export default function Home({ params }: { params: { date: string } }) {
         contentRef.current = newContent;
         countWords();
     };
+
+    function showDecryptionError() {
+        document.getElementById("decryptError")?.classList.remove("hidden");
+        document.getElementById("loadingEntry")?.classList.add("hidden");
+        document.querySelector(".content")?.classList.add("hidden");
+        document.querySelector(".line")?.classList.remove("visible");
+    }
 
     function countWords() {
         const wordCountEl = document.getElementById("word-count") as HTMLParagraphElement;
