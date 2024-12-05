@@ -38,7 +38,8 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
 
     useEffect(() => {
         if (editorRef.current && props.content) {
-            (editorRef.current as any).setData(props.content); // update editor when content changes
+            focusContent();
+            (editorRef.current as any).setData(handleLineBreaks(props.content)); // update editor when content changes
         }
     }, [props.content]);
 
@@ -91,8 +92,22 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
     function handleLineBreaks(text: string) {
         return text
             .split("\n")
-            .map((line) => `<p>${line}</p>`)
+            .map((line) => (line.startsWith("<p") ? line : `<p>${line}</p>`))
             .join("");
+    }
+
+    function focusContent() {
+        // focus it if it's today
+        if (today === props.date) {
+            const editorEl = document.querySelector(".ck-content") as HTMLElement;
+            // idk it needs a delay
+            requestAnimationFrame(() => moveCursorToEnd(editorEl));
+        }
+
+        // show line now that content has loaded
+        document.querySelector(".line")?.classList.add("visible");
+        // and hide loading text
+        document.getElementById("loadingEntry")?.classList.add("hidden");
     }
 
     return (
@@ -104,17 +119,7 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
 
                 const model = editor.model.document;
                 const setDataCallback = () => {
-                    // focus it if it's today
-                    if (today === props.date) {
-                        const editorEl = document.querySelector(".ck-content") as HTMLElement;
-                        // idk it needs a delay
-                        requestAnimationFrame(() => moveCursorToEnd(editorEl));
-                    }
-
-                    // show line now that content has loaded
-                    document.querySelector(".line")?.classList.add("visible");
-                    // and hide loading text
-                    document.getElementById("loadingEntry")?.classList.add("hidden");
+                    focusContent();
 
                     // remove the listener so it only runs once
                     model.off("change:data", setDataCallback);
@@ -128,8 +133,6 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
                 if (props.content == "") setDataCallback();
 
                 editor.editing.view.document.on("keyup", setEditorContent);
-
-                const editorEl = document.querySelector(".ck-content") as HTMLElement;
 
                 /* 
                 TODO: figure out search at some point
