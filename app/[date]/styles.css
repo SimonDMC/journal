@@ -12,19 +12,39 @@ main.date {
     height: 35em;
     position: relative;
     font-size: min(1.3em, 4vw);
-    transition: opacity .2s;
+    transition: opacity 0.2s;
 }
 
 .content.loading {
     opacity: 0;
 }
 
-textarea {
+.ck-body-wrapper {
+    --ck-color-panel-background: #0f0f0f;
+    --ck-color-toolbar-background: var(--ck-color-panel-background);
+    --ck-color-panel-border: #222;
+    --ck-color-toolbar-border: var(--ck-color-panel-border);
+    --ck-balloon-border-width: 2px;
+    --ck-color-text: #ccc;
+    --ck-color-button-default-hover-background: var(--ck-color-panel-border);
+    --ck-color-button-default-active-background: var(--ck-color-button-on-background);
+    --ck-color-button-on-background: var(--ck-color-panel-border);
+    --ck-color-button-on-hover-background: #333;
+    --ck-color-button-on-active-background: var(--ck-color-button-on-hover-background);
+    --ck-color-button-on-color: #eee;
+    --ck-focus-ring: none;
+    --ck-focus-outer-shadow: none;
+}
+
+.ck-content {
+    --ck-spacing-large: 0.25em;
+
+    border: none !important;
     line-height: 1.8em;
-    background-color: transparent;
     color: white;
-    padding: .2em .5em;
-    padding-left: 3em;
+    padding: 0.2em 0.5em;
+    padding-left: 3em !important;
+    padding-bottom: 30em !important;
     outline: none;
     transition: border 0.2s;
     width: 100%;
@@ -35,6 +55,8 @@ textarea {
     background-attachment: local;
     background-position: 0 1.6em;
     resize: none;
+    font-feature-settings: "ss03" on;
+    scrollbar-width: none;
 }
 
 /* remove scrollbar */
@@ -45,25 +67,31 @@ textarea::-webkit-scrollbar {
 .line {
     width: 2px;
     position: absolute;
-    height: calc(100% - .5em);
+    height: calc(100% - 0.5em);
     background-color: #333;
     margin-left: 2em;
-    margin-top: .5em;
+    margin-top: 0.5em;
     z-index: 1;
+    /* hide until editor loads */
+    display: none;
+}
+
+.line.visible {
+    display: block;
 }
 
 a.back {
     font-size: 2em;
     color: white;
     position: absolute;
-    top: .2em;
-    left: .5em;
+    top: 0.2em;
+    left: 0.5em;
 }
 
 .bubble {
     font-size: 1.3em;
     border: 2px solid #222;
-    background-color: #0F0F0F;
+    background-color: #0f0f0f;
     border-radius: 1em;
     padding: 1em;
     display: flex;
@@ -90,21 +118,22 @@ select {
 button {
     width: fit-content;
     border: 2px solid #333;
-    padding: .2em .6em;
-    border-radius: .3em;
-    transition: background-color .2s;
+    padding: 0.2em 0.6em;
+    border-radius: 0.3em;
+    transition: background-color 0.2s;
 }
 
 button:hover {
-    background-color: #1B1B1B;
+    background-color: #1b1b1b;
 }
 
 option {
-    background-color: #0F0F0F;
+    background-color: #0f0f0f;
     color: #ccc;
 }
 
-#decryptError {
+#decryptError,
+#loadingEntry {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -114,8 +143,15 @@ option {
     text-align: center;
 }
 
-#decryptError.hidden {
+#decryptError.hidden,
+#loadingEntry.hidden {
     display: none;
+}
+
+/* remove ckeditor logo */
+
+.ck-powered-by-balloon {
+    display: none !important;
 }
 
 @media (max-width: 1350px) {

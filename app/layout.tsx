@@ -1,6 +1,6 @@
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
+import ToastProvider from "@/components/ToastProvider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
@@ -21,9 +21,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     rel="stylesheet"
                     href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.6.0/css/fontawesome.min.css"
                 ></link>
+                <link rel="stylesheet" href="https://rsms.me/inter/inter.css"></link>
             </head>
-            <body>{children}</body>
-            <ToastContainer />
+            <body>
+                <ToastProvider>{children}</ToastProvider>
+            </body>
         </html>
     );
 }

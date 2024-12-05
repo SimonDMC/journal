@@ -3,16 +3,21 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { API_URL, KEY_GENERATOR } from "../../util/config";
 import "./styles.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { today } from "@/components/Calendar";
 import { Slide, toast } from "react-toastify";
+import dynamic from "next/dynamic";
+
+const Editor = dynamic(() => import("../../components/Editor.tsx"), { ssr: false });
 
 export default function Home({ params }: { params: { date: string } }) {
     const key = useRef<CryptoKey>();
     const word_count = useRef(0);
     const router = useRouter();
     const searchParams = useSearchParams();
+    const [initialContent, setInitialContent] = useState("");
+    const contentRef = useRef("");
 
     // wrapped to only run on the client
     useEffect(() => {
@@ -23,10 +28,9 @@ export default function Home({ params }: { params: { date: string } }) {
             router.push("/codeword");
         }
 
-        const textarea = document.getElementById("entry") as HTMLTextAreaElement;
         const mood = document.getElementById("mood") as HTMLSelectElement;
         const location = document.getElementById("location") as HTMLSelectElement;
-        let prevText = textarea.value;
+        let prevText: string;
         let prevMood = mood.value;
         let prevLocation = location.value;
         let initialized = false;
@@ -35,10 +39,20 @@ export default function Home({ params }: { params: { date: string } }) {
         let autosaveInterval: NodeJS.Timer;
         if (today === params.date) {
             autosaveInterval = setInterval(() => {
-                const text = textarea.value;
-                if (initialized && (text !== prevText || mood.value !== prevMood || location.value !== prevLocation)) {
+                const text = contentRef.current;
+                if (!prevText) {
+                    prevText = text;
+                    return;
+                }
+                if (initialized && text && (text !== prevText || mood.value !== prevMood || location.value !== prevLocation)) {
+                    /* console.log(text, prevText);
+                    console.log(mood.value, prevMood);
+                    console.log(location.value, prevLocation); */
+
                     saveWithoutNotify(text);
                     prevText = text;
+                    prevMood = mood.value;
+                    prevLocation = location.value;
                 }
             }, 10000);
         }
@@ -52,7 +66,7 @@ export default function Home({ params }: { params: { date: string } }) {
                     const keyBuffer = new Uint8Array(JSON.parse(json));
                     key.current = await crypto.subtle.importKey("raw", keyBuffer, KEY_GENERATOR, true, ["encrypt", "decrypt"]);
                 } else {
-                    document.getElementById("decryptError")?.classList.remove("hidden");
+                    showDecryptionError();
                     return;
                 }
 
@@ -70,35 +84,17 @@ export default function Home({ params }: { params: { date: string } }) {
                     try {
                         const decrypted = await crypto.subtle.decrypt({ name: "AES-CBC", iv }, key.current, buffer);
                         const decryptedText = new TextDecoder().decode(decrypted);
-                        textarea.value = decryptedText;
+                        contentRef.current = decryptedText;
+                        setInitialContent(decryptedText);
+
                         initialized = true;
+                        countWords();
                     } catch (err) {
                         console.error(err);
-                        document.getElementById("decryptError")?.classList.remove("hidden");
+                        showDecryptionError();
                     }
                 } else {
                     initialized = true;
-                }
-                if (initialized) {
-                    // data has been loaded, so enable the textarea
-                    textarea.disabled = false;
-                    document.querySelector(".content")?.classList.remove("loading");
-                    // and focus it if it's today
-                    if (today === params.date) {
-                        textarea.focus();
-                    }
-
-                    // select occurrence if linked from search
-                    const startIndex = searchParams.get("s");
-                    const endIndex = searchParams.get("e");
-                    if (startIndex && endIndex) {
-                        textarea.focus();
-
-                        textarea.selectionStart = parseInt(startIndex);
-                        textarea.selectionEnd = parseInt(endIndex);
-                    }
-
-                    countWords();
                 }
             });
 
@@ -127,16 +123,26 @@ export default function Home({ params }: { params: { date: string } }) {
         };
     }, []);
 
+    const handleContentChange = (newContent: string) => {
+        contentRef.current = newContent;
+        countWords();
+    };
+
+    function showDecryptionError() {
+        document.getElementById("decryptError")?.classList.remove("hidden");
+        document.getElementById("loadingEntry")?.classList.add("hidden");
+        document.querySelector(".content")?.classList.add("hidden");
+        document.querySelector(".line")?.classList.remove("visible");
+    }
+
     function countWords() {
-        const entry = document.getElementById("entry") as HTMLTextAreaElement;
         const wordCountEl = document.getElementById("word-count") as HTMLParagraphElement;
-        word_count.current = entry.value.split(/\s+/).filter((word) => word !== "").length;
+        word_count.current = contentRef.current.split(/\s+/).filter((word) => word !== "").length;
         wordCountEl.innerText = `Word Count: ${word_count.current}`;
     }
 
     async function save() {
-        const textarea = document.getElementById("entry") as HTMLTextAreaElement;
-        const text = textarea.value;
+        const text = contentRef.current;
         const result = await saveEntry(text, params.date);
         const saveButton = document.querySelector("button") as HTMLButtonElement;
         if (result) {
@@ -210,9 +216,10 @@ export default function Home({ params }: { params: { date: string } }) {
             <div id="decryptError" className="hidden">
                 Error decrypting entry. Make sure you have imported your key.
             </div>
-            <div className="content loading">
+            <div id="loadingEntry">Loading...</div>
+            <div className="content">
                 <div className="line"></div>
-                <textarea name="entry" id="entry" onKeyUp={countWords} disabled></textarea>
+                <Editor content={initialContent} onKeyUp={countWords} setContent={handleContentChange} date={params.date} />
             </div>
             <Link href="/overview" className="back">
                 <i className="fa-solid fa-arrow-left"></i>
