@@ -208,6 +208,7 @@ export default function Home({ params }: { params: { date: string } }) {
             <div id="decryptError" className="hidden">
                 Error decrypting entry. Make sure you have imported your key.
             </div>
+            <div id="loadingEntry">Loading...</div>
             <div className="content">
                 <div className="line"></div>
                 <Editor content={initialContent} onKeyUp={countWords} setContent={handleContentChange} date={params.date} />

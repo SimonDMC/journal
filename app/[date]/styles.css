@@ -19,12 +19,14 @@ main.date {
     opacity: 0;
 }
 
-textarea {
+.ck-content {
+    --ck-spacing-large: 0.25em;
+    border: none !important;
     line-height: 1.8em;
-    background-color: transparent;
     color: white;
     padding: 0.2em 0.5em;
-    padding-left: 3em;
+    padding-left: 3em !important;
+    padding-bottom: 30em !important;
     outline: none;
     transition: border 0.2s;
     width: 100%;
@@ -36,6 +38,7 @@ textarea {
     background-position: 0 1.6em;
     resize: none;
     font-feature-settings: "ss03" on;
+    scrollbar-width: none;
 }
 
 /* remove scrollbar */
@@ -51,6 +54,12 @@ textarea::-webkit-scrollbar {
     margin-left: 2em;
     margin-top: 0.5em;
     z-index: 1;
+    /* hide until editor loads */
+    display: none;
+}
+
+.line.visible {
+    display: block;
 }
 
 a.back {
@@ -105,7 +114,8 @@ option {
     color: #ccc;
 }
 
-#decryptError {
+#decryptError,
+#loadingEntry {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -115,7 +125,8 @@ option {
     text-align: center;
 }
 
-#decryptError.hidden {
+#decryptError.hidden,
+#loadingEntry.hidden {
     display: none;
 }
 

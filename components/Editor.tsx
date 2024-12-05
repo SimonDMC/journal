@@ -79,6 +79,13 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
         range.collapse(true);
         selection?.removeAllRanges();
         selection?.addRange(range);
+
+        const lastChild = contentEle.lastElementChild!;
+        const lastLineRect = lastChild.getBoundingClientRect();
+        const contentRect = contentEle.getBoundingClientRect();
+
+        // scroll into view if too far down
+        if (lastLineRect.bottom > contentRect.bottom) lastChild!.scrollIntoView();
     };
 
     return (
@@ -87,15 +94,35 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
             config={editorConfig}
             onReady={(editor) => {
                 (editorRef.current as any) = editor;
-                if (props.content) editor.setData(props.content); // set data if already loaded
+
+                const model = editor.model.document;
+                const setDataCallback = () => {
+                    // focus it if it's today
+                    if (today === props.date) {
+                        const editorEl = document.querySelector(".ck-content") as HTMLElement;
+                        // idk it needs a delay
+                        requestAnimationFrame(() => moveCursorToEnd(editorEl));
+                    }
+
+                    // show line now that content has loaded
+                    document.querySelector(".line")?.classList.add("visible");
+                    // and hide loading text
+                    document.getElementById("loadingEntry")?.classList.add("hidden");
+
+                    // remove the listener so it only runs once
+                    model.off("change:data", setDataCallback);
+                };
+
+                model.on("change:data", setDataCallback);
+
+                // set data if already loaded
+                if (props.content) editor.setData(props.content);
+                // or focus if theres nothing
+                if (props.content == "") setDataCallback();
+
                 editor.editing.view.document.on("keyup", setEditorContent);
 
                 const editorEl = document.querySelector(".ck-content") as HTMLElement;
-
-                // focus it if it's today
-                if (today === props.date) {
-                    moveCursorToEnd(editorEl);
-                }
 
                 /* 
                 TODO: figure out search at some point
