@@ -47,6 +47,8 @@ export default function Home() {
                     if (res.ok) {
                         console.log("Codeword verified.");
                         display.innerText = "☺";
+                        display.classList.add("smiley");
+                        await new Promise((resolve) => setTimeout(resolve, 1000));
 
                         sessionStorage.setItem("codeword", input.value);
                         router.push("/overview");
@@ -87,7 +89,9 @@ export default function Home() {
             <div className="visible">
                 <span id="codeword-display">0</span>
             </div>
-            <i onClick={logout} className="fa-solid fa-arrow-right-from-bracket logout"></i>
+            <a onClick={logout}>
+                <i className="fa-solid fa-arrow-right-from-bracket logout"></i>
+            </a>
         </main>
     );
 }

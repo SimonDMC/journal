@@ -101,7 +101,8 @@ export default function Home() {
             <dialog onClick={closeInfo}>
                 <p>
                     This is an app I use for keeping a daily personal journal. There is no way to create an account because I&apos;m the
-                    only one who uses this. I might open this up for public use (unlikely) but for now it&apos;s just for me :)
+                    only one who uses this. I might open this up for public use once I think it&apos;s ready, but for now it&apos;s just for
+                    me :)
                 </p>
                 <form method="dialog">
                     <button>Close</button>

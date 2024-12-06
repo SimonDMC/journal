@@ -255,7 +255,9 @@ export default function Home() {
                     <i className="fa-solid fa-arrow-down key-arrow"></i>
                 </a>
             </div>
-            <i onClick={logout} className="fa-solid fa-arrow-right-from-bracket logout"></i>
+            <a onClick={logout}>
+                <i className="fa-solid fa-arrow-right-from-bracket logout"></i>
+            </a>
             <div className="stats">
                 <p className="entryCount">Entry Count: {commaFormat(entries.length)}</p>
                 <p className="wordCount">Total Words: {commaFormat(wordCount)}</p>

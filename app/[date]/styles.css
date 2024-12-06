@@ -92,7 +92,7 @@ a.back {
     font-size: 1.3em;
     border: 2px solid #222;
     background-color: #0f0f0f;
-    border-radius: 1em;
+    border-radius: 0.8em;
     padding: 1em;
     display: flex;
     flex-direction: column;

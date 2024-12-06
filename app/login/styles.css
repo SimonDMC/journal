@@ -5,6 +5,7 @@ main.login {
     align-items: center;
     height: 100svh;
     font-size: 2em;
+    color: #ccc;
 }
 
 .container {
@@ -23,32 +24,33 @@ main.login {
 
 input {
     width: 10em;
-    border: 1px solid white;
+    border: 2px solid #222;
     outline: none;
     background: transparent;
-    margin-bottom: .3em;
-    border-radius: .2em;
+    margin-bottom: 0.3em;
+    border-radius: 0.2em;
     padding: 0 0.2em;
 }
 
-#login-button {
+button {
     font-size: 1em;
-    border: 1px solid white;
+    border: 2px solid #222;
     padding: 0.1em 0.5em;
-    border-radius: .3em;
+    border-radius: 0.3em;
     transition: translate 0.15s;
     margin-top: 1em;
+    transition: background-color 0.2s;
 }
 
-#login-button:hover {
-    translate: 0 -0.05em;
+button:hover {
+    background-color: #0f0f0f;
 }
 
 .info {
     position: absolute;
-    top: .3em;
-    right: .3em;
-    border: 3px solid #ccc;
+    top: 0.3em;
+    right: 0.3em;
+    border: 3px solid #888;
     border-radius: 50%;
     width: 1.3em;
     height: 1.3em;
@@ -61,18 +63,22 @@ input {
 }
 
 .info:hover {
-    border: 3px solid white;
+    border: 3px solid #ccc;
 }
 
 dialog {
     background-color: black;
-    color: white;
+    color: #ccc;
     max-width: min(40em, 90vw);
     font-size: min(1em, 6vw);
-    border: 2px solid white;
-    border-radius: .7em;
+    border: 2px solid #222;
+    border-radius: 0.7em;
     padding: 1em;
     /* transition: display 0.25s allow-discrete; */
+}
+
+dialog button {
+    margin-top: 1em;
 }
 
 form {
