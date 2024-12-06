@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, MutableRefObject, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
+import { highlightNthOccurrence } from "../util/selection";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 
 import {
@@ -24,10 +25,12 @@ import {
 
 import "ckeditor5/ckeditor5.css";
 import { today } from "./Calendar";
+import { useSearchParams } from "next/navigation";
 
 export default function App(props: { content: string; onKeyUp: GetCallback<BaseEvent>; setContent: Function; date: string }) {
     const [isLayoutReady, setIsLayoutReady] = useState(false);
     const editorRef = useRef(null);
+    const searchParams = useSearchParams();
 
     useEffect(() => {
         setIsLayoutReady(true);
@@ -95,11 +98,20 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
     }
 
     function focusContent() {
+        const editorEl = document.querySelector(".ck-content") as HTMLElement;
+
         // focus it if it's today
         if (today === props.date) {
-            const editorEl = document.querySelector(".ck-content") as HTMLElement;
             // idk it needs a delay
             requestAnimationFrame(() => moveCursorToEnd(editorEl));
+        }
+
+        // select occurrence if linked from search
+        const query = searchParams.get("q");
+        if (query) {
+            let index = parseInt(searchParams.get("i") ?? "0");
+            // this also needs a delay for whatever reason
+            requestAnimationFrame(() => highlightNthOccurrence(editorEl, query, index));
         }
 
         // show line now that content has loaded
@@ -131,19 +143,6 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
                 if (props.content == "") setDataCallback();
 
                 editor.editing.view.document.on("keyup", setEditorContent);
-
-                /* 
-                TODO: figure out search at some point
-                
-                // select occurrence if linked from search
-                const startIndex = searchParams.get("s");
-                const endIndex = searchParams.get("e");
-                if (startIndex && endIndex) {
-                    textarea.focus();
-
-                    textarea.selectionStart = parseInt(startIndex);
-                    textarea.selectionEnd = parseInt(endIndex);
-                } */
             }}
         />
     );

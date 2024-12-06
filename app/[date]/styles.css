@@ -63,11 +63,6 @@ main.date {
     line-height: 1em;
 }
 
-/* remove scrollbar */
-textarea::-webkit-scrollbar {
-    display: none;
-}
-
 .line {
     width: 2px;
     position: absolute;

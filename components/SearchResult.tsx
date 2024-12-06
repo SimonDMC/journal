@@ -3,6 +3,7 @@ import "./SearchResult.css";
 
 export type SearchResultType = {
     date: string;
+    query: string;
     matches: SearchMatch[];
 };
 
@@ -12,20 +13,15 @@ type SearchMatch = {
     endIndex: number;
     fromStart: boolean;
     fromEnd: boolean;
-    absoluteStartIndex: number;
-    absoluteEndIndex: number;
+    index: number;
 };
 
 export default function SearchResult(props: SearchResultType) {
     return (
-        <Link className="result" href={`/${props.date}`}>
+        <Link className="result" href={`/${props.date}?q=${props.query}`}>
             <div className="date">{props.date}</div>
             {props.matches.map((result: SearchMatch) => (
-                <Link
-                    className="match"
-                    key={result.startIndex}
-                    href={`/${props.date}?s=${result.absoluteStartIndex}&e=${result.absoluteEndIndex}`}
-                >
+                <Link className="match" key={result.index} href={`/${props.date}?q=${props.query}&i=${result.index}`}>
                     {result.fromStart || <span className="ellipsis">...</span>}
                     {result.match.substring(0, result.startIndex)}
                     <span className="highlight">{result.match.substring(result.startIndex, result.endIndex)}</span>
