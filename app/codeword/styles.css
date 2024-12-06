@@ -23,6 +23,7 @@
 
 #codeword-display.smiley {
     font-family: inherit;
+    font-variant-emoji: text;
 }
 
 .logout {

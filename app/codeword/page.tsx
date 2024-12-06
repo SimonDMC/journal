@@ -48,7 +48,6 @@ export default function Home() {
                         console.log("Codeword verified.");
                         display.innerText = "☺";
                         display.classList.add("smiley");
-                        await new Promise((resolve) => setTimeout(resolve, 1000));
 
                         sessionStorage.setItem("codeword", input.value);
                         router.push("/overview");
