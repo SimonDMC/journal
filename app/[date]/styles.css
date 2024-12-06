@@ -55,8 +55,12 @@ main.date {
     background-attachment: local;
     background-position: 0 1.6em;
     resize: none;
-    font-feature-settings: "ss03" on;
+    font-feature-settings: "ss03";
     scrollbar-width: none;
+}
+
+.ck-content code {
+    line-height: 1em;
 }
 
 /* remove scrollbar */

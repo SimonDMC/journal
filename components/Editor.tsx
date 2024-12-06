@@ -18,7 +18,6 @@ import {
     Superscript,
     TextTransformation,
     Underline,
-    Undo,
     GetCallback,
     BaseEvent,
 } from "ckeditor5";
@@ -45,7 +44,7 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
 
     const editorConfig = {
         toolbar: {
-            items: ["undo", "redo", "|", "bold", "italic", "underline", "strikethrough", "subscript", "superscript", "code"],
+            items: ["bold", "italic", "underline", "strikethrough", "subscript", "superscript", "code"],
             shouldNotGroupWhenFull: false,
         },
         plugins: [
@@ -62,7 +61,6 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
             Superscript,
             TextTransformation,
             Underline,
-            Undo,
         ],
     };
 
