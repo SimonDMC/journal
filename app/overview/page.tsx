@@ -72,7 +72,7 @@ export default function Home() {
             }
 
             // search
-            if (e.key === "s" || e.key === "/") {
+            if (e.key === "s" || e.key === "f" || e.key === "/") {
                 const search = document.getElementById("search") as HTMLAnchorElement;
                 search.click();
             }

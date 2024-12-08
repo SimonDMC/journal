@@ -19,6 +19,7 @@ export type JournalEntry = {
 export default function Home() {
     const [results, setResults] = useState<SearchResultType[]>([]);
     const [entries, setEntries] = useState<JournalEntry[]>([]);
+    const [activeIndex, setActiveIndex] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
     const [dataLoadingPromise, setDataLoadingPromise] = useState<Promise<void> | null>(null);
@@ -100,6 +101,42 @@ export default function Home() {
         };
         document.addEventListener("keydown", keyDown);
     }, [fetchAndDecryptEntries]);
+
+    function scrollActiveResultIntoView() {
+        const result = document.querySelector(".result.active")!;
+        const resultBoundingBox = result.getBoundingClientRect();
+        const boundingBox = document.querySelector(".results")!.getBoundingClientRect();
+
+        if (resultBoundingBox.bottom > boundingBox.bottom) {
+            result.scrollIntoView(false);
+        } else if (resultBoundingBox.top < boundingBox.top) {
+            result.scrollIntoView(true);
+        }
+    }
+
+    function wrapIndex(index: number) {
+        if (index < 0) index += results.length;
+        if (index >= results.length) index -= results.length;
+        return index;
+    }
+
+    function navigate(event: React.KeyboardEvent<HTMLInputElement>) {
+        if (event.key == "ArrowUp") {
+            setActiveIndex(wrapIndex(activeIndex - 1));
+            event.preventDefault();
+            requestAnimationFrame(() => scrollActiveResultIntoView());
+        }
+
+        if (event.key == "ArrowDown") {
+            setActiveIndex(wrapIndex(activeIndex + 1));
+            event.preventDefault();
+            requestAnimationFrame(() => scrollActiveResultIntoView());
+        }
+
+        if (event.key == "Enter") {
+            (document.querySelector(".result.active") as HTMLElement).click();
+        }
+    }
 
     // https://www.joshwcomeau.com/snippets/javascript/debounce/
     const debounce = (callback: (...args: any[]) => void, wait: number): ((...args: any[]) => void) => {
@@ -193,14 +230,22 @@ export default function Home() {
     return (
         <main className="search">
             <div className="search-wrap">
-                <input id="search-field" placeholder="Search..." onInput={search} autoFocus />
+                <input id="search-field" placeholder="Search..." onInput={search} autoFocus onKeyDown={navigate} />
                 <div id="search-icon">
                     <i className="fas fa-search"></i>
                 </div>
                 <p id="result-count"></p>
                 <div className="results">
-                    {results.map((result) => (
-                        <SearchResult key={result.date} date={result.date} query={searchQuery} matches={result.matches} />
+                    {results.map((result, index) => (
+                        <SearchResult
+                            key={result.date}
+                            date={result.date}
+                            query={searchQuery}
+                            matches={result.matches}
+                            active={index == activeIndex}
+                            id={index}
+                            setActiveIndex={setActiveIndex}
+                        />
                     ))}
                 </div>
             </div>

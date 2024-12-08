@@ -5,6 +5,9 @@ export type SearchResultType = {
     date: string;
     query: string;
     matches: SearchMatch[];
+    active?: boolean;
+    id?: number;
+    setActiveIndex?: Function;
 };
 
 type SearchMatch = {
@@ -18,7 +21,11 @@ type SearchMatch = {
 
 export default function SearchResult(props: SearchResultType) {
     return (
-        <Link className="result" href={`/${props.date}?q=${props.query}`}>
+        <Link
+            className={`result ${props.active && "active"}`}
+            href={`/${props.date}?q=${props.query}`}
+            onMouseOver={() => props.setActiveIndex!(props.id)}
+        >
             <div className="date">{props.date}</div>
             {props.matches.map((result: SearchMatch) => (
                 <Link className="match" key={result.index} href={`/${props.date}?q=${props.query}&i=${result.index}`}>

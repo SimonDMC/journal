@@ -46,6 +46,7 @@ export function highlightNthOccurrence(container: Node, searchText: string, n: n
     findAndHighlight(container);
 }
 
+// based on https://stackoverflow.com/a/23526970/19271522
 function getCaretPixelTop(node: HTMLElement, offsetY: number = 0): number | null {
     if (!node) return null;
 
