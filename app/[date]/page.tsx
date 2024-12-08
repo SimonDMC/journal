@@ -101,7 +101,7 @@ export default function Home({ params }: { params: { date: string } }) {
         const keyDown = async (event: KeyboardEvent) => {
             // exit on esc
             if (event.key === "Escape") {
-                router.push("/overview");
+                router.back();
                 event.preventDefault();
             }
 
