@@ -87,50 +87,6 @@ a.back {
     left: 0.5em;
 }
 
-.bubble {
-    font-size: 1.3em;
-    border: 2px solid #222;
-    background-color: #0f0f0f;
-    border-radius: 0.8em;
-    padding: 1em;
-    display: flex;
-    flex-direction: column;
-    color: #ccc;
-    gap: 1em;
-    align-items: center;
-    position: absolute;
-    bottom: 1em;
-    right: 1em;
-}
-
-.selections {
-    display: flex;
-    flex-direction: column;
-}
-
-select {
-    padding: 0;
-    background-color: transparent;
-    outline: none;
-}
-
-button {
-    width: fit-content;
-    border: 2px solid #333;
-    padding: 0.2em 0.6em;
-    border-radius: 0.3em;
-    transition: background-color 0.2s;
-}
-
-button:hover {
-    background-color: #1b1b1b;
-}
-
-option {
-    background-color: #0f0f0f;
-    color: #ccc;
-}
-
 #decryptError,
 #loadingEntry {
     position: absolute;

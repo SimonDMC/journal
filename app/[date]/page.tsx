@@ -8,6 +8,7 @@ import Link from "next/link";
 import { today } from "@/components/Calendar";
 import { Slide, toast } from "react-toastify";
 import dynamic from "next/dynamic";
+import EditorBubble from "@/components/EditorBubble.tsx";
 
 const Editor = dynamic(() => import("../../components/Editor.tsx"), { ssr: false });
 
@@ -15,9 +16,11 @@ export default function Home({ params }: { params: { date: string } }) {
     const key = useRef<CryptoKey>();
     const word_count = useRef(0);
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const [initialContent, setInitialContent] = useState("");
     const contentRef = useRef("");
+
+    const [initialContent, setInitialContent] = useState("");
+    const mood = useRef(0);
+    const location = useRef(0);
 
     // wrapped to only run on the client
     useEffect(() => {
@@ -28,11 +31,9 @@ export default function Home({ params }: { params: { date: string } }) {
             router.push("/codeword");
         }
 
-        const mood = document.getElementById("mood") as HTMLSelectElement;
-        const location = document.getElementById("location") as HTMLSelectElement;
         let prevText: string;
-        let prevMood = mood.value;
-        let prevLocation = location.value;
+        let prevMood = mood;
+        let prevLocation = location;
         let initialized = false;
 
         // Autosave every 10 seconds if on today's entry
@@ -44,15 +45,15 @@ export default function Home({ params }: { params: { date: string } }) {
                     prevText = text;
                     return;
                 }
-                if (initialized && text && (text !== prevText || mood.value !== prevMood || location.value !== prevLocation)) {
+                if (initialized && text && (text !== prevText || mood !== prevMood || location !== prevLocation)) {
                     /* console.log(text, prevText);
                     console.log(mood.value, prevMood);
                     console.log(location.value, prevLocation); */
 
                     saveWithoutNotify(text);
                     prevText = text;
-                    prevMood = mood.value;
-                    prevLocation = location.value;
+                    prevMood = mood;
+                    prevLocation = location;
                 }
             }, 10000);
         }
@@ -71,10 +72,10 @@ export default function Home({ params }: { params: { date: string } }) {
                 }
 
                 if (data.mood) {
-                    mood.value = data.mood.toString();
+                    mood.current = data.mood;
                 }
                 if (data.location) {
-                    location.value = data.location.toString();
+                    location.current = data.location;
                 }
                 if (data.content) {
                     // decrypt entry
@@ -144,7 +145,8 @@ export default function Home({ params }: { params: { date: string } }) {
     async function save() {
         const text = contentRef.current;
         const result = await saveEntry(text, params.date);
-        const saveButton = document.querySelector("button") as HTMLButtonElement;
+        const saveButton = document.getElementById("save-button") as HTMLButtonElement;
+
         if (result) {
             saveButton.innerText = "Saved!";
         } else {
@@ -168,10 +170,6 @@ export default function Home({ params }: { params: { date: string } }) {
     }
 
     async function saveEntry(text: string, date: string) {
-        let moodStr = (document.getElementById("mood") as HTMLSelectElement).value;
-        let moodNum = moodStr === "" ? null : parseInt(moodStr);
-        let locationStr = (document.getElementById("location") as HTMLSelectElement).value;
-        let locationNum = locationStr === "" ? null : parseInt(locationStr);
         // encrypt entry
         const data = new TextEncoder().encode(text);
         const iv = crypto.getRandomValues(new Uint8Array(16));
@@ -186,6 +184,8 @@ export default function Home({ params }: { params: { date: string } }) {
         result.set(buffer, iv.length);
         const encryptedContent = btoa(String.fromCharCode(...result));
 
+        console.log("mood", mood.current, "location", location.current);
+
         return new Promise((resolve) => {
             fetch(`${API_URL}/entry/${date}?codeword=${sessionStorage.getItem("codeword")}`, {
                 method: "POST",
@@ -194,8 +194,8 @@ export default function Home({ params }: { params: { date: string } }) {
                 },
                 body: JSON.stringify({
                     content: encryptedContent,
-                    mood: moodNum,
-                    location: locationNum,
+                    mood: mood.current,
+                    location: location.current,
                     // word count has to be sent because you can't recalculate it once encrypted
                     word_count: word_count.current,
                 }),
@@ -224,35 +224,7 @@ export default function Home({ params }: { params: { date: string } }) {
             <Link href="/overview" className="back">
                 <i className="fa-solid fa-arrow-left"></i>
             </Link>
-            <div className="bubble">
-                <p id="word-count">Word Count: 0</p>
-                <div className="selections">
-                    <select title="Mood" name="mood" id="mood" defaultValue="">
-                        <option value="" disabled hidden>
-                            Mood
-                        </option>
-                        <option value="1">1 - Worst day ever</option>
-                        <option value="2">2 - Awful</option>
-                        <option value="3">3 - Bad</option>
-                        <option value="4">4 - Average</option>
-                        <option value="5">5 - Good</option>
-                        <option value="6">6 - Great</option>
-                        <option value="7">7 - Best day ever</option>
-                    </select>
-                    <select title="Location" name="location" id="location" defaultValue="">
-                        <option value="" disabled hidden>
-                            Location
-                        </option>
-                        <option value="1">Mom&apos;s</option>
-                        <option value="2">Dad&apos;s</option>
-                        <option value="3">Cottage</option>
-                        <option value="4">Not home!</option>
-                    </select>
-                </div>
-                <button type="button" onClick={save} id="save-button">
-                    Save
-                </button>
-            </div>
+            <EditorBubble saveEntry={save} mood={mood} location={location} />
         </main>
     );
 }
