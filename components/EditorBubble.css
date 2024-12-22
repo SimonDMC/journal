@@ -90,6 +90,11 @@ button:hover {
     padding: 0.2em 0.5em !important;
 }
 
+.select-option.selected {
+    color: #ccc;
+    background-color: #333 !important;
+}
+
 .select-indicators-container * {
     color: #ccc !important;
 }

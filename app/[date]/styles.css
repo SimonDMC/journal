@@ -118,6 +118,10 @@ a.back {
         margin-bottom: 12em;
         margin-top: 3em;
     }
+
+    .ck-content {
+        padding-bottom: 0 !important;
+    }
 }
 
 @media (max-width: 700px) {
@@ -131,6 +135,7 @@ a.back {
     }
 
     .content {
-        margin-bottom: unset;
+        margin-bottom: 18rem;
+        margin-top: 3em;
     }
 }

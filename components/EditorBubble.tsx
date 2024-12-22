@@ -1,8 +1,10 @@
 import Select from "react-select";
 import "./EditorBubble.css";
-import { MutableRefObject } from "react";
+import { MutableRefObject, useState } from "react";
 
 export default function EditorBubble(props: { saveEntry: Function; mood: MutableRefObject<Number>; location: MutableRefObject<Number> }) {
+    const [, setForceRender] = useState(false);
+
     const moods = [
         { value: 1, label: "1 - Worst day ever" },
         { value: 2, label: "2 - Awful" },
@@ -28,11 +30,8 @@ export default function EditorBubble(props: { saveEntry: Function; mood: Mutable
         indicatorsContainer: () => "select-indicators-container",
         menu: () => "select-menu",
         menuList: () => "select-menu-list",
-        option: () => "select-option",
+        option: ({ isSelected }: { isSelected: boolean }) => (isSelected ? "select-option selected" : "select-option"),
     };
-
-    const defaultMood = moods.find((mood) => mood.value === props.mood.current);
-    const defaultLocation = locations.find((location) => location.value === props.location.current);
 
     return (
         <div className="bubble">
@@ -41,22 +40,25 @@ export default function EditorBubble(props: { saveEntry: Function; mood: Mutable
                 <Select
                     options={moods}
                     placeholder="Mood"
-                    value={defaultMood}
+                    value={moods.find((mood) => mood.value === props.mood.current)}
                     menuPlacement="top"
                     isSearchable={false}
                     onChange={(option) => {
                         if (option) props.mood.current = option.value;
+                        // this is ugly but i have to use useRef because useState didn't pass it to parent properly
+                        setForceRender((prev) => !prev);
                     }}
                     classNames={selectStyles}
                 />
                 <Select
                     options={locations}
                     placeholder="Location"
-                    value={defaultLocation}
+                    value={locations.find((location) => location.value === props.location.current)}
                     menuPlacement="top"
                     isSearchable={false}
                     onChange={(option) => {
                         if (option) props.location.current = option.value;
+                        setForceRender((prev) => !prev);
                     }}
                     classNames={selectStyles}
                 />
