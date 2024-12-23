@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { API_URL } from "../../util/config";
 import "./styles.css";
-import { KeyboardEventHandler, useEffect } from "react";
+import { useEffect } from "react";
 import { Slide, toast } from "react-toastify";
 
 export default function Home() {
@@ -89,7 +89,7 @@ export default function Home() {
                 <span id="codeword-display">0</span>
             </div>
             <a onClick={logout}>
-                <i className="fa-solid fa-arrow-right-from-bracket logout"></i>
+                <i className="fa-solid fa-arrow-right-from-bracket logout-icon"></i>
             </a>
         </main>
     );

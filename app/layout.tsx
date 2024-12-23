@@ -1,6 +1,6 @@
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
-import ToastProvider from "@/components/ToastProvider";
+import ToastProvider from "@/components/toast-provider/ToastProvider";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (

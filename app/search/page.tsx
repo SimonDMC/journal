@@ -2,7 +2,7 @@
 
 import "./styles.css";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import SearchResult, { SearchResultType } from "@/components/SearchResult";
+import SearchResult, { SearchResultType } from "@/components/search-result/SearchResult";
 import { API_URL, KEY_GENERATOR } from "@/util/config";
 import { useRouter } from "next/navigation";
 import Link from "next/link";

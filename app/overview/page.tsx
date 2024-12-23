@@ -2,18 +2,24 @@
 
 import "./styles.css";
 import { useEffect, useRef, useState } from "react";
-import Calendar, { dayAdjustedTime, today } from "@/components/Calendar";
-import { API_URL, KEY_GENERATOR } from "../../util/config";
+import Calendar, { dayAdjustedTime, today } from "@/components/calendar/Calendar";
+import { API_URL } from "../../util/config";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Slide, toast } from "react-toastify";
+import Dropdown from "@/components/dropdown/Dropdown";
+import DropdownItem from "@/components/dropdown/DropdownItem";
+import DropdownSeparator from "@/components/dropdown/DropdownSeparator";
+import DropdownText from "@/components/dropdown/DropdownText";
+import { downloadKey, uploadKey, download } from "@/util/profile";
 
 export default function Home() {
     const [entries, setEntries] = useState([]);
     const [wordCount, setWordCount] = useState(0);
     const [oneYearAgo, setOneYearAgo] = useState("");
+    const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
     const entriesLoaded = useRef(false);
     const router = useRouter();
+    const username = useRef("User");
 
     // wrapped to only run on the client
     useEffect(() => {
@@ -23,6 +29,8 @@ export default function Home() {
         } else if (!sessionStorage.getItem("codeword")) {
             router.push("/codeword");
         }
+
+        username.current = localStorage.getItem("username") ?? "User";
 
         // check key status
         if (!localStorage.getItem("key")) {
@@ -100,62 +108,6 @@ export default function Home() {
         }
     }, [entries]);
 
-    function download() {
-        fetch(`${API_URL}/download?codeword=${sessionStorage.getItem("codeword")}`)
-            .then((res) => res.json())
-            .then(async (json) => {
-                // decrypt entries
-                const storedKey = localStorage.getItem("key");
-                if (!storedKey) {
-                    toast.error("No key has been imported.", {
-                        position: "top-right",
-                        theme: "dark",
-                        transition: Slide,
-                    });
-                    return;
-                }
-                const buffer = new Uint8Array(JSON.parse(storedKey));
-                const key = await window.crypto.subtle.importKey("raw", buffer, KEY_GENERATOR, false, ["decrypt"]);
-
-                let failed = false;
-                for (const entry of json.results) {
-                    const data = new Uint8Array([...atob(entry.content)].map((c) => c.charCodeAt(0)));
-                    const iv = data.slice(0, 16);
-                    const encrypted = data.slice(16);
-                    try {
-                        const decrypted = await window.crypto.subtle.decrypt({ name: "AES-CBC", iv }, key, encrypted);
-                        entry.content = new TextDecoder().decode(decrypted);
-                    } catch (err) {
-                        console.error(err);
-                        failed = true;
-                    }
-                }
-
-                if (failed) {
-                    toast.warn("Failed to decrypt some entries.", {
-                        position: "top-right",
-                        theme: "dark",
-                        transition: Slide,
-                    });
-                }
-
-                const blob = new Blob([JSON.stringify(json, null, 2)], { type: "application/json" });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = `journal-export-${today}.json`;
-                a.click();
-            })
-            .catch((err) => {
-                toast.error("Something went wrong :(", {
-                    position: "top-right",
-                    theme: "dark",
-                    transition: Slide,
-                });
-                console.error(err);
-            });
-    }
-
     // js date supports stuff like (2023, -7, 20) or (2023, 54, 20) so no need to worry about going out of bounds
     const [month, setMonth] = useState(dayAdjustedTime.getMonth() + 1);
 
@@ -169,52 +121,8 @@ export default function Home() {
         sessionStorage.setItem("month", (month + 1).toString());
     }
 
-    function uploadKey() {
-        const input = document.createElement("input");
-        input.type = "file";
-        input.accept = ".key";
-        input.onchange = async () => {
-            const file = input.files?.[0];
-            if (!file) {
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = async () => {
-                const imported = new Uint8Array(reader.result as ArrayBuffer);
-                localStorage.setItem("key", JSON.stringify(Array.from(imported)));
-                toast.success("Key imported successfully!", {
-                    position: "top-right",
-                    theme: "dark",
-                    transition: Slide,
-                });
-                document.getElementById("keyless-bar")?.classList.add("hidden");
-                document.querySelector(".stats")?.classList.remove("hidden");
-                document.querySelector(".controls")?.classList.remove("hidden");
-            };
-            reader.readAsArrayBuffer(file);
-        };
-        input.click();
-    }
-
-    function downloadKey() {
-        const key = localStorage.getItem("key");
-        if (!key) {
-            toast.error("No key has been imported.", {
-                position: "top-right",
-                theme: "dark",
-                transition: Slide,
-            });
-            return;
-        }
-
-        const blob = new Blob([new Uint8Array(JSON.parse(key))], { type: "application/octet-stream" });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "JOURNAL_SECRET.key";
-        a.click();
-    }
+    // https://stackoverflow.com/a/2901298
+    const commaFormat = (x: number) => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
     async function logout() {
         await fetch(`${API_URL}/logout`, {
@@ -224,9 +132,6 @@ export default function Home() {
         sessionStorage.removeItem("codeword");
         router.push("/login");
     }
-
-    // https://stackoverflow.com/a/2901298
-    const commaFormat = (x: number) => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
     return (
         <main>
@@ -245,27 +150,25 @@ export default function Home() {
             <Link href={`/${oneYearAgo}`} id="lastYear" className="nav-link inactive">
                 One Year Ago
             </Link>
-            <div className="key">
-                <a onClick={uploadKey}>
-                    <i className="fa-solid fa-key key-button"></i>
-                    <i className="fa-solid fa-arrow-up key-arrow"></i>
+            <div className="top-right">
+                <a onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}>
+                    <i className="fa-solid fa-user logout"></i>
                 </a>
-                <a onClick={downloadKey}>
-                    <i className="fa-solid fa-key key-button"></i>
-                    <i className="fa-solid fa-arrow-down key-arrow"></i>
-                </a>
+                <Dropdown open={profileDropdownOpen}>
+                    <DropdownText label={username.current} />
+                    <DropdownSeparator />
+                    <DropdownItem label="Upload Key" onClick={uploadKey} />
+                    <DropdownItem label="Download Key" onClick={downloadKey} />
+                    <DropdownItem label="Export" onClick={download} />
+                    <DropdownSeparator />
+                    <DropdownItem label="Log Out" onClick={logout} />
+                </Dropdown>
             </div>
-            <a onClick={logout}>
-                <i className="fa-solid fa-arrow-right-from-bracket logout"></i>
-            </a>
             <div className="stats">
                 <p className="entryCount">Entry Count: {commaFormat(entries.length)}</p>
                 <p className="wordCount">Total Words: {commaFormat(wordCount)}</p>
             </div>
             <div className="controls">
-                <a onClick={download}>
-                    <i className="fa-solid fa-download"></i>
-                </a>
                 <Link href="/search" id="search">
                     <i className="fa-solid fa-magnifying-glass"></i>
                 </Link>

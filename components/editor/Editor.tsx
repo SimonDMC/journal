@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { highlightNthOccurrence } from "../util/selection";
+import { highlightNthOccurrence } from "../../util/selection";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 
 import {
@@ -24,7 +24,7 @@ import {
 } from "ckeditor5";
 
 import "ckeditor5/ckeditor5.css";
-import { today } from "./Calendar";
+import { today } from "../calendar/Calendar";
 import { useSearchParams } from "next/navigation";
 
 export default function App(props: { content: string; onKeyUp: GetCallback<BaseEvent>; setContent: Function; date: string }) {

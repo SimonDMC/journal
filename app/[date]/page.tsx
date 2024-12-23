@@ -1,16 +1,16 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { API_URL, KEY_GENERATOR } from "../../util/config";
 import "./styles.css";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { today } from "@/components/Calendar";
+import { today } from "@/components/calendar/Calendar.tsx";
 import { Slide, toast } from "react-toastify";
 import dynamic from "next/dynamic";
-import EditorBubble from "@/components/EditorBubble.tsx";
+import EditorBubble from "@/components/editor-bubble/EditorBubble.tsx";
 
-const Editor = dynamic(() => import("../../components/Editor.tsx"), { ssr: false });
+const Editor = dynamic(() => import("../../components/editor/Editor.tsx"), { ssr: false });
 
 export default function Home({ params }: { params: { date: string } }) {
     const key = useRef<CryptoKey>();
@@ -46,10 +46,6 @@ export default function Home({ params }: { params: { date: string } }) {
                     return;
                 }
                 if (initialized && text && (text !== prevText || mood !== prevMood || location !== prevLocation)) {
-                    /* console.log(text, prevText);
-                    console.log(mood.value, prevMood);
-                    console.log(location.value, prevLocation); */
-
                     saveWithoutNotify(text);
                     prevText = text;
                     prevMood = mood;
@@ -183,8 +179,6 @@ export default function Home({ params }: { params: { date: string } }) {
         result.set(iv, 0);
         result.set(buffer, iv.length);
         const encryptedContent = btoa(String.fromCharCode(...result));
-
-        console.log("mood", mood.current, "location", location.current);
 
         return new Promise((resolve) => {
             fetch(`${API_URL}/entry/${date}?codeword=${sessionStorage.getItem("codeword")}`, {

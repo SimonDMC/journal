@@ -3,7 +3,7 @@
     width: calc(21.6em + 12px);
     height: fit-content;
     outline: 2px solid #555;
-    margin-bottom: 2em;
+    margin-bottom: 1.5em;
     display: flex;
     flex-direction: column;
     border-radius: .3em;

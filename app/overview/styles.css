@@ -10,7 +10,7 @@ main {
     color: #ccc;
     font-size: 2em;
     font-weight: 400;
-    transition: color .3s;
+    transition: color 0.3s;
 }
 
 .nav-link:hover {
@@ -22,27 +22,38 @@ main {
     text-decoration: none;
 }
 
-.logout {
+.top-right {
     position: absolute;
-    top: 0.5em;
-    right: 0.5em;
+    top: 1em;
+    right: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.top-right a {
+    display: block;
+    height: max-content;
+}
+
+.logout {
     font-size: min(2em, 6vw);
     cursor: pointer;
 }
 
 .stats {
     position: absolute;
-    bottom: .3em;
-    left: .4em;
+    bottom: 0.3em;
+    left: 0.4em;
     font-size: min(1.6em, 4vw);
 }
 
 .key {
     position: absolute;
-    top: .8em;
-    left: .9em;
+    top: 0.8em;
+    left: 0.9em;
     display: flex;
-    gap: .8em;
+    gap: 0.8em;
 }
 
 .key a {
@@ -54,14 +65,14 @@ main {
 }
 
 .key-arrow {
-    font-size: min(.9em, 3.5vw);
-    translate: -.3em .2em;
+    font-size: min(0.9em, 3.5vw);
+    translate: -0.3em 0.2em;
 }
 
 .controls {
     position: absolute;
-    bottom: calc(.3em * 1.6);
-    right: .9em;
+    bottom: calc(0.3em * 1.6);
+    right: 0.9em;
     display: flex;
     gap: 1.4em;
 }
@@ -74,7 +85,7 @@ main {
 #keyless-bar {
     font-size: 1.5em;
     margin-bottom: 2em;
-    padding: .2em 3em;
+    padding: 0.2em 3em;
     background: linear-gradient(90deg, #000 0%, #300 20%, #300 80%, #000 100%);
 }
 
@@ -83,13 +94,14 @@ main {
 }
 
 @media (max-width: 500px) {
-    .stats, .controls {
+    .stats,
+    .controls {
         margin-bottom: 1.2em;
-        margin-left: .5em;
-        margin-right: .5em;
+        margin-left: 0.5em;
+        margin-right: 0.5em;
     }
 
     #keyless-bar {
-        margin-bottom: .5em;
+        margin-bottom: 0.5em;
     }
 }

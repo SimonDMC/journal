@@ -35,14 +35,17 @@ export default function Home() {
     }, []);
 
     async function login() {
+        const username = (document.getElementById("username") as HTMLInputElement).value;
+        const password = (document.getElementById("password") as HTMLInputElement).value;
+
         await fetch(`${API_URL}/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                username: (document.getElementById("username") as HTMLInputElement).value,
-                password: (document.getElementById("password") as HTMLInputElement).value,
+                username: username,
+                password: password,
             }),
         })
             .then(async (res) => {
@@ -50,6 +53,7 @@ export default function Home() {
                     console.log("Logged in.");
 
                     localStorage.setItem("logged-in", "true");
+                    localStorage.setItem("username", username);
                     router.push("/codeword");
                 } else {
                     toast.error("Incorrect username or password.", {

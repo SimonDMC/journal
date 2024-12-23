@@ -1,0 +1,40 @@
+.dropdown {
+    border: 2px solid #555;
+    border-radius: 0.5em;
+    margin-top: 0.5em;
+    display: none;
+    overflow: hidden;
+}
+
+.dropdown.open {
+    display: block;
+}
+
+.dropdown-item,
+.dropdown-text {
+    font-size: 1.2em;
+    padding: 0.2em 0.5em;
+    color: #ccc;
+}
+
+.dropdown-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.dropdown-text {
+    font-weight: 600;
+    color: #eee;
+}
+
+.dropdown-item:hover {
+    background-color: #222;
+}
+
+.dropdown-separator {
+    height: 1px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #333;
+}
