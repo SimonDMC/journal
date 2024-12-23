@@ -3,20 +3,23 @@
 import { useRouter } from "next/navigation";
 import { API_URL, KEY_GENERATOR } from "../../util/config";
 import "./styles.css";
-import { useEffect, useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { today } from "@/components/calendar/Calendar.tsx";
 import { Slide, toast } from "react-toastify";
 import dynamic from "next/dynamic";
 import EditorBubble from "@/components/editor-bubble/EditorBubble.tsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const Editor = dynamic(() => import("../../components/editor/Editor.tsx"), { ssr: false });
 
-export default function Home({ params }: { params: { date: string } }) {
+export default function Home({ params }: { params: Promise<{ date: string }> }) {
     const key = useRef<CryptoKey>();
     const word_count = useRef(0);
     const router = useRouter();
     const contentRef = useRef("");
+    const { date } = use(params);
 
     const [initialContent, setInitialContent] = useState("");
     const mood = useRef(0);
@@ -38,7 +41,7 @@ export default function Home({ params }: { params: { date: string } }) {
 
         // Autosave every 10 seconds if on today's entry
         let autosaveInterval: NodeJS.Timer;
-        if (today === params.date) {
+        if (today === date) {
             autosaveInterval = setInterval(() => {
                 const text = contentRef.current;
                 if (!prevText) {
@@ -55,7 +58,7 @@ export default function Home({ params }: { params: { date: string } }) {
         }
 
         // load entry from database
-        fetch(`${API_URL}/entry/${params.date}?codeword=${sessionStorage.getItem("codeword")}`)
+        fetch(`${API_URL}/entry/${date}?codeword=${sessionStorage.getItem("codeword")}`)
             .then((res) => res.json())
             .then(async (data) => {
                 const json = localStorage.getItem("key");
@@ -140,7 +143,7 @@ export default function Home({ params }: { params: { date: string } }) {
 
     async function save() {
         const text = contentRef.current;
-        const result = await saveEntry(text, params.date);
+        const result = await saveEntry(text, date);
         const saveButton = document.getElementById("save-button") as HTMLButtonElement;
 
         if (result) {
@@ -155,7 +158,7 @@ export default function Home({ params }: { params: { date: string } }) {
 
     async function saveWithoutNotify(text: string) {
         console.log("Autosaving...");
-        const res = await saveEntry(text, params.date);
+        const res = await saveEntry(text, date);
         if (!res) {
             toast.error("Error saving entry.", {
                 position: "top-right",
@@ -213,10 +216,10 @@ export default function Home({ params }: { params: { date: string } }) {
             <div id="loadingEntry">Loading...</div>
             <div className="content">
                 <div className="line"></div>
-                <Editor content={initialContent} onKeyUp={countWords} setContent={handleContentChange} date={params.date} />
+                <Editor content={initialContent} onKeyUp={countWords} setContent={handleContentChange} date={date} />
             </div>
             <Link href="/overview" className="back">
-                <i className="fa-solid fa-arrow-left"></i>
+                <FontAwesomeIcon icon={faArrowLeft} />
             </Link>
             <EditorBubble saveEntry={save} mood={mood} location={location} />
         </main>

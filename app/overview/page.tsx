@@ -11,6 +11,8 @@ import DropdownItem from "@/components/dropdown/DropdownItem";
 import DropdownSeparator from "@/components/dropdown/DropdownSeparator";
 import DropdownText from "@/components/dropdown/DropdownText";
 import { downloadKey, uploadKey, download } from "@/util/profile";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMagnifyingGlass, faUser } from "@fortawesome/free-solid-svg-icons";
 
 export default function Home() {
     const [entries, setEntries] = useState([]);
@@ -161,7 +163,7 @@ export default function Home() {
             </Link>
             <div className="top-right" id="profile-dropdown">
                 <a onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}>
-                    <i className="fa-solid fa-user logout"></i>
+                    <FontAwesomeIcon icon={faUser} />
                 </a>
                 <Dropdown open={profileDropdownOpen}>
                     <DropdownText label={username.current} />
@@ -179,7 +181,7 @@ export default function Home() {
             </div>
             <div className="controls">
                 <Link href="/search" id="search">
-                    <i className="fa-solid fa-magnifying-glass"></i>
+                    <FontAwesomeIcon icon={faMagnifyingGlass} />
                 </Link>
             </div>
         </main>

@@ -26,7 +26,7 @@
     font-variant-emoji: text;
 }
 
-.logout-icon {
+.logout-icon svg {
     position: absolute;
     top: 0.5em;
     right: 0.5em;

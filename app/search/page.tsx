@@ -7,6 +7,8 @@ import { API_URL, KEY_GENERATOR } from "@/util/config";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Slide, toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft, faSearch } from "@fortawesome/free-solid-svg-icons";
 
 export type JournalEntry = {
     date: string;
@@ -95,7 +97,7 @@ export default function Home() {
         const keyDown = async (event: KeyboardEvent) => {
             // exit on esc
             if (event.key === "Escape") {
-                router.back();
+                router.push("/overview");
                 event.preventDefault();
             }
         };
@@ -232,7 +234,7 @@ export default function Home() {
             <div className="search-wrap">
                 <input id="search-field" placeholder="Search..." onInput={search} autoFocus onKeyDown={navigate} />
                 <div id="search-icon">
-                    <i className="fas fa-search"></i>
+                    <FontAwesomeIcon icon={faSearch} />
                 </div>
                 <p id="result-count"></p>
                 <div className="results">
@@ -250,7 +252,7 @@ export default function Home() {
                 </div>
             </div>
             <Link href="/overview" className="back">
-                <i className="fa-solid fa-arrow-left"></i>
+                <FontAwesomeIcon icon={faArrowLeft} />
             </Link>
         </main>
     );

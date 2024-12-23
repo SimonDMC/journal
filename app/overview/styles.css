@@ -32,13 +32,13 @@ main {
     pointer-events: none;
 }
 
-.top-right > * {
-    pointer-events: all;
+.top-right svg {
+    font-size: 2em;
+    cursor: pointer;
 }
 
-.top-right a {
-    display: block;
-    height: max-content;
+.top-right > * {
+    pointer-events: all;
 }
 
 .logout {

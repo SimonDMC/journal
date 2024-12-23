@@ -5,6 +5,8 @@ import { API_URL } from "../../util/config";
 import "./styles.css";
 import { useEffect } from "react";
 import { Slide, toast } from "react-toastify";
+import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Home() {
     const router = useRouter();
@@ -88,8 +90,8 @@ export default function Home() {
             <div className="visible">
                 <span id="codeword-display">0</span>
             </div>
-            <a onClick={logout}>
-                <i className="fa-solid fa-arrow-right-from-bracket logout-icon"></i>
+            <a onClick={logout} className="logout-icon">
+                <FontAwesomeIcon icon={faArrowRightFromBracket} />
             </a>
         </main>
     );
