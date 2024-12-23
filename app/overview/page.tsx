@@ -87,9 +87,18 @@ export default function Home() {
         };
         document.addEventListener("keydown", keydown);
 
-        // remove listener on unmount
+        // profile dropdown
+        const clickOutside = (e: MouseEvent) => {
+            if (!document.getElementById("profile-dropdown")?.contains(e.target as HTMLElement)) {
+                setProfileDropdownOpen(false);
+            }
+        };
+        document.addEventListener("click", clickOutside);
+
+        // remove listeners on unmount
         return () => {
             document.removeEventListener("keydown", keydown);
+            document.removeEventListener("click", clickOutside);
         };
     }, []);
 
@@ -150,7 +159,7 @@ export default function Home() {
             <Link href={`/${oneYearAgo}`} id="lastYear" className="nav-link inactive">
                 One Year Ago
             </Link>
-            <div className="top-right">
+            <div className="top-right" id="profile-dropdown">
                 <a onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}>
                     <i className="fa-solid fa-user logout"></i>
                 </a>
