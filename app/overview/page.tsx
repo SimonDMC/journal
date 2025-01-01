@@ -174,7 +174,7 @@ export default function Home() {
                 Warning: Missing Key
             </div>
             <Calendar
-                month={new Date(new Date().getFullYear(), month, 1).toISOString().substring(0, 10)}
+                month={new Date(new Date(dayAdjustedTime).getFullYear(), month, 1).toISOString().substring(0, 10)}
                 previousMonth={previousMonth}
                 nextMonth={nextMonth}
                 entries={entries}
