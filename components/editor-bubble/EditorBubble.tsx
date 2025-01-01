@@ -2,7 +2,12 @@ import Select from "react-select";
 import "./EditorBubble.css";
 import { MutableRefObject, useState } from "react";
 
-export default function EditorBubble(props: { saveEntry: Function; mood: MutableRefObject<Number>; location: MutableRefObject<Number> }) {
+export default function EditorBubble(props: {
+    saveEntry: Function;
+    mood: MutableRefObject<Number>;
+    location: MutableRefObject<Number>;
+    year: string;
+}) {
     const [, setForceRender] = useState(false);
 
     const moods = [
@@ -50,18 +55,23 @@ export default function EditorBubble(props: { saveEntry: Function; mood: Mutable
                     }}
                     classNames={selectStyles}
                 />
-                <Select
-                    options={locations}
-                    placeholder="Location"
-                    value={locations.find((location) => location.value === props.location.current)}
-                    menuPlacement="top"
-                    isSearchable={false}
-                    onChange={(option) => {
-                        if (option) props.location.current = option.value;
-                        setForceRender((prev) => !prev);
-                    }}
-                    classNames={selectStyles}
-                />
+                {
+                    /* only show location if in 2024 */
+                    props.year === "2024" && (
+                        <Select
+                            options={locations}
+                            placeholder="Location"
+                            value={locations.find((location) => location.value === props.location.current)}
+                            menuPlacement="top"
+                            isSearchable={false}
+                            onChange={(option) => {
+                                if (option) props.location.current = option.value;
+                                setForceRender((prev) => !prev);
+                            }}
+                            classNames={selectStyles}
+                        />
+                    )
+                }
             </div>
             <button type="button" onClick={() => props.saveEntry()} id="save-button">
                 Save

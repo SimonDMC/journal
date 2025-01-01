@@ -221,7 +221,7 @@ export default function Home({ params }: { params: Promise<{ date: string }> }) 
             <Link href="/overview" className="back">
                 <FontAwesomeIcon icon={faArrowLeft} />
             </Link>
-            <EditorBubble saveEntry={save} mood={mood} location={location} />
+            <EditorBubble saveEntry={save} mood={mood} location={location} year={date.substring(0, 4)} />
         </main>
     );
 }

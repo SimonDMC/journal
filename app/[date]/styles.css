@@ -135,7 +135,8 @@ a.back {
     }
 
     .content {
-        margin-bottom: 18rem;
+        margin-bottom: 17rem;
         margin-top: 3em;
+        height: 100%;
     }
 }
