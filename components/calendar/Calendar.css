@@ -6,8 +6,8 @@
     margin-bottom: 1.5em;
     display: flex;
     flex-direction: column;
-    border-radius: .3em;
-    padding: .8em;
+    border-radius: 0.3em;
+    padding: 0.8em;
 }
 
 .calendar.loading {
@@ -21,17 +21,19 @@
 
 .week-days {
     height: 1em;
-    margin-bottom: .3em;
+    margin-bottom: 0.3em;
     color: #777;
     cursor: default;
 }
 
-.top-bar, .week-days {
+.top-bar,
+.week-days {
     display: flex;
     justify-content: center;
 }
 
-.top-bar .inner, .week-days .inner {
+.top-bar .inner,
+.week-days .inner {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -53,7 +55,7 @@
 
 .week-days .inner {
     width: 90%;
-    font-size: .8em;
+    font-size: 0.8em;
 }
 
 .top-bar button {
@@ -68,7 +70,8 @@
     gap: 2px;
 }
 
-.day, .offset {
+.day,
+.offset {
     width: calc(20em / 7);
     height: calc(20em / 7);
     display: inline-flex;
@@ -78,8 +81,8 @@
 
 .day {
     background-color: #1b1b1b;
-    transition: filter .3s;
-    border-radius: .2em;
+    transition: filter 0.3s;
+    border-radius: 0.2em;
 }
 
 .day:hover {
@@ -103,6 +106,6 @@ span.offset:first-of-type {
 
 @media (max-width: 600px) {
     .calendar {
-        margin-bottom: .8em;
+        margin-bottom: 0.8em;
     }
 }

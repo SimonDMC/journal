@@ -1,9 +1,13 @@
-/** @type {import('next').NextConfig} */
-const withPWA = require("next-pwa")({
-    dest: "public",
-    disable: process.env.NODE_ENV === "development",
-});
+const fs = require("fs");
+const path = require("path");
 
-module.exports = withPWA({
-    // Your existing Next.js configuration
-});
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+    webpack(config) {
+        const buildTimestamp = Date.now();
+        fs.writeFileSync(path.join(__dirname, "public", "build-meta.json"), JSON.stringify({ buildTimestamp }));
+        return config;
+    },
+};
+
+module.exports = nextConfig;

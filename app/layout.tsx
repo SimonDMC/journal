@@ -1,21 +1,36 @@
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 import ToastProvider from "@/components/toast-provider/ToastProvider";
+import { Metadata, Viewport } from "next";
+import { useEffect } from "react";
+
+export const metadata: Metadata = {
+    title: "Journal",
+    description: "Until I can preserve my memories indefinitely, this will have to do.",
+    openGraph: {
+        title: "Journal",
+        description: "Until I can preserve my memories indefinitely, this will have to do.",
+        url: "https://journal.simondmc.com",
+    },
+    icons: {
+        icon: "/favicon.png",
+        apple: "/maskable.png",
+    },
+    manifest: "/manifest.json",
+};
+
+export const viewport: Viewport = {
+    themeColor: "#000000",
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="en">
             <head>
-                <title>Journal</title>
-                <meta content="Journal" property="og:title" />
-                <meta content="You keep your experiences here" property="og:description" />
-                <meta content="You keep your experiences here" name="description" />
-                <meta content="https://journal.simondmc.com" property="og:url" />
-                <meta content="#000000" data-react-helmet="true" name="theme-color" />
-                <link rel="apple-touch-icon" href="maskable.png" />
-                <meta name="viewport" content="width=device-width, user-scalable=no" />
-                <link rel="icon" href="favicon.png" />
-                <link rel="manifest" href="/manifest.json" />
                 <link rel="stylesheet" href="https://rsms.me/inter/inter.css"></link>
             </head>
             <body>
