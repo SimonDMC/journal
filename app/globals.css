@@ -29,8 +29,10 @@ body {
 
 :root {
     font-family: Inter, sans-serif;
-    font-feature-settings: "liga" 1, "calt" 1, "ss03" !important; /* fix for Chrome */
+    font-feature-settings: "liga"1, "calt"1, "ss03" !important;
+    /* fix for Chrome */
 }
+
 @supports (font-variation-settings: normal) {
     :root {
         font-family: InterVariable, sans-serif;
@@ -57,4 +59,8 @@ body {
 .editor-container_balloon-editor .editor-container__editor {
     min-width: 795px;
     max-width: 795px;
+}
+
+svg {
+    display: none;
 }
