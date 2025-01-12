@@ -29,20 +29,42 @@ self.addEventListener("fetch", (event) => {
                 return cachedResponse;
             }
 
-            return fetch(event.request)
-                .then((networkResponse) => {
-                    return caches.open(CACHE_NAME).then((cache) => {
-                        // Only cache GET requests
-                        if (event.request.method === "GET") {
-                            cache.put(event.request, networkResponse.clone());
+            // Try to find a cached response for the year
+            const dateMatch = /(\d{4})-\d{2}-\d{2}/.exec(url.pathname);
+            if (dateMatch) {
+                const year = dateMatch[1];
+                return caches.open(CACHE_NAME).then((cache) => {
+                    return cache.match(`/${year}`).then((yearlyCache) => {
+                        if (yearlyCache) {
+                            return yearlyCache;
                         }
-                        return networkResponse;
+
+                        // If no cache found, fetch from network
+                        return fetchAndCache(event.request, year);
                     });
-                })
-                .catch((error) => {
-                    console.error("Fetch failed:", error);
-                    throw error;
                 });
+            }
+
+            // For non-date URLs, proceed with normal fetch and cache
+            return fetchAndCache(event.request);
         })
     );
 });
+
+// Helper function to fetch from network and cache the response
+function fetchAndCache(request, year = null) {
+    return fetch(request).then((networkResponse) => {
+        if (request.method === "GET") {
+            return caches.open(CACHE_NAME).then((cache) => {
+                // If we have a year, cache under the year key
+                if (year) {
+                    cache.put(`/${year}`, networkResponse.clone());
+                } else {
+                    cache.put(request, networkResponse.clone());
+                }
+                return networkResponse;
+            });
+        }
+        return networkResponse;
+    });
+}

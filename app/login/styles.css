@@ -80,7 +80,7 @@ form {
 }
 
 @media (hover: hover) and (pointer: fine) {
-    button:hover {
+    main.login button:hover {
         background-color: #0f0f0f;
     }
 
