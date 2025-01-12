@@ -13,10 +13,6 @@ main {
     transition: color 0.3s;
 }
 
-.nav-link:hover {
-    color: #fff;
-}
-
 #lastYear.inactive {
     color: #333;
     text-decoration: none;
@@ -37,7 +33,7 @@ main {
     cursor: pointer;
 }
 
-.top-right > * {
+.top-right>* {
     pointer-events: all;
 }
 
@@ -98,7 +94,15 @@ main {
     display: none;
 }
 
-@media (max-width: 500px) {
+/* only show hover effects if mouse exists */
+@media (hover: hover) and (pointer: fine) {
+    .nav-link:hover {
+        color: #fff;
+    }
+}
+
+@media (max-width: 600px) {
+
     .stats,
     .controls {
         margin-bottom: 1.2em;

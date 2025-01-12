@@ -42,10 +42,6 @@ button {
     transition: background-color 0.2s;
 }
 
-button:hover {
-    background-color: #0f0f0f;
-}
-
 .info {
     position: absolute;
     top: 0.3em;
@@ -60,10 +56,6 @@ button:hover {
     cursor: pointer;
     transition: border 0.2s;
     font-weight: 600;
-}
-
-.info:hover {
-    border: 3px solid #ccc;
 }
 
 dialog {
@@ -85,6 +77,16 @@ form {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    button:hover {
+        background-color: #0f0f0f;
+    }
+
+    .info:hover {
+        border: 3px solid #ccc;
+    }
 }
 
 @media (max-width: 600px) {

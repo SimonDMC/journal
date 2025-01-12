@@ -85,12 +85,6 @@
     border-radius: 0.2em;
 }
 
-.day:hover {
-    /* using a brightness filter instead of background color allows 
-    transition fade without impacting color changes from month switching */
-    filter: brightness(1.5);
-}
-
 .day.today {
     outline: 2px solid #888;
     z-index: 1;
@@ -102,6 +96,14 @@
 
 span.offset:first-of-type {
     height: calc(20em / 7 + 1px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .day:hover {
+        /* using a brightness filter instead of background color allows 
+        transition fade without impacting color changes from month switching */
+        filter: brightness(1.5);
+    }
 }
 
 @media (max-width: 600px) {
