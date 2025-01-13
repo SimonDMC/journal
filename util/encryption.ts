@@ -1,6 +1,6 @@
 import { KEY_GENERATOR } from "./config";
 
-let cryptoKey;
+let cryptoKey: CryptoKey | undefined;
 async function getKey() {
     if (cryptoKey) return cryptoKey;
 
