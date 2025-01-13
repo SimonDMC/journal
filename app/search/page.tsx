@@ -3,12 +3,13 @@
 import "./styles.css";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import SearchResult, { SearchResultType } from "@/components/search-result/SearchResult";
-import { API_URL, KEY_GENERATOR } from "@/util/config";
+import { API_URL } from "@/util/config";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Slide, toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { decryptEntry } from "@/util/encryption";
 
 export type JournalEntry = {
     date: string;
@@ -39,40 +40,33 @@ export default function Home() {
             const response = await fetch(`${API_URL}/download?codeword=${sessionStorage.getItem("codeword")}`);
             const json = await response.json();
 
-            const storedKey = localStorage.getItem("key");
-            if (!storedKey) {
-                toast.error("No key has been imported.", {
-                    position: "top-right",
-                    theme: "dark",
-                    transition: Slide,
-                });
-                return;
-            }
-
             // decrypt entries
-            const buffer = new Uint8Array(JSON.parse(storedKey));
-            const key = await window.crypto.subtle.importKey("raw", buffer, KEY_GENERATOR, false, ["decrypt"]);
+            const decryptPromises = [];
+            let error = false;
 
-            let failed = false;
             for (const entry of json.results) {
-                const data = new Uint8Array([...atob(entry.content)].map((c) => c.charCodeAt(0)));
-                const iv = data.slice(0, 16);
-                const encrypted = data.slice(16);
-                try {
-                    const decrypted = await window.crypto.subtle.decrypt({ name: "AES-CBC", iv }, key, encrypted);
-                    const decoded = new TextDecoder().decode(decrypted);
-                    // strip html
-                    const div = document.createElement("div");
-                    div.innerHTML = decoded;
-                    // strip emojis
-                    entry.content = div.innerText.replace(/\p{Emoji}/gu, "");
-                } catch (err) {
-                    console.error(err);
-                    failed = true;
-                }
+                decryptPromises.push(
+                    new Promise<void>(async (resolve, reject) => {
+                        const decoded = await decryptEntry(entry.content);
+                        if (!decoded) {
+                            error = true;
+                            console.log("Failed decrypting:", entry.content, entry.date);
+                        } else {
+                            // strip html
+                            const div = document.createElement("div");
+                            div.innerHTML = decoded;
+                            // strip emojis
+                            entry.content = div.innerText.replace(/\p{Emoji}/gu, "");
+                        }
+
+                        resolve();
+                    })
+                );
             }
 
-            if (failed) {
+            await Promise.all(decryptPromises);
+
+            if (error) {
                 toast.warn("Failed to decrypt some entries.", {
                     position: "top-right",
                     theme: "dark",
@@ -82,10 +76,8 @@ export default function Home() {
 
             setEntries(json.results);
             setIsLoading(false);
-        } catch (err) {
-            console.error(err);
-            localStorage.removeItem("logged-in");
-            router.push("/login");
+        } catch (error) {
+            console.log("Decryption failed:", error);
         }
     }, []);
 

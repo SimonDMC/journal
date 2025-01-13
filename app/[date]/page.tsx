@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { API_URL, KEY_GENERATOR } from "../../util/config";
+import { API_URL } from "../../util/config";
 import "./styles.css";
 import { use, useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -11,11 +11,11 @@ import dynamic from "next/dynamic";
 import EditorBubble from "@/components/editor-bubble/EditorBubble.tsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { decryptEntry, encryptEntry } from "@/util/encryption.ts";
 
 const Editor = dynamic(() => import("../../components/editor/Editor.tsx"), { ssr: false });
 
 export default function Home({ params }: { params: Promise<{ date: string }> }) {
-    const key = useRef<CryptoKey>();
     const word_count = useRef(0);
     const router = useRouter();
     const contentRef = useRef("");
@@ -61,15 +61,6 @@ export default function Home({ params }: { params: Promise<{ date: string }> }) 
         fetch(`${API_URL}/entry/${date}?codeword=${sessionStorage.getItem("codeword")}`)
             .then((res) => res.json())
             .then(async (data) => {
-                const json = localStorage.getItem("key");
-                if (json) {
-                    const keyBuffer = new Uint8Array(JSON.parse(json));
-                    key.current = await crypto.subtle.importKey("raw", keyBuffer, KEY_GENERATOR, true, ["encrypt", "decrypt"]);
-                } else {
-                    showDecryptionError();
-                    return;
-                }
-
                 if (data.mood) {
                     mood.current = data.mood;
                 }
@@ -77,22 +68,17 @@ export default function Home({ params }: { params: Promise<{ date: string }> }) 
                     location.current = data.location;
                 }
                 if (data.content) {
-                    // decrypt entry
-                    const toDecrypt = new Uint8Array([...atob(data.content)].map((c) => c.charCodeAt(0)));
-                    const iv = toDecrypt.slice(0, 16);
-                    const buffer = toDecrypt.slice(16);
-                    try {
-                        const decrypted = await crypto.subtle.decrypt({ name: "AES-CBC", iv }, key.current, buffer);
-                        const decryptedText = new TextDecoder().decode(decrypted);
-                        contentRef.current = decryptedText;
-                        setInitialContent(decryptedText);
-
-                        initialized = true;
-                        countWords();
-                    } catch (err) {
-                        console.error(err);
+                    const decryptedText = await decryptEntry(data.content);
+                    if (!decryptedText) {
                         showDecryptionError();
+                        return;
                     }
+
+                    contentRef.current = decryptedText;
+                    setInitialContent(decryptedText);
+
+                    initialized = true;
+                    countWords();
                 } else {
                     initialized = true;
                 }
@@ -169,19 +155,8 @@ export default function Home({ params }: { params: Promise<{ date: string }> }) 
     }
 
     async function saveEntry(text: string, date: string) {
-        // encrypt entry
-        const data = new TextEncoder().encode(text);
-        const iv = crypto.getRandomValues(new Uint8Array(16));
-        if (!key.current) {
-            document.getElementById("decryptError")?.classList.remove("hidden");
-            return false;
-        }
-        const encrypted = await crypto.subtle.encrypt({ name: "AES-CBC", iv }, key.current, data);
-        const buffer = new Uint8Array(encrypted);
-        const result = new Uint8Array(iv.length + buffer.length);
-        result.set(iv, 0);
-        result.set(buffer, iv.length);
-        const encryptedContent = btoa(String.fromCharCode(...result));
+        const encryptedContent = await encryptEntry(text);
+        if (!encryptedContent) return false;
 
         return new Promise((resolve) => {
             fetch(`${API_URL}/entry/${date}?codeword=${sessionStorage.getItem("codeword")}`, {
