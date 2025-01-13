@@ -14,6 +14,7 @@ import { downloadKey, uploadKey, download } from "@/util/profile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faUser } from "@fortawesome/free-solid-svg-icons";
 import { Slide, toast } from "react-toastify";
+import { syncDatabase } from "@/database/sync";
 
 export default function Home() {
     const [entries, setEntries] = useState([]);
@@ -195,6 +196,7 @@ export default function Home() {
                     <DropdownItem label="Upload Key" onClick={uploadKey} />
                     <DropdownItem label="Download Key" onClick={downloadKey} />
                     <DropdownItem label="Export" onClick={download} />
+                    <DropdownItem label="Sync" onClick={syncDatabase} />
                     <DropdownSeparator />
                     <DropdownItem label="Log Out" onClick={logout} />
                 </Dropdown>

@@ -19,6 +19,8 @@
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.14",
     "ckeditor5": "^43.3.1",
+    "dexie": "^4.0.10",
+    "dexie-react-hooks": "^1.1.7",
     "eslint": "8.45.0",
     "firebase": "^10.0.0",
     "next": "^15.1.2",
