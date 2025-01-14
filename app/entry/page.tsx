@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { API_URL } from "../../util/config.ts";
 import "./styles.css";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { today } from "@/components/calendar/Calendar.tsx";
 import { Slide, toast } from "react-toastify";
@@ -15,7 +15,7 @@ import { decryptEntry, encryptEntry } from "@/util/encryption.ts";
 
 const Editor = dynamic(() => import("../../components/editor/Editor.tsx"), { ssr: false });
 
-export default function Entry() {
+function EntryContent() {
     const word_count = useRef(0);
     const router = useRouter();
     const contentRef = useRef("");
@@ -199,5 +199,13 @@ export default function Entry() {
             </Link>
             <EditorBubble saveEntry={save} mood={mood} location={location} year={date.substring(0, 4)} />
         </main>
+    );
+}
+
+export default function Entry() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <EntryContent />
+        </Suspense>
     );
 }
