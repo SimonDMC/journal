@@ -13,7 +13,7 @@ import DropdownText from "@/components/dropdown/DropdownText";
 import { downloadKey, uploadKey, download } from "@/util/profile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faUser } from "@fortawesome/free-solid-svg-icons";
-import { Slide, toast } from "react-toastify";
+import { checkForUpdate } from "@/util/update";
 
 export default function Home() {
     const [entries, setEntries] = useState([]);
@@ -33,28 +33,7 @@ export default function Home() {
             router.push("/codeword");
         }
 
-        // check for update
-        fetch("/build-meta.json")
-            .then((res) => res.json())
-            .then((json) => {
-                const buildTimestamp = json.buildTimestamp;
-
-                // clear cache and reload if there's a newer build available
-                const cachedAt = localStorage.getItem("cached-at");
-                if (cachedAt && parseInt(cachedAt) < buildTimestamp) {
-                    window.caches.delete("journal-cache");
-                    localStorage.setItem("cached-at", Date.now().toString());
-
-                    toast.success("New build available, reloading in 5 seconds!", {
-                        position: "top-right",
-                        theme: "dark",
-                        transition: Slide,
-                    });
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 5000);
-                }
-            });
+        checkForUpdate();
 
         username.current = localStorage.getItem("username") ?? "User";
 

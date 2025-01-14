@@ -1,9 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { API_URL } from "../../util/config";
+import { useRouter, useSearchParams } from "next/navigation";
+import { API_URL } from "../../util/config.ts";
 import "./styles.css";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { today } from "@/components/calendar/Calendar.tsx";
 import { Slide, toast } from "react-toastify";
@@ -15,11 +15,12 @@ import { decryptEntry, encryptEntry } from "@/util/encryption.ts";
 
 const Editor = dynamic(() => import("../../components/editor/Editor.tsx"), { ssr: false });
 
-export default function Home({ params }: { params: Promise<{ date: string }> }) {
+export default function Entry() {
     const word_count = useRef(0);
     const router = useRouter();
     const contentRef = useRef("");
-    const { date } = use(params);
+    const searchParams = useSearchParams();
+    const date = searchParams.get("date") as string;
 
     const [initialContent, setInitialContent] = useState("");
     const mood = useRef(0);
