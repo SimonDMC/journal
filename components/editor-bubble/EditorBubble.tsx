@@ -4,8 +4,8 @@ import { MutableRefObject, useState } from "react";
 
 export default function EditorBubble(props: {
     saveEntry: Function;
-    mood: MutableRefObject<Number>;
-    location: MutableRefObject<Number>;
+    mood: MutableRefObject<Number | null>;
+    location: MutableRefObject<Number | null>;
     year: string;
 }) {
     const [, setForceRender] = useState(false);

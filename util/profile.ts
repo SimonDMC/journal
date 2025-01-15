@@ -1,6 +1,7 @@
 import { Slide, toast } from "react-toastify";
 import { API_URL, KEY_GENERATOR } from "./config";
 import { today } from "@/components/calendar/Calendar";
+import { decryptEntry } from "./encryption";
 
 export function uploadKey() {
     const input = document.createElement("input");
@@ -49,58 +50,44 @@ export function downloadKey() {
     a.click();
 }
 
-export function download() {
-    fetch(`${API_URL}/download?codeword=${sessionStorage.getItem("codeword")}`)
-        .then((res) => res.json())
-        .then(async (json) => {
-            // decrypt entries
-            const storedKey = localStorage.getItem("key");
-            if (!storedKey) {
-                toast.error("No key has been imported.", {
-                    position: "top-right",
-                    theme: "dark",
-                    transition: Slide,
-                });
-                return;
-            }
-            const buffer = new Uint8Array(JSON.parse(storedKey));
-            const key = await window.crypto.subtle.importKey("raw", buffer, KEY_GENERATOR, false, ["decrypt"]);
+export async function download() {
+    const response = await fetch(`${API_URL}/download?codeword=${sessionStorage.getItem("codeword")}`);
+    const json = await response.json();
 
-            let failed = false;
-            for (const entry of json.results) {
-                const data = new Uint8Array([...atob(entry.content)].map((c) => c.charCodeAt(0)));
-                const iv = data.slice(0, 16);
-                const encrypted = data.slice(16);
-                try {
-                    const decrypted = await window.crypto.subtle.decrypt({ name: "AES-CBC", iv }, key, encrypted);
-                    entry.content = new TextDecoder().decode(decrypted);
-                } catch (err) {
-                    console.error(err);
-                    failed = true;
+    // decrypt entries
+    const decryptPromises = [];
+    let error = false;
+
+    for (const entry of json.results) {
+        decryptPromises.push(
+            new Promise<void>(async (resolve, reject) => {
+                const decoded = await decryptEntry(entry.content);
+                if (!decoded) {
+                    error = true;
+                    console.log("Failed decrypting:", entry.content, entry.date);
+                } else {
+                    entry.content = decoded;
                 }
-            }
 
-            if (failed) {
-                toast.warn("Failed to decrypt some entries.", {
-                    position: "top-right",
-                    theme: "dark",
-                    transition: Slide,
-                });
-            }
+                resolve();
+            })
+        );
+    }
 
-            const blob = new Blob([JSON.stringify(json, null, 2)], { type: "application/json" });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `journal-export-${today}.json`;
-            a.click();
-        })
-        .catch((err) => {
-            toast.error("Something went wrong :(", {
-                position: "top-right",
-                theme: "dark",
-                transition: Slide,
-            });
-            console.error(err);
+    await Promise.all(decryptPromises);
+
+    if (error) {
+        toast.warn("Failed to decrypt some entries.", {
+            position: "top-right",
+            theme: "dark",
+            transition: Slide,
         });
+    }
+
+    const blob = new Blob([JSON.stringify(json, null, 2)], { type: "application/json" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `journal-export-${today}.json`;
+    a.click();
 }

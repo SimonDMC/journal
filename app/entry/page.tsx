@@ -23,8 +23,8 @@ function EntryContent() {
     const date = searchParams.get("date") as string;
 
     const [initialContent, setInitialContent] = useState("");
-    const mood = useRef(0);
-    const location = useRef(0);
+    const mood = useRef(null);
+    const location = useRef(null);
 
     // wrapped to only run on the client
     useEffect(() => {
@@ -159,6 +159,19 @@ function EntryContent() {
         const encryptedContent = await encryptEntry(text);
         if (!encryptedContent) return false;
 
+        // compute hash -- docs/hash.md
+        const toHashObject: { entry: string; mood?: number; location?: number } = {
+            entry: text,
+        };
+        if (mood.current) toHashObject.mood = mood.current;
+        if (location.current) toHashObject.location = location.current;
+        const toHashString = JSON.stringify(toHashObject);
+
+        const encoder = new TextEncoder();
+        const data = encoder.encode(toHashString);
+        const hashBuffer = await window.crypto.subtle.digest("SHA-1", data);
+        const hashed = btoa(String.fromCharCode(...new Uint8Array(hashBuffer))).slice(0, -1);
+
         return new Promise((resolve) => {
             fetch(`${API_URL}/entry/${date}?codeword=${sessionStorage.getItem("codeword")}`, {
                 method: "POST",
@@ -171,6 +184,7 @@ function EntryContent() {
                     location: location.current,
                     // word count has to be sent because you can't recalculate it once encrypted
                     word_count: word_count.current,
+                    hash: hashed,
                 }),
             })
                 .then((res) => {

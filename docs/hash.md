@@ -8,8 +8,9 @@ entries are identical.
 ### Format
 
 The hash parameter is a Base64 SHA-1 hash of serialized JSON including the entry content, mood (if
-applicable), and location (if applicable). Unencrypted content is used in the hash since encryption
-is not deterministic, which means it is always computed by the client.
+applicable), and location (if applicable). The last character is truncated as it's always an equals
+sign. Unencrypted content is used in the hash since encryption is not deterministic, which means it
+is always computed by the client.
 
 ### Example:
 
@@ -30,7 +31,10 @@ To be hashed:
 `{"content":"Entry Content","mood":4}`
 
 Hex hash:
-022af9cb7c106b4c1235b11f641c3a5f7a7d71cc18d1768461a7fd3a6276a7bf
+070f4d55b832efdf0d84d308f65c38f61f781987
+
+Base64 hash:
+Bw9NVbgy798NhNMI9lw49h94GYc=
 
 Final hash:
-Air5y3wQa0wSNbEfZBw6X3p9ccwY0XaEYaf9OmJ2p78=
+Bw9NVbgy798NhNMI9lw49h94GYc
