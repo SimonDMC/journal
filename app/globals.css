@@ -61,6 +61,6 @@ body {
     max-width: 795px;
 }
 
-svg {
+svg:not(.ck-icon) {
     display: none;
 }
