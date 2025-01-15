@@ -43,6 +43,7 @@ export default function EditorBubble(props: {
             <p id="word-count">Word Count: 0</p>
             <div className="selections">
                 <Select
+                    instanceId="mood"
                     options={moods}
                     placeholder="Mood"
                     value={moods.find((mood) => mood.value === props.mood.current)}
@@ -59,6 +60,7 @@ export default function EditorBubble(props: {
                     /* only show location if in 2024 */
                     props.year === "2024" && (
                         <Select
+                            instanceId="location"
                             options={locations}
                             placeholder="Location"
                             value={locations.find((location) => location.value === props.location.current)}

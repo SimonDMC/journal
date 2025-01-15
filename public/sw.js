@@ -24,47 +24,43 @@ self.addEventListener("fetch", (event) => {
 
     // Normal caching logic for other requests
     event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
+        caches.match(event.request).then(async (cachedResponse) => {
             if (cachedResponse) {
                 return cachedResponse;
             }
 
-            // Try to find a cached response for the year
-            const dateMatch = /(\d{4})-\d{2}-\d{2}/.exec(url.pathname);
-            if (dateMatch) {
-                const year = dateMatch[1];
-                return caches.open(CACHE_NAME).then((cache) => {
-                    return cache.match(`/${year}`).then((yearlyCache) => {
-                        if (yearlyCache) {
-                            return yearlyCache;
-                        }
+            // Cache <Link>-based entry and full-load entry separately since
+            // only caching the <Link> one fails when reloading the entry page
+            // while only caching the full-load one renders CKEditor every page load
+            if (url.pathname == "/entry" && !url.searchParams.get("_rsc")) {
+                const cache = await caches.open(CACHE_NAME);
+                let entryPage = await cache.match(`/entry`);
 
-                        // If no cache found, fetch from network
-                        return fetchAndCache(event.request, year);
-                    });
-                });
+                if (!entryPage) {
+                    entryPage = await fetch(event.request);
+                    await cache.put(`/entry`, entryPage.clone());
+                }
+
+                return entryPage;
+            } else if (url.pathname == "/entry") {
+                const cache = await caches.open(CACHE_NAME);
+                let entryPage = await cache.match(`/entry-rsc`);
+
+                if (!entryPage) {
+                    entryPage = await fetch(event.request);
+                    await cache.put(`/entry-rsc`, entryPage.clone());
+                }
+
+                return entryPage;
             }
 
-            // For non-date URLs, proceed with normal fetch and cache
-            return fetchAndCache(event.request);
+            // For non-entry URLs, proceed with normal fetch and cache
+            const networkResponse = await fetch(event.request);
+            if (event.request.method === "GET") {
+                const cache = await caches.open(CACHE_NAME);
+                cache.put(event.request, networkResponse.clone());
+            }
+            return networkResponse;
         })
     );
 });
-
-// Helper function to fetch from network and cache the response
-function fetchAndCache(request, year = null) {
-    return fetch(request).then((networkResponse) => {
-        if (request.method === "GET") {
-            return caches.open(CACHE_NAME).then((cache) => {
-                // If we have a year, cache under the year key
-                if (year) {
-                    cache.put(`/${year}`, networkResponse.clone());
-                } else {
-                    cache.put(request, networkResponse.clone());
-                }
-                return networkResponse;
-            });
-        }
-        return networkResponse;
-    });
-}

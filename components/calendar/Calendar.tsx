@@ -87,7 +87,7 @@ export default function Calendar(props: { month: string; previousMonth: Function
                     }
 
                     return (
-                        <Link className={`day ${classes.join(" ")}`} key={i} href={`/${currentDay}`}>
+                        <Link className={`day ${classes.join(" ")}`} key={i} href={`/entry?date=${currentDay}`}>
                             {i + 1}
                         </Link>
                     );
