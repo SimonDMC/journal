@@ -21,10 +21,14 @@ type SearchMatch = {
 
 export default function SearchResult(props: SearchResultType) {
     return (
-        <Link className={`result ${props.active && "active"}`} href={`/${props.date}`} onMouseOver={() => props.setActiveIndex!(props.id)}>
+        <Link
+            className={`result ${props.active && "active"}`}
+            href={`/entry?date=${props.date}`}
+            onMouseOver={() => props.setActiveIndex!(props.id)}
+        >
             <div className="date">{props.date}</div>
             {props.matches.map((result: SearchMatch) => (
-                <Link className="match" key={result.index} href={`/${props.date}?q=${props.query}&i=${result.index}`}>
+                <Link className="match" key={result.index} href={`/entry?date=${props.date}&q=${props.query}&i=${result.index}`}>
                     {result.fromStart || <span className="ellipsis">...</span>}
                     {result.match.substring(0, result.startIndex)}
                     <span className="highlight">{result.match.substring(result.startIndex, result.endIndex)}</span>

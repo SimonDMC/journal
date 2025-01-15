@@ -24,3 +24,9 @@ export function checkForUpdate() {
             }
         });
 }
+
+export function forceReload() {
+    window.caches.delete("journal-cache");
+    localStorage.setItem("cached-at", Date.now().toString());
+    window.location.reload();
+}

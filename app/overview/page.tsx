@@ -13,7 +13,7 @@ import DropdownText from "@/components/dropdown/DropdownText";
 import { downloadKey, uploadKey, download } from "@/util/profile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faUser } from "@fortawesome/free-solid-svg-icons";
-import { checkForUpdate } from "@/util/update";
+import { checkForUpdate, forceReload } from "@/util/update";
 
 export default function Home() {
     const [entries, setEntries] = useState([]);
@@ -158,10 +158,10 @@ export default function Home() {
                 nextMonth={nextMonth}
                 entries={entries}
             />
-            <Link href={`/${today}`} id="today" className="nav-link">
+            <Link href={`/entry?date=${today}`} id="today" className="nav-link">
                 Today
             </Link>
-            <Link href={`/${oneYearAgo}`} id="lastYear" className="nav-link inactive">
+            <Link href={`/entry?date=${oneYearAgo}`} id="lastYear" className="nav-link inactive">
                 One Year Ago
             </Link>
             <div className="top-right" id="profile-dropdown">
@@ -174,6 +174,7 @@ export default function Home() {
                     <DropdownItem label="Upload Key" onClick={uploadKey} />
                     <DropdownItem label="Download Key" onClick={downloadKey} />
                     <DropdownItem label="Export" onClick={download} />
+                    <DropdownItem label="Force Reload" onClick={forceReload} />
                     <DropdownSeparator />
                     <DropdownItem label="Log Out" onClick={logout} />
                 </Dropdown>
