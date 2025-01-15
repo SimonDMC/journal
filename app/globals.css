@@ -61,6 +61,6 @@ body {
     max-width: 795px;
 }
 
-svg:not(.ck-icon) {
-    display: none;
+svg.svg-inline--fa {
+    max-height: 1em;
 }
