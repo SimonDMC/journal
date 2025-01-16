@@ -160,8 +160,8 @@ function EntryContent() {
         if (!encryptedContent) return false;
 
         // compute hash -- docs/hash.md
-        const toHashObject: { entry: string; mood?: number; location?: number } = {
-            entry: text,
+        const toHashObject: { content: string; mood?: number; location?: number } = {
+            content: text,
         };
         if (mood.current) toHashObject.mood = mood.current;
         if (location.current) toHashObject.location = location.current;
