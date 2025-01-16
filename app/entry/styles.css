@@ -79,7 +79,7 @@ main.date {
     display: block;
 }
 
-a.back {
+main.date a.back {
     font-size: 2em;
     color: white;
     position: absolute;
