@@ -10,7 +10,7 @@ import Dropdown from "@/components/dropdown/Dropdown";
 import DropdownItem from "@/components/dropdown/DropdownItem";
 import DropdownSeparator from "@/components/dropdown/DropdownSeparator";
 import DropdownText from "@/components/dropdown/DropdownText";
-import { downloadKey, uploadKey, download } from "@/util/profile";
+import { downloadKey, uploadKey, download, upload } from "@/util/profile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faUser } from "@fortawesome/free-solid-svg-icons";
 import { checkForUpdate, forceReload } from "@/util/update";
@@ -174,6 +174,7 @@ export default function Home() {
                     <DropdownItem label="Upload Key" onClick={uploadKey} />
                     <DropdownItem label="Download Key" onClick={downloadKey} />
                     <DropdownItem label="Export" onClick={download} />
+                    <DropdownItem label="Import" onClick={upload} />
                     <DropdownItem label="Force Reload" onClick={forceReload} />
                     <DropdownSeparator />
                     <DropdownItem label="Log Out" onClick={logout} />

@@ -41,30 +41,20 @@ export default function Home() {
             const json = await response.json();
 
             // decrypt entries
-            const decryptPromises = [];
             let error = false;
 
             for (const entry of json.results) {
-                decryptPromises.push(
-                    new Promise<void>(async (resolve, reject) => {
-                        const decoded = await decryptEntry(entry.content);
-                        if (!decoded) {
-                            error = true;
-                            console.log("Failed decrypting:", entry.content, entry.date);
-                        } else {
-                            // strip html
-                            const div = document.createElement("div");
-                            div.innerHTML = decoded;
-                            // strip emojis
-                            entry.content = div.innerText.replace(/\p{Emoji}/gu, "");
-                        }
-
-                        resolve();
-                    })
-                );
+                const decrypted = await decryptEntry(entry.content);
+                if (!decrypted) {
+                    error = true;
+                    console.log("Failed decrypting:", entry.content, entry.date);
+                } else {
+                    // strip html
+                    const div = document.createElement("div");
+                    div.innerHTML = decrypted;
+                    entry.content = div.innerText;
+                }
             }
-
-            await Promise.all(decryptPromises);
 
             if (error) {
                 toast.warn("Failed to decrypt some entries.", {

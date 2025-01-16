@@ -1,5 +1,6 @@
 import Link from "next/link";
 import "./SearchResult.css";
+import parse from "html-react-parser";
 
 export type SearchResultType = {
     date: string;
@@ -19,6 +20,17 @@ type SearchMatch = {
     index: number;
 };
 
+function fixupText(text: string) {
+    return parse(
+        text
+            // remove potential half-emojis
+            .toWellFormed()
+            .replaceAll("\uFFFD", "")
+            // wrap emoji in span to allow monospace styling
+            .replaceAll(/(\p{Emoji})/gu, "<span class='emoji'>$1</span>")
+    );
+}
+
 export default function SearchResult(props: SearchResultType) {
     return (
         <Link
@@ -30,9 +42,9 @@ export default function SearchResult(props: SearchResultType) {
             {props.matches.map((result: SearchMatch) => (
                 <Link className="match" key={result.index} href={`/entry?date=${props.date}&q=${props.query}&i=${result.index}`}>
                     {result.fromStart || <span className="ellipsis">...</span>}
-                    {result.match.substring(0, result.startIndex)}
-                    <span className="highlight">{result.match.substring(result.startIndex, result.endIndex)}</span>
-                    {result.match.substring(result.endIndex)}
+                    {fixupText(result.match.substring(0, result.startIndex))}
+                    <span className="highlight">{fixupText(result.match.substring(result.startIndex, result.endIndex))}</span>
+                    {fixupText(result.match.substring(result.endIndex))}
                     {result.fromEnd || <span className="ellipsis">...</span>}
                 </Link>
             ))}

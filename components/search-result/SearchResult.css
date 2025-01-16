@@ -33,7 +33,9 @@
 
 .result .emoji {
     display: inline-block;
+    font-size: .9em;
     width: 1em;
+    margin-right: .2em;
 }
 
 @media (hover: hover) and (pointer: fine) {
