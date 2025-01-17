@@ -40,7 +40,7 @@ export default function Calendar(props: { month: string; previousMonth: Function
     };
 
     return (
-        <div id="calendar" className="calendar loading" onTouchStart={touchStart} onTouchEnd={touchEnd}>
+        <div id="calendar" className="calendar" onTouchStart={touchStart} onTouchEnd={touchEnd}>
             <div className="top-bar">
                 <div className="inner">
                     <button onClick={() => props.previousMonth()}>

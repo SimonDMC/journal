@@ -15,15 +15,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faUser } from "@fortawesome/free-solid-svg-icons";
 import { syncDatabase } from "@/database/sync";
 import { checkForUpdate, forceReload } from "@/util/update";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/database/db";
 
 export default function Home() {
-    const [entries, setEntries] = useState([]);
-    const [wordCount, setWordCount] = useState(0);
     const [oneYearAgo, setOneYearAgo] = useState("");
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
     const entriesLoaded = useRef(false);
     const router = useRouter();
     const username = useRef("User");
+
+    const entriesFull = useLiveQuery(() => db.entries.toArray()) ?? [];
+    const entries = entriesFull.map((entry) => entry.date);
+    const wordCount = entriesFull.reduce((acc, cur) => (acc += cur.word_count), 0);
 
     // wrapped to only run on the client
     useEffect(() => {
@@ -47,20 +51,6 @@ export default function Home() {
 
         const month = sessionStorage.getItem("month");
         if (month) setMonth(parseInt(month));
-
-        // load entries from database
-        fetch(`${API_URL}/overview?codeword=${sessionStorage.getItem("codeword")}`)
-            .then((res) => res.json())
-            .then((data) => {
-                setEntries(data.entries);
-                setWordCount(data.totalWords);
-                document.getElementById("calendar")?.classList.remove("loading");
-            })
-            .catch((err) => {
-                console.error(err);
-                localStorage.removeItem("logged-in");
-                router.push("/login");
-            });
 
         // keybinds
         const keydown = (e: KeyboardEvent) => {
