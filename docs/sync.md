@@ -30,10 +30,10 @@ Finally, it sends over to the server the list of excess entries along with newer
 
 ```json
 [
-    ["2025-01-01", "Nfv7B8vuaXEtMnICOmkUdPlBHvmsMaMtRyL9RksjNd8="],
-    ["2025-01-03", "aTv/mFkGqjEkb3lLdA1/RqdLxkc4L5OsJWsQ/zzNmPA="],
-    ["2025-01-04", "dXISXGXZKuQcOoZ24dzWwvAeIE7OX4P85eJ7GvsRuFU="],
-    ["2025-01-05", "sbxRN4Nj4BOhZGO+ITPFHzSO3PksmPhqY34nGCqoeYM="]
+    ["2025-01-01", "nyTx8YuJ+5jnYPp384fAlkzCPGI"],
+    ["2025-01-03", "EjA3zYOQrA/pUpaTf3iXX8RJSIc"],
+    ["2025-01-04", "dOVBO6wBnAPDvlXzuES8S+Cp3rQ"],
+    ["2025-01-05", "q4Q/dnmEkG/ZQqvZvoBtzDZY8jY"]
 ]
 ```
 
@@ -49,7 +49,7 @@ Response:
             "location": null,
             "word_count": 2,
             "last_modified": "2025-01-02T09:28:38.481Z",
-            "hash": "iobE7s8SRG/yc6/APhs6CakR0LeYHbGvWMtFxDkWEpU="
+            "hash": "PovYn5h5G+Y6Ukboaoug49ANfl0"
         }
     ],
     "differing": [
@@ -60,7 +60,7 @@ Response:
             "location": 1,
             "word_count": 3,
             "last_modified": "2025-01-03T09:28:38.481Z",
-            "hash": "ZgnWKVdtXMwvZ2ee8d34Z2FdVSHX9csntsWIrUDt3ko="
+            "hash": "MFY0YhJncZOJzQjVHKVzOySWgxQ"
         },
         {
             "date": "2025-01-04",
@@ -69,7 +69,7 @@ Response:
             "location": 4,
             "word_count": 3,
             "last_modified": "2025-01-04T09:28:38.481Z",
-            "hash": "sh/Iz7zXzOaFPxxZj1sE7wTMfdlPRZ/4yDBEgCVVbnQ="
+            "hash": "8ph7t/M1w6C7R5gk3mqUoVbG0hQ"
         }
     ],
     "excess": ["2025-01-05"]
@@ -89,7 +89,7 @@ Client decides 2025-01-03 is newer local, 2025-01-04 is newer remote
         "location": null,
         "word_count": 3,
         "last_modified": "2025-01-03T10:28:38.481Z",
-        "hash": "8PWkivuSFk8FX7QbsVSagU93gLhAq25qeBpRHyH1q4M="
+        "hash": "EjA3zYOQrA/pUpaTf3iXX8RJSIc"
     },
     {
         "date": "2025-01-05",
@@ -98,7 +98,7 @@ Client decides 2025-01-03 is newer local, 2025-01-04 is newer remote
         "location": null,
         "word_count": 3,
         "last_modified": "2025-01-05T09:28:38.481Z",
-        "hash": "TElSpdwRANa8r8J1zAIJj6iKZ3gG9ioLtUeGnSNAW88="
+        "hash": "q4Q/dnmEkG/ZQqvZvoBtzDZY8jY"
     }
 ]
 ```

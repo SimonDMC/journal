@@ -67,7 +67,7 @@ main.search {
     scroll-behavior: smooth;
 }
 
-a.back {
+main.search a.back {
     font-size: 2rem;
     color: white;
     position: absolute;
