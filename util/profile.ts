@@ -2,6 +2,8 @@ import { Slide, toast } from "react-toastify";
 import { API_URL } from "./config";
 import { today } from "@/components/calendar/Calendar";
 import { decryptEntry, encryptEntry } from "./encryption";
+import { db } from "@/database/db";
+import { syncDatabase } from "@/database/sync";
 
 export function uploadKey() {
     const input = document.createElement("input");
@@ -51,31 +53,9 @@ export function downloadKey() {
 }
 
 export async function download() {
-    const response = await fetch(`${API_URL}/download?codeword=${sessionStorage.getItem("codeword")}`);
-    const json = await response.json();
+    const entries = await db.entries.toArray();
 
-    // decrypt entries
-    let error = false;
-
-    for (const entry of json.results) {
-        const decrypted = await decryptEntry(entry.content);
-        if (!decrypted) {
-            error = true;
-            console.log("Failed decrypting:", entry.content, entry.date);
-        } else {
-            entry.content = decrypted;
-        }
-    }
-
-    if (error) {
-        toast.warn("Failed to decrypt some entries.", {
-            position: "top-right",
-            theme: "dark",
-            transition: Slide,
-        });
-    }
-
-    const blob = new Blob([JSON.stringify(json, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(entries, null, 2)], { type: "application/json" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -104,7 +84,9 @@ export async function upload() {
             const json = JSON.parse(reader.result as string);
             let error = false;
 
-            for (const entry of json.results) {
+            // legacy exports have entries in {results: [...]}
+            // new exports have entries in [...]
+            for (const entry of json.results ?? json) {
                 const encrypted = await encryptEntry(entry.content);
                 if (!encrypted) {
                     error = true;
@@ -123,9 +105,12 @@ export async function upload() {
                 return;
             }
 
+            // wipe all local entries
+            await db.entries.clear();
+
             const res = await fetch(`${API_URL}/upload?codeword=${sessionStorage.getItem("codeword")}`, {
                 method: "POST",
-                body: JSON.stringify(json),
+                body: JSON.stringify(json.results ?? json),
             });
 
             if (res.ok) {
@@ -141,8 +126,19 @@ export async function upload() {
                     transition: Slide,
                 });
             }
+
+            await syncDatabase();
         };
         reader.readAsText(file);
     };
     inputEl.click();
+}
+
+export async function wipeLocalDatabase() {
+    await db.entries.clear();
+    toast.success("Database wiped successfully.", {
+        position: "top-right",
+        theme: "dark",
+        transition: Slide,
+    });
 }

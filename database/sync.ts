@@ -86,7 +86,7 @@ export async function syncDatabase() {
         const remoteTime = new Date(entry.last_modified).getTime();
         const localTime = new Date(localEntry.last_modified).getTime();
 
-        if (localTime > remoteTime) {
+        if (localTime >= remoteTime) {
             // local wins
             serverSyncEntries.push(localEntry);
         } else {

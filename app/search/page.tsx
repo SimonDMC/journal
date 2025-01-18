@@ -3,13 +3,12 @@
 import "./styles.css";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import SearchResult, { SearchResultType } from "@/components/search-result/SearchResult";
-import { API_URL } from "@/util/config";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Slide, toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { decryptEntry } from "@/util/encryption";
+import { db } from "@/database/db";
+import { useLiveQuery } from "dexie-react-hooks";
 
 export type JournalEntry = {
     date: string;
@@ -21,70 +20,43 @@ export type JournalEntry = {
 
 export default function Home() {
     const [results, setResults] = useState<SearchResultType[]>([]);
-    const [entries, setEntries] = useState<JournalEntry[]>([]);
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>("");
-    const [isLoading, setIsLoading] = useState(true);
-    const [dataLoadingPromise, setDataLoadingPromise] = useState<Promise<void> | null>(null);
     const router = useRouter();
 
-    const fetchAndDecryptEntries = useCallback(async () => {
+    const entries = useLiveQuery(() => db.entries.toArray())?.map((entry) => {
+        // strip html
+        const div = document.createElement("div");
+        div.innerHTML = entry.content;
+        entry.content = div.innerText;
+        return entry;
+    });
+
+    const checkLoginStatus = useCallback(async () => {
         // check login status
         if (!localStorage.getItem("logged-in")) {
             router.push("/login");
         } else if (!sessionStorage.getItem("codeword")) {
             router.push("/codeword");
         }
-
-        try {
-            const response = await fetch(`${API_URL}/download?codeword=${sessionStorage.getItem("codeword")}`);
-            const json = await response.json();
-
-            // decrypt entries
-            let error = false;
-
-            for (const entry of json.results) {
-                const decrypted = await decryptEntry(entry.content);
-                if (!decrypted) {
-                    error = true;
-                    console.log("Failed decrypting:", entry.content, entry.date);
-                } else {
-                    // strip html
-                    const div = document.createElement("div");
-                    div.innerHTML = decrypted;
-                    entry.content = div.innerText;
-                }
-            }
-
-            if (error) {
-                toast.warn("Failed to decrypt some entries.", {
-                    position: "top-right",
-                    theme: "dark",
-                    transition: Slide,
-                });
-            }
-
-            setEntries(json.results);
-            setIsLoading(false);
-        } catch (error) {
-            console.log("Decryption failed:", error);
-        }
     }, []);
 
     // wrapped to only run on the client
     useEffect(() => {
-        const loadingPromise = fetchAndDecryptEntries();
-        setDataLoadingPromise(loadingPromise);
-
-        const keyDown = async (event: KeyboardEvent) => {
+        const keydown = async (event: KeyboardEvent) => {
             // exit on esc
             if (event.key === "Escape") {
                 router.push("/overview");
                 event.preventDefault();
             }
         };
-        document.addEventListener("keydown", keyDown);
-    }, [fetchAndDecryptEntries]);
+        document.addEventListener("keydown", keydown);
+
+        // remove listener on unmount
+        return () => {
+            document.removeEventListener("keydown", keydown);
+        };
+    }, []);
 
     function scrollActiveResultIntoView() {
         const result = document.querySelector(".result.active")!;
@@ -151,10 +123,6 @@ export default function Home() {
                     return;
                 }
 
-                if (isLoading && dataLoadingPromise) {
-                    await dataLoadingPromise;
-                }
-
                 // extra context for mobile
                 let extraContext = 0;
                 if (window.innerWidth < 600) {
@@ -162,7 +130,7 @@ export default function Home() {
                 }
 
                 const results: SearchResultType[] = [];
-                for (const entry of entries) {
+                for (const entry of entries ?? []) {
                     const matches = entry.content.matchAll(new RegExp(searchQuery, "gi"));
                     const searchResult = { date: entry.date, query: searchQuery, matches: [] } as SearchResultType;
 

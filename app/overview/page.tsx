@@ -10,7 +10,7 @@ import Dropdown from "@/components/dropdown/Dropdown";
 import DropdownItem from "@/components/dropdown/DropdownItem";
 import DropdownSeparator from "@/components/dropdown/DropdownSeparator";
 import DropdownText from "@/components/dropdown/DropdownText";
-import { downloadKey, uploadKey, download, upload } from "@/util/profile";
+import { downloadKey, uploadKey, download, upload, wipeLocalDatabase } from "@/util/profile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass, faUser } from "@fortawesome/free-solid-svg-icons";
 import { syncDatabase } from "@/database/sync";
@@ -39,6 +39,7 @@ export default function Home() {
         }
 
         checkForUpdate();
+        syncDatabase();
 
         username.current = localStorage.getItem("username") ?? "User";
 
@@ -162,12 +163,15 @@ export default function Home() {
                 <Dropdown open={profileDropdownOpen}>
                     <DropdownText label={username.current} />
                     <DropdownSeparator />
+                    <DropdownText label="Actions" />
                     <DropdownItem label="Upload Key" onClick={uploadKey} />
                     <DropdownItem label="Download Key" onClick={downloadKey} />
                     <DropdownItem label="Export" onClick={download} />
                     <DropdownItem label="Import" onClick={upload} />
-                    <DropdownItem label="Sync" onClick={syncDatabase} />
+                    <DropdownSeparator />
+                    <DropdownText label="Debug" />
                     <DropdownItem label="Force Reload" onClick={forceReload} />
+                    <DropdownItem label="Wipe Local DB" onClick={wipeLocalDatabase} />
                     <DropdownSeparator />
                     <DropdownItem label="Log Out" onClick={logout} />
                 </Dropdown>

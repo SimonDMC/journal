@@ -48,7 +48,9 @@ function EntryContent() {
                     prevText = text;
                     return;
                 }
+
                 if (initialized && text && (text !== prevText || mood !== prevMood || location !== prevLocation)) {
+                    console.log("Autosaving locally");
                     saveEntry(text, date);
                     prevText = text;
                     prevMood = mood;
