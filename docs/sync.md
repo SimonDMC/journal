@@ -29,12 +29,12 @@ Finally, it sends over to the server the list of excess entries along with newer
 `POST /api/client-sync`
 
 ```json
-[
-    ["2025-01-01", "nyTx8YuJ+5jnYPp384fAlkzCPGI"],
-    ["2025-01-03", "EjA3zYOQrA/pUpaTf3iXX8RJSIc"],
-    ["2025-01-04", "dOVBO6wBnAPDvlXzuES8S+Cp3rQ"],
-    ["2025-01-05", "q4Q/dnmEkG/ZQqvZvoBtzDZY8jY"]
-]
+{
+    "2025-01-01": "nyTx8YuJ+5jnYPp384fAlkzCPGI",
+    "2025-01-03": "EjA3zYOQrA/pUpaTf3iXX8RJSIc",
+    "2025-01-04": "dOVBO6wBnAPDvlXzuES8S+Cp3rQ",
+    "2025-01-05": "q4Q/dnmEkG/ZQqvZvoBtzDZY8jY"
+}
 ```
 
 Response:

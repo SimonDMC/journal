@@ -1,17 +1,16 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { API_URL } from "../../util/config.ts";
 import "./styles.css";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { MutableRefObject, Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { today } from "@/components/calendar/Calendar.tsx";
-import { Slide, toast } from "react-toastify";
 import dynamic from "next/dynamic";
 import EditorBubble from "@/components/editor-bubble/EditorBubble.tsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { decryptEntry, encryptEntry } from "@/util/encryption.ts";
+import { db } from "@/database/db.ts";
+import { syncEntry } from "@/database/sync.ts";
 
 const Editor = dynamic(() => import("../../components/editor/Editor.tsx"), { ssr: false });
 
@@ -23,8 +22,8 @@ function EntryContent() {
     const date = searchParams.get("date") as string;
 
     const [initialContent, setInitialContent] = useState("");
-    const mood = useRef(null);
-    const location = useRef(null);
+    const mood: MutableRefObject<number | null> = useRef(null);
+    const location: MutableRefObject<number | null> = useRef(null);
 
     // wrapped to only run on the client
     useEffect(() => {
@@ -49,8 +48,10 @@ function EntryContent() {
                     prevText = text;
                     return;
                 }
+
                 if (initialized && text && (text !== prevText || mood !== prevMood || location !== prevLocation)) {
-                    saveWithoutNotify(text);
+                    console.log("Autosaving locally");
+                    saveEntry(text, date);
                     prevText = text;
                     prevMood = mood;
                     prevLocation = location;
@@ -58,32 +59,23 @@ function EntryContent() {
             }, 10000);
         }
 
-        // load entry from database
-        fetch(`${API_URL}/entry/${date}?codeword=${sessionStorage.getItem("codeword")}`)
-            .then((res) => res.json())
-            .then(async (data) => {
-                if (data.mood) {
-                    mood.current = data.mood;
-                }
-                if (data.location) {
-                    location.current = data.location;
-                }
-                if (data.content) {
-                    const decryptedText = await decryptEntry(data.content);
-                    if (!decryptedText) {
-                        showDecryptionError();
-                        return;
-                    }
+        // load entry
+        db.entries.get(date).then(async (data) => {
+            if (!data) return;
 
-                    contentRef.current = decryptedText;
-                    setInitialContent(decryptedText);
+            if (data.mood) {
+                mood.current = data.mood;
+            }
+            if (data.location) {
+                location.current = data.location;
+            }
 
-                    initialized = true;
-                    countWords();
-                } else {
-                    initialized = true;
-                }
-            });
+            contentRef.current = data.content;
+            setInitialContent(data.content);
+
+            initialized = true;
+            countWords();
+        });
 
         const keyDown = async (event: KeyboardEvent) => {
             // exit on esc
@@ -115,13 +107,6 @@ function EntryContent() {
         countWords();
     };
 
-    function showDecryptionError() {
-        document.getElementById("decryptError")?.classList.remove("hidden");
-        document.getElementById("loadingEntry")?.classList.add("hidden");
-        document.querySelector(".content")?.classList.add("hidden");
-        document.querySelector(".line")?.classList.remove("visible");
-    }
-
     function countWords() {
         const wordCountEl = document.getElementById("word-count") as HTMLParagraphElement;
         word_count.current = contentRef.current.split(/\s+/).filter((word) => word !== "").length;
@@ -130,35 +115,17 @@ function EntryContent() {
 
     async function save() {
         const text = contentRef.current;
-        const result = await saveEntry(text, date);
+        await saveEntry(text, date);
         const saveButton = document.getElementById("save-button") as HTMLButtonElement;
-
-        if (result) {
-            saveButton.innerText = "Saved!";
-        } else {
-            saveButton.innerText = "Error :(";
-        }
+        saveButton.innerText = "Saved!";
         setTimeout(() => {
             saveButton.innerText = "Save";
         }, 1000);
-    }
 
-    async function saveWithoutNotify(text: string) {
-        console.log("Autosaving...");
-        const res = await saveEntry(text, date);
-        if (!res) {
-            toast.error("Error saving entry.", {
-                position: "top-right",
-                theme: "dark",
-                transition: Slide,
-            });
-        }
+        syncEntry(date);
     }
 
     async function saveEntry(text: string, date: string) {
-        const encryptedContent = await encryptEntry(text);
-        if (!encryptedContent) return false;
-
         // compute hash -- docs/hash.md
         const toHashObject: { content: string; mood?: number; location?: number } = {
             content: text,
@@ -172,37 +139,35 @@ function EntryContent() {
         const hashBuffer = await window.crypto.subtle.digest("SHA-1", data);
         const hashed = btoa(String.fromCharCode(...new Uint8Array(hashBuffer))).slice(0, -1);
 
-        return new Promise((resolve) => {
-            fetch(`${API_URL}/entry/${date}?codeword=${sessionStorage.getItem("codeword")}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    content: encryptedContent,
-                    mood: mood.current,
-                    location: location.current,
-                    // word count has to be sent because you can't recalculate it once encrypted
-                    word_count: word_count.current,
-                    hash: hashed,
-                }),
-            })
-                .then((res) => {
-                    resolve(res.ok);
-                })
-                .catch((err) => {
-                    console.error(err);
-                    resolve(false);
-                });
-        });
+        const existingEntry = await db.entries.get(date);
+
+        if (existingEntry) {
+            // update existing entry
+            await db.entries.update(date, {
+                content: text,
+                mood: mood.current,
+                location: location.current,
+                word_count: word_count.current,
+                hash: hashed,
+                last_modified: new Date().toISOString(),
+            });
+        } else {
+            // create new entry
+            await db.entries.add({
+                date: date,
+                content: text,
+                mood: mood.current,
+                location: location.current,
+                word_count: word_count.current,
+                hash: hashed,
+                last_modified: new Date().toISOString(),
+            });
+        }
     }
 
     return (
         <main className="date">
             <div className="sidebar invis"></div>
-            <div id="decryptError" className="hidden">
-                Error decrypting entry. Make sure you have imported your key.
-            </div>
             <div id="loadingEntry">Loading...</div>
             <div className="content">
                 <div className="line"></div>
