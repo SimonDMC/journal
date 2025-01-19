@@ -6,6 +6,7 @@ import "./styles.css";
 import { useEffect } from "react";
 import { Slide, toast } from "react-toastify";
 import { checkForUpdate } from "@/util/update";
+import { db } from "@/database/db";
 
 export default function Home() {
     const router = useRouter();
@@ -41,7 +42,7 @@ export default function Home() {
         const username = (document.getElementById("username") as HTMLInputElement).value;
         const password = (document.getElementById("password") as HTMLInputElement).value;
 
-        await fetch(`${API_URL}/login`, {
+        const res = await fetch(`${API_URL}/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -50,30 +51,28 @@ export default function Home() {
                 username: username,
                 password: password,
             }),
-        })
-            .then(async (res) => {
-                if (res.ok) {
-                    console.log("Logged in.");
+        });
 
-                    localStorage.setItem("logged-in", "true");
-                    localStorage.setItem("username", username);
-                    router.push("/codeword");
-                } else {
-                    toast.error("Incorrect username or password.", {
-                        position: "top-right",
-                        theme: "dark",
-                        transition: Slide,
-                    });
-                }
-            })
-            .catch((err) => {
-                toast.error("Something went wrong. Please try again later.", {
-                    position: "top-right",
-                    theme: "dark",
-                    transition: Slide,
-                });
-                console.error(err);
+        if (res.ok) {
+            console.log("Logged in.");
+
+            localStorage.setItem("logged-in", "true");
+
+            // TODO: Review this
+            // wipe local database on login with a different account to prevent syncing entries with
+            // another account
+            if (localStorage.getItem("username") && localStorage.getItem("username") != username) {
+                await db.entries.clear();
+            }
+            localStorage.setItem("username", username);
+            router.push("/codeword");
+        } else {
+            toast.error("Incorrect username or password.", {
+                position: "top-right",
+                theme: "dark",
+                transition: Slide,
             });
+        }
     }
 
     function openInfo() {
