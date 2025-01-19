@@ -18,30 +18,6 @@ main {
     text-decoration: none;
 }
 
-.top-right {
-    position: absolute;
-    top: 1em;
-    right: 1em;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    pointer-events: none;
-}
-
-.top-right svg {
-    font-size: 2em;
-    cursor: pointer;
-}
-
-.top-right>* {
-    pointer-events: all;
-}
-
-.logout {
-    font-size: min(2em, 6vw);
-    cursor: pointer;
-}
-
 .stats {
     position: absolute;
     bottom: 0.3em;

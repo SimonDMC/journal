@@ -1,5 +1,5 @@
 import "./Dropdown.css";
 
-export default function Dropdown() {
+export default function DropdownSeparator() {
     return <div className="dropdown-separator"></div>;
 }

@@ -28,6 +28,14 @@
     color: #eee;
 }
 
+.dropdown-heading {
+    font-weight: 600;
+    color: #888;
+    padding-top: 0.3em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
 .dropdown-separator {
     height: 1px;
     width: 90%;

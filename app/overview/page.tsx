@@ -3,27 +3,20 @@
 import "./styles.css";
 import { useEffect, useRef, useState } from "react";
 import Calendar, { dayAdjustedTime, today } from "@/components/calendar/Calendar";
-import { API_URL } from "../../util/config";
+import ProfileIcon from "@/components/profile-icon/ProfileIcon";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Dropdown from "@/components/dropdown/Dropdown";
-import DropdownItem from "@/components/dropdown/DropdownItem";
-import DropdownSeparator from "@/components/dropdown/DropdownSeparator";
-import DropdownText from "@/components/dropdown/DropdownText";
-import { downloadKey, uploadKey, download, upload, wipeLocalDatabase } from "@/util/profile";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { syncDatabase } from "@/database/sync";
-import { checkForUpdate, forceReload } from "@/util/update";
+import { checkForUpdate } from "@/util/update";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/database/db";
 
 export default function Home() {
     const [oneYearAgo, setOneYearAgo] = useState("");
-    const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
     const entriesLoaded = useRef(false);
     const router = useRouter();
-    const username = useRef("User");
 
     const entriesFull = useLiveQuery(() => db.entries.toArray()) ?? [];
     const entries = entriesFull.map((entry) => entry.date);
@@ -40,8 +33,6 @@ export default function Home() {
 
         checkForUpdate();
         syncDatabase();
-
-        username.current = localStorage.getItem("username") ?? "User";
 
         // check key status
         if (!localStorage.getItem("key")) {
@@ -84,18 +75,9 @@ export default function Home() {
         };
         document.addEventListener("keydown", keydown);
 
-        // profile dropdown
-        const clickOutside = (e: MouseEvent) => {
-            if (!document.getElementById("profile-dropdown")?.contains(e.target as HTMLElement)) {
-                setProfileDropdownOpen(false);
-            }
-        };
-        document.addEventListener("click", clickOutside);
-
-        // remove listeners on unmount
+        // remove listener on unmount
         return () => {
             document.removeEventListener("keydown", keydown);
-            document.removeEventListener("click", clickOutside);
         };
     }, []);
 
@@ -130,15 +112,6 @@ export default function Home() {
     // https://stackoverflow.com/a/2901298
     const commaFormat = (x: number) => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-    async function logout() {
-        await fetch(`${API_URL}/logout`, {
-            method: "POST",
-        });
-        localStorage.removeItem("logged-in");
-        sessionStorage.removeItem("codeword");
-        router.push("/login");
-    }
-
     return (
         <main>
             <div id="keyless-bar" className="hidden">
@@ -156,26 +129,7 @@ export default function Home() {
             <Link href={`/entry?date=${oneYearAgo}`} id="lastYear" className="nav-link inactive">
                 One Year Ago
             </Link>
-            <div className="top-right" id="profile-dropdown">
-                <a onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}>
-                    <FontAwesomeIcon icon={faUser} />
-                </a>
-                <Dropdown open={profileDropdownOpen}>
-                    <DropdownText label={username.current} />
-                    <DropdownSeparator />
-                    <DropdownText label="Actions" />
-                    <DropdownItem label="Upload Key" onClick={uploadKey} />
-                    <DropdownItem label="Download Key" onClick={downloadKey} />
-                    <DropdownItem label="Export" onClick={download} />
-                    <DropdownItem label="Import" onClick={upload} />
-                    <DropdownSeparator />
-                    <DropdownText label="Debug" />
-                    <DropdownItem label="Force Reload" onClick={forceReload} />
-                    <DropdownItem label="Wipe Local DB" onClick={wipeLocalDatabase} />
-                    <DropdownSeparator />
-                    <DropdownItem label="Log Out" onClick={logout} />
-                </Dropdown>
-            </div>
+            <ProfileIcon></ProfileIcon>
             <div className="stats">
                 <p className="entryCount">Entry Count: {commaFormat(entries.length)}</p>
                 <p className="wordCount">Total Words: {commaFormat(wordCount)}</p>

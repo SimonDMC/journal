@@ -15,10 +15,6 @@ main.date {
     transition: opacity 0.2s;
 }
 
-.content.loading {
-    opacity: 0;
-}
-
 .ck-body-wrapper {
     --ck-color-panel-background: #0f0f0f;
     --ck-color-toolbar-background: var(--ck-color-panel-background);
@@ -87,7 +83,6 @@ main.date a.back {
     left: 0.5em;
 }
 
-#decryptError,
 #loadingEntry {
     position: absolute;
     top: 50%;
@@ -98,7 +93,6 @@ main.date a.back {
     text-align: center;
 }
 
-#decryptError.hidden,
 #loadingEntry.hidden {
     display: none;
 }
