@@ -27,7 +27,7 @@ function fixupText(text: string) {
             .toWellFormed()
             .replaceAll("\uFFFD", "")
             // wrap emoji in span to allow monospace styling
-            .replaceAll(/(\p{Emoji})/gu, "<span class='emoji'>$1</span>")
+            .replaceAll(/(\p{Emoji_Presentation})/gu, "<span class='emoji'>$1</span>")
     );
 }
 
