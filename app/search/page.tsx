@@ -94,90 +94,71 @@ export default function Home() {
         }
     }
 
-    // https://www.joshwcomeau.com/snippets/javascript/debounce/
-    const debounce = (callback: (...args: any[]) => void, wait: number): ((...args: any[]) => void) => {
-        let timeoutId: number | null = null;
+    async function search() {
+        const searchField = document.getElementById("search-field") as HTMLInputElement;
+        const searchQuery = searchField.value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        setSearchQuery(searchQuery);
+        const resultCount = document.getElementById("result-count") as HTMLParagraphElement;
 
-        return (...args: any[]) => {
-            if (timeoutId !== null) {
-                window.clearTimeout(timeoutId);
+        if (searchQuery.length < 3) {
+            setResults([]);
+            resultCount.textContent = "";
+            return;
+        }
+
+        // extra context for mobile
+        let extraContext = 0;
+        if (window.innerWidth < 600) {
+            extraContext = 8;
+        }
+
+        const results: SearchResultType[] = [];
+        for (const entry of entries ?? []) {
+            const matches = entry.content.matchAll(new RegExp(searchQuery, "gi"));
+            const searchResult = { date: entry.date, query: searchQuery, matches: [] } as SearchResultType;
+
+            let i = 0;
+            for (const match of matches) {
+                if (match.index === undefined) continue;
+                // cut context
+                let fromStart = false;
+                let fromEnd = false;
+                let startIndex = match.index - 20 - extraContext;
+                let endIndex = match.index + 25 + extraContext;
+                // if there's extra space on either side, adjust
+                if (startIndex < 0) {
+                    endIndex -= startIndex - 2;
+                    startIndex = 0;
+                    fromStart = true;
+                }
+                if (endIndex > entry.content.length) {
+                    startIndex -= endIndex - entry.content.length + 2;
+                    // edge case where the whole entry is shorter than the context window
+                    startIndex = Math.max(0, startIndex);
+                    endIndex = entry.content.length;
+                    fromEnd = true;
+                }
+
+                searchResult.matches.push({
+                    match: entry.content.substring(startIndex, endIndex),
+                    startIndex: match.index - startIndex,
+                    endIndex: match.index + match[0].length - startIndex,
+                    fromStart,
+                    fromEnd,
+                    index: ++i,
+                });
             }
+            if (searchResult.matches.length > 0) {
+                results.push(searchResult);
+            }
+        }
 
-            timeoutId = window.setTimeout(() => {
-                callback(...args);
-            }, wait);
-        };
-    };
+        // sort results by date
+        results.sort((a, b) => (a.date < b.date ? 1 : -1));
 
-    const search = useMemo(
-        () =>
-            debounce(async () => {
-                const searchField = document.getElementById("search-field") as HTMLInputElement;
-                const searchQuery = searchField.value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-                setSearchQuery(searchQuery);
-                const resultCount = document.getElementById("result-count") as HTMLParagraphElement;
-
-                if (searchQuery.length < 3) {
-                    setResults([]);
-                    resultCount.textContent = "";
-                    return;
-                }
-
-                // extra context for mobile
-                let extraContext = 0;
-                if (window.innerWidth < 600) {
-                    extraContext = 8;
-                }
-
-                const results: SearchResultType[] = [];
-                for (const entry of entries ?? []) {
-                    const matches = entry.content.matchAll(new RegExp(searchQuery, "gi"));
-                    const searchResult = { date: entry.date, query: searchQuery, matches: [] } as SearchResultType;
-
-                    let i = 0;
-                    for (const match of matches) {
-                        if (match.index === undefined) continue;
-                        // cut context
-                        let fromStart = false;
-                        let fromEnd = false;
-                        let startIndex = match.index - 20 - extraContext;
-                        let endIndex = match.index + 25 + extraContext;
-                        // if there's extra space on either side, adjust
-                        if (startIndex < 0) {
-                            endIndex -= startIndex - 2;
-                            startIndex = 0;
-                            fromStart = true;
-                        }
-                        if (endIndex > entry.content.length) {
-                            startIndex -= endIndex - entry.content.length + 2;
-                            // edge case where the whole entry is shorter than the context window
-                            startIndex = Math.max(0, startIndex);
-                            endIndex = entry.content.length;
-                            fromEnd = true;
-                        }
-
-                        searchResult.matches.push({
-                            match: entry.content.substring(startIndex, endIndex),
-                            startIndex: match.index - startIndex,
-                            endIndex: match.index + match[0].length - startIndex,
-                            fromStart,
-                            fromEnd,
-                            index: ++i,
-                        });
-                    }
-                    if (searchResult.matches.length > 0) {
-                        results.push(searchResult);
-                    }
-                }
-
-                // sort results by date
-                results.sort((a, b) => (a.date < b.date ? 1 : -1));
-
-                setResults(results);
-                resultCount.textContent = `${results.length} result${results.length === 1 ? "" : "s"}`;
-            }, 150),
-        [entries]
-    );
+        setResults(results);
+        resultCount.textContent = `${results.length} result${results.length === 1 ? "" : "s"}`;
+    }
 
     return (
         <main className="search">
