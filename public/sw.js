@@ -22,6 +22,11 @@ self.addEventListener("fetch", (event) => {
         return;
     }
 
+    // Don't cache non-HTTP (chrome-extension://) requests
+    if (!event.request.url.startsWith("http")) {
+        return;
+    }
+
     // Normal caching logic for other requests
     event.respondWith(
         caches.match(event.request).then(async (cachedResponse) => {
