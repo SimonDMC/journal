@@ -68,6 +68,8 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
     };
 
     function setEditorContent() {
+        console.log("changed!");
+
         if (editorRef.current) {
             const editorData = (editorRef.current as any).getData();
             props.setContent(editorData); // send content up to parent
@@ -142,7 +144,7 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
                 // or focus if theres nothing
                 if (props.content == "") setDataCallback();
 
-                editor.editing.view.document.on("keyup", setEditorContent);
+                model.on("change:data", setEditorContent);
             }}
         />
     );
