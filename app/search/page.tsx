@@ -155,8 +155,14 @@ export default function Home() {
         // sort results by date
         results.sort((a, b) => (a.date < b.date ? 1 : -1));
 
-        setResults(results);
         resultCount.textContent = `${results.length} result${results.length === 1 ? "" : "s"}`;
+
+        // only keep first 40 and last 10 results if there are more
+        if (results.length > 50) {
+            results.splice(40, results.length - 50);
+        }
+
+        setResults(results);
     }
 
     return (
