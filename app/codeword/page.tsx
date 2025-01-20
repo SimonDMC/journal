@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import { API_URL } from "../../util/config";
 import "./styles.css";
 import { useEffect } from "react";
-import { Slide, toast } from "react-toastify";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { errorToast } from "@/util/toast";
 
 export default function Home() {
     const router = useRouter();
@@ -65,11 +65,7 @@ export default function Home() {
                     }
                 })
                 .catch((err) => {
-                    toast.error("Something went wrong. Please try again later.", {
-                        position: "top-right",
-                        theme: "dark",
-                        transition: Slide,
-                    });
+                    errorToast("Something went wrong. Please try again later.");
                     console.error(err);
                 });
         }

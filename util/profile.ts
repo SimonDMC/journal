@@ -1,9 +1,9 @@
-import { Slide, toast } from "react-toastify";
 import { API_URL } from "./config";
 import { today } from "@/components/calendar/Calendar";
-import { decryptEntry, encryptEntry } from "./encryption";
+import { encryptEntry } from "./encryption";
 import { db } from "@/database/db";
 import { syncDatabase } from "@/database/sync";
+import { errorToast, successToast } from "./toast";
 
 export function uploadKey() {
     const input = document.createElement("input");
@@ -19,11 +19,7 @@ export function uploadKey() {
         reader.onload = async () => {
             const imported = new Uint8Array(reader.result as ArrayBuffer);
             localStorage.setItem("key", JSON.stringify(Array.from(imported)));
-            toast.success("Key imported successfully!", {
-                position: "top-right",
-                theme: "dark",
-                transition: Slide,
-            });
+            successToast("Key imported successfully!");
             document.getElementById("keyless-bar")?.classList.add("hidden");
             document.querySelector(".stats")?.classList.remove("hidden");
             document.querySelector(".controls")?.classList.remove("hidden");
@@ -36,11 +32,7 @@ export function uploadKey() {
 export function downloadKey() {
     const key = localStorage.getItem("key");
     if (!key) {
-        toast.error("No key has been imported.", {
-            position: "top-right",
-            theme: "dark",
-            transition: Slide,
-        });
+        errorToast("No key has been imported.");
         return;
     }
 
@@ -97,11 +89,7 @@ export async function upload() {
             }
 
             if (error) {
-                toast.error("Failed to encrypt some entries.", {
-                    position: "top-right",
-                    theme: "dark",
-                    transition: Slide,
-                });
+                errorToast("Failed to encrypt some entries.");
                 return;
             }
 
@@ -114,17 +102,9 @@ export async function upload() {
             });
 
             if (res.ok) {
-                toast.success("Data imported successfully!", {
-                    position: "top-right",
-                    theme: "dark",
-                    transition: Slide,
-                });
+                successToast("Data imported successfully!");
             } else {
-                toast.error("Failed to import.", {
-                    position: "top-right",
-                    theme: "dark",
-                    transition: Slide,
-                });
+                errorToast("Failed to import.");
             }
 
             await syncDatabase();
@@ -136,9 +116,5 @@ export async function upload() {
 
 export async function wipeLocalDatabase() {
     await db.entries.clear();
-    toast.success("Database wiped successfully.", {
-        position: "top-right",
-        theme: "dark",
-        transition: Slide,
-    });
+    successToast("Database wiped successfully.");
 }

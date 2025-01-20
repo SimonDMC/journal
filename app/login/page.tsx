@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { Slide, toast } from "react-toastify";
 import { checkForUpdate } from "@/util/update";
 import { db } from "@/database/db";
+import { errorToast } from "@/util/toast";
 
 export default function Home() {
     const router = useRouter();
@@ -67,11 +68,7 @@ export default function Home() {
             localStorage.setItem("username", username);
             router.push("/codeword");
         } else {
-            toast.error("Incorrect username or password.", {
-                position: "top-right",
-                theme: "dark",
-                transition: Slide,
-            });
+            errorToast("Incorrect username or password.");
         }
     }
 

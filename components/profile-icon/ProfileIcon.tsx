@@ -11,6 +11,7 @@ import { API_URL } from "@/util/config";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import DropdownHeading from "../dropdown/DropdownHeading";
+import { successToast } from "@/util/toast";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -70,6 +71,7 @@ export default function ProfileIcon() {
                     description="Delete all locally saved entries (resyncs with the database on page reload)"
                     onClick={wipeLocalDatabase}
                 />
+                {/* <DropdownItem label="Sample Toast" onClick={() => successToast("Toast!")} /> */}
                 <DropdownSeparator />
                 <DropdownItem label="Log Out" onClick={logout} />
             </Dropdown>

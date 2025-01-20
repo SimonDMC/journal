@@ -1,4 +1,4 @@
-import { Slide, toast } from "react-toastify";
+import { infoToast } from "./toast";
 
 export function checkForUpdate() {
     fetch("/build-meta.json")
@@ -13,11 +13,7 @@ export function checkForUpdate() {
 
                 localStorage.setItem("cached-at", Date.now().toString());
 
-                toast.success("New build available, reloading in 5 seconds!", {
-                    position: "top-right",
-                    theme: "dark",
-                    transition: Slide,
-                });
+                infoToast("New build available, reloading in 5 seconds!");
                 setTimeout(() => {
                     window.location.reload();
                 }, 5000);

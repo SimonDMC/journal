@@ -1,7 +1,7 @@
-import { Slide, toast } from "react-toastify";
 import { db } from "./db";
 import { API_URL } from "@/util/config";
 import { decryptEntry, encryptEntry } from "@/util/encryption";
+import { warningToast } from "@/util/toast";
 
 type ClientSyncBody = {
     [key: string]: string;
@@ -26,11 +26,7 @@ export async function syncDatabase() {
     });
 
     if (!clientSyncResponse.ok) {
-        toast.error("Sync failed (client request)", {
-            position: "top-right",
-            theme: "dark",
-            transition: Slide,
-        });
+        warningToast("Sync failed (client request)");
         return;
     }
 
@@ -41,11 +37,7 @@ export async function syncDatabase() {
     for (const entry of json.missing) {
         const decrypted = await decryptEntry(entry.content);
         if (!decrypted) {
-            toast.error("Sync failed (decryption)", {
-                position: "top-right",
-                theme: "dark",
-                transition: Slide,
-            });
+            warningToast("Sync failed (decryption)");
             return;
         }
 
@@ -61,11 +53,7 @@ export async function syncDatabase() {
             });
         } catch (e) {
             console.error(e);
-            toast.error("Sync failed (adding)", {
-                position: "top-right",
-                theme: "dark",
-                transition: Slide,
-            });
+            warningToast("Sync failed (adding)");
             return;
         }
     }
@@ -75,11 +63,7 @@ export async function syncDatabase() {
     for (const entry of json.differing) {
         const localEntry = await db.entries.get(entry.date);
         if (!localEntry) {
-            toast.error("Sync failed (desynced?)", {
-                position: "top-right",
-                theme: "dark",
-                transition: Slide,
-            });
+            warningToast("Sync failed (desynced?)");
             return;
         }
 
@@ -95,11 +79,7 @@ export async function syncDatabase() {
 
             const decrypted = await decryptEntry(entry.content);
             if (!decrypted) {
-                toast.error("Sync failed (decryption)", {
-                    position: "top-right",
-                    theme: "dark",
-                    transition: Slide,
-                });
+                warningToast("Sync failed (decryption)");
                 return;
             }
 
@@ -119,11 +99,7 @@ export async function syncDatabase() {
     for (const date of json.excess) {
         const localEntry = await db.entries.get(date);
         if (!localEntry) {
-            toast.error("Sync failed (desynced?)", {
-                position: "top-right",
-                theme: "dark",
-                transition: Slide,
-            });
+            warningToast("Sync failed (desynced?)");
             return;
         }
 
@@ -134,11 +110,7 @@ export async function syncDatabase() {
     for (const entry of serverSyncEntries) {
         const encryptedContent = await encryptEntry(entry.content);
         if (!encryptedContent) {
-            toast.error("Sync failed (encryption)", {
-                position: "top-right",
-                theme: "dark",
-                transition: Slide,
-            });
+            warningToast("Sync failed (encryption)");
             return;
         }
 
@@ -152,11 +124,7 @@ export async function syncDatabase() {
         });
 
         if (!serverSyncResponse.ok) {
-            toast.error("Sync failed (server request)", {
-                position: "top-right",
-                theme: "dark",
-                transition: Slide,
-            });
+            warningToast("Sync failed (server request)");
             return;
         }
     }
