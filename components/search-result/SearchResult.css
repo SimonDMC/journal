@@ -8,6 +8,7 @@
     transition: outline-width 0.05s;
     outline: 0px solid #444;
     margin-bottom: 0.4em;
+    white-space: nowrap;
 }
 
 .result .date {

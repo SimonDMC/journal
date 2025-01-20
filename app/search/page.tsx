@@ -1,7 +1,7 @@
 "use client";
 
 import "./styles.css";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import SearchResult, { SearchResultType } from "@/components/search-result/SearchResult";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -90,7 +90,8 @@ export default function Home() {
         }
 
         if (event.key == "Enter") {
-            (document.querySelector(".result.active") as HTMLElement).click();
+            const activeResult = document.querySelector(".result.active") as HTMLElement;
+            if (activeResult) activeResult.click();
         }
     }
 
