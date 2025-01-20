@@ -74,7 +74,7 @@ export default function Home() {
         return index;
     }
 
-    function navigate(event: React.KeyboardEvent<HTMLInputElement>) {
+    async function navigate(event: React.KeyboardEvent<HTMLInputElement>) {
         if (event.key == "ArrowUp") {
             setActiveIndex(wrapIndex(activeIndex - 1));
             event.preventDefault();
@@ -91,6 +91,28 @@ export default function Home() {
             const activeResult = document.querySelector(".result.active") as HTMLElement;
             if (activeResult) activeResult.click();
         }
+
+        if (event.key == "o" && event.ctrlKey) {
+            event.preventDefault();
+
+            const monthCounts: { [key: string]: number } = {};
+
+            for (const entry of entries ?? []) {
+                const matches = [];
+                for (const queryFragment of searchQuery.split(" OR ")) {
+                    matches.push(...entry.content.matchAll(new RegExp(queryFragment, "gi")));
+                }
+
+                if (matches.length == 0) continue;
+
+                if (monthCounts[entry.date.substring(0, 7)]) monthCounts[entry.date.substring(0, 7)]++;
+                else monthCounts[entry.date.substring(0, 7)] = 1;
+            }
+
+            const startingMonth = (await db.entries.toArray())[0].date.substring(0, 7);
+
+            window.open(`https://simondmc.com/journal-plot?q=${searchQuery}&start=${startingMonth}&res=${JSON.stringify(monthCounts)}`);
+        }
     }
 
     async function search() {
@@ -99,10 +121,12 @@ export default function Home() {
         setSearchQuery(searchQuery);
         const resultCount = document.getElementById("result-count") as HTMLParagraphElement;
 
-        if (searchQuery.length < 3) {
-            setResults([]);
-            resultCount.textContent = "";
-            return;
+        for (const queryFragment of searchQuery.split(" OR ")) {
+            if (queryFragment.length < 3) {
+                setResults([]);
+                resultCount.textContent = "";
+                return;
+            }
         }
 
         // extra context for mobile
@@ -113,8 +137,12 @@ export default function Home() {
 
         const results: SearchResultType[] = [];
         for (const entry of entries ?? []) {
-            const matches = entry.content.matchAll(new RegExp(searchQuery, "gi"));
-            const searchResult = { date: entry.date, query: searchQuery, matches: [] } as SearchResultType;
+            const matches: RegExpExecArray[] = [];
+            for (const queryFragment of searchQuery.split(" OR ")) {
+                matches.push(...entry.content.matchAll(new RegExp(queryFragment, "gi")));
+            }
+
+            const searchResult = { date: entry.date, matches: [] } as SearchResultType;
 
             let i = 0;
             for (const match of matches) {
@@ -145,6 +173,7 @@ export default function Home() {
                     fromStart,
                     fromEnd,
                     index: ++i,
+                    query: match[0],
                 });
             }
             if (searchResult.matches.length > 0) {
@@ -178,7 +207,6 @@ export default function Home() {
                         <SearchResult
                             key={result.date}
                             date={result.date}
-                            query={searchQuery}
                             matches={result.matches}
                             active={index == activeIndex}
                             id={index}

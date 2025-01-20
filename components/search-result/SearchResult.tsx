@@ -4,7 +4,6 @@ import parse from "html-react-parser";
 
 export type SearchResultType = {
     date: string;
-    query: string;
     matches: SearchMatch[];
     active?: boolean;
     id?: number;
@@ -18,6 +17,7 @@ type SearchMatch = {
     fromStart: boolean;
     fromEnd: boolean;
     index: number;
+    query: string;
 };
 
 function fixupText(text: string) {
@@ -40,7 +40,7 @@ export default function SearchResult(props: SearchResultType) {
         >
             <div className="date">{props.date}</div>
             {props.matches.map((result: SearchMatch) => (
-                <Link className="match" key={result.index} href={`/entry?date=${props.date}&q=${props.query}&i=${result.index}`}>
+                <Link className="match" key={result.index} href={`/entry?date=${props.date}&q=${result.query}&i=${result.index}`}>
                     {result.fromStart || <span className="ellipsis">...</span>}
                     {fixupText(result.match.substring(0, result.startIndex))}
                     <span className="highlight">{fixupText(result.match.substring(result.startIndex, result.endIndex))}</span>
