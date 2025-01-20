@@ -35,7 +35,9 @@ body {
 
 @supports (font-variation-settings: normal) {
     :root {
-        font-family: InterVariable, sans-serif;
+        --font: InterVariable, sans-serif;
+        --toastify-font-family: var(--font);
+        font-family: var(--font);
     }
 }
 

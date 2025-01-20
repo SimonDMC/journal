@@ -1,7 +1,7 @@
 "use client";
 
 import "./styles.css";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SearchResult, { SearchResultType } from "@/components/search-result/SearchResult";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -32,17 +32,15 @@ export default function Home() {
         return entry;
     });
 
-    const checkLoginStatus = useCallback(async () => {
+    // wrapped to only run on the client
+    useEffect(() => {
         // check login status
         if (!localStorage.getItem("logged-in")) {
             router.push("/login");
         } else if (!sessionStorage.getItem("codeword")) {
             router.push("/codeword");
         }
-    }, []);
 
-    // wrapped to only run on the client
-    useEffect(() => {
         const keydown = async (event: KeyboardEvent) => {
             // exit on esc
             if (event.key === "Escape") {
