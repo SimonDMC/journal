@@ -109,9 +109,12 @@ export default function Home() {
                 else monthCounts[entry.date.substring(0, 7)] = 1;
             }
 
-            const startingMonth = (await db.entries.toArray())[0].date.substring(0, 7);
+            const startMonth = (await db.entries.toArray())[0].date.substring(0, 7);
+            const endMonth = `${new Date().getFullYear()}-${new Date().getMonth() + 1}`;
+            const username = localStorage.getItem("username");
+            const data = JSON.stringify(monthCounts);
 
-            window.open(`https://simondmc.com/journal-plot?q=${searchQuery}&start=${startingMonth}&res=${JSON.stringify(monthCounts)}`);
+            window.open(`https://simondmc.com/journal-plot?q=${searchQuery}&u=${username}&s=${startMonth}&e=${endMonth}&d=${data}`);
         }
     }
 
