@@ -78,14 +78,11 @@ main.search a.back {
 
 @media (max-width: 600px) {
     .search-wrap {
-        height: 91vh;
-        translate: 0 1.5vh;
+        height: 80vh;
     }
 
-    /* first is date, second is first match */
-    .result .match:not(:nth-child(2)) {
-        border-top: 2px dotted #555;
-        margin-top: 0.3em;
-        padding-top: 0.3em;
+    /* hide plot button */
+    #plot-button {
+        display: none;
     }
 }

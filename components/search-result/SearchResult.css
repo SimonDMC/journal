@@ -47,3 +47,16 @@
         outline-width: 2px;
     }
 }
+
+@media (max-width: 600px) {
+    .result {
+        white-space: unset;
+    }
+
+    /* first is date, second is first match */
+    .result .match:not(:nth-child(2)) {
+        border-top: 2px dotted #555;
+        margin-top: 0.3em;
+        padding-top: 0.3em;
+    }
+}
