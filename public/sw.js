@@ -24,6 +24,13 @@ self.addEventListener("fetch", (event) => {
 
     // Don't cache non-HTTP (chrome-extension://) requests
     if (!event.request.url.startsWith("http")) {
+        event.respondWith(fetch(event.request));
+        return;
+    }
+
+    // Don't cache local requests while developing
+    if (url.host == "localhost:3000") {
+        event.respondWith(fetch(event.request));
         return;
     }
 
