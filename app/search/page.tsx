@@ -93,7 +93,7 @@ export default function Home() {
         }
 
         const startMonth = (await db.entries.toArray())[0].date.substring(0, 7);
-        const endMonth = `${new Date().getFullYear()}-${new Date().getMonth() + 1}`;
+        const endMonth = `${new Date().getFullYear()}-${(new Date().getMonth() + 1).toString().padStart(2, "0")}`;
         const username = localStorage.getItem("username");
         const data = JSON.stringify(monthCounts);
 
