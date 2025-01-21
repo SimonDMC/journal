@@ -41,15 +41,16 @@ main.search {
     color: #666;
 }
 
-#search-icon {
+#plot-button {
     position: absolute;
-    right: 1.4em;
+    right: 1.6em;
     top: 1.4em;
+    color: #bbb;
+    cursor: pointer;
 }
 
-#search-icon i {
+#plot-button i {
     font-size: 1.3em;
-    color: #666;
 }
 
 #result-count {

@@ -6,9 +6,10 @@ import SearchResult, { SearchResultType } from "@/components/search-result/Searc
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faChartLine, faUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import { db } from "@/database/db";
 import { useLiveQuery } from "dexie-react-hooks";
+import { PLOT_URL } from "@/util/config";
 
 export type JournalEntry = {
     date: string;
@@ -74,6 +75,31 @@ export default function Home() {
         return index;
     }
 
+    async function openPlot() {
+        if (!searchQuery) return;
+
+        const monthCounts: { [key: string]: number } = {};
+
+        for (const entry of entries ?? []) {
+            const matches = [];
+            for (const queryFragment of searchQuery.split(" OR ")) {
+                matches.push(...entry.content.matchAll(new RegExp(queryFragment, "gi")));
+            }
+
+            if (matches.length == 0) continue;
+
+            if (monthCounts[entry.date.substring(0, 7)]) monthCounts[entry.date.substring(0, 7)]++;
+            else monthCounts[entry.date.substring(0, 7)] = 1;
+        }
+
+        const startMonth = (await db.entries.toArray())[0].date.substring(0, 7);
+        const endMonth = `${new Date().getFullYear()}-${new Date().getMonth() + 1}`;
+        const username = localStorage.getItem("username");
+        const data = JSON.stringify(monthCounts);
+
+        window.location.href = `${PLOT_URL}?q=${searchQuery}&u=${username}&s=${startMonth}&e=${endMonth}&d=${data}`;
+    }
+
     async function navigate(event: React.KeyboardEvent<HTMLInputElement>) {
         if (event.key == "ArrowUp") {
             setActiveIndex(wrapIndex(activeIndex - 1));
@@ -88,33 +114,12 @@ export default function Home() {
         }
 
         if (event.key == "Enter") {
-            const activeResult = document.querySelector(".result.active") as HTMLElement;
-            if (activeResult) activeResult.click();
-        }
-
-        if (event.key == "o" && event.ctrlKey) {
-            event.preventDefault();
-
-            const monthCounts: { [key: string]: number } = {};
-
-            for (const entry of entries ?? []) {
-                const matches = [];
-                for (const queryFragment of searchQuery.split(" OR ")) {
-                    matches.push(...entry.content.matchAll(new RegExp(queryFragment, "gi")));
-                }
-
-                if (matches.length == 0) continue;
-
-                if (monthCounts[entry.date.substring(0, 7)]) monthCounts[entry.date.substring(0, 7)]++;
-                else monthCounts[entry.date.substring(0, 7)] = 1;
+            if (event.ctrlKey) {
+                openPlot();
+            } else {
+                const activeResult = document.querySelector(".result.active") as HTMLElement;
+                if (activeResult) activeResult.click();
             }
-
-            const startMonth = (await db.entries.toArray())[0].date.substring(0, 7);
-            const endMonth = `${new Date().getFullYear()}-${new Date().getMonth() + 1}`;
-            const username = localStorage.getItem("username");
-            const data = JSON.stringify(monthCounts);
-
-            window.open(`https://simondmc.com/journal-plot?q=${searchQuery}&u=${username}&s=${startMonth}&e=${endMonth}&d=${data}`);
         }
     }
 
@@ -200,9 +205,9 @@ export default function Home() {
     return (
         <main className="search">
             <div className="search-wrap">
-                <input id="search-field" placeholder="Search..." onInput={search} autoFocus onKeyDown={navigate} />
-                <div id="search-icon">
-                    <FontAwesomeIcon icon={faSearch} />
+                <input value={searchQuery} id="search-field" placeholder="Search..." onInput={search} autoFocus onKeyDown={navigate} />
+                <div id="plot-button" onClick={openPlot}>
+                    <FontAwesomeIcon icon={faChartLine} />
                 </div>
                 <p id="result-count"></p>
                 <div className="results">
