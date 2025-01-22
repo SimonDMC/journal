@@ -29,6 +29,8 @@ export default function Home() {
         const div = document.createElement("div");
         div.innerHTML = entry.content;
         entry.content = div.innerText;
+        // replace "s
+        entry.content = entry.content.replaceAll("“", '"').replaceAll("”", '"');
         return entry;
     });
 
@@ -99,7 +101,7 @@ export default function Home() {
 
     async function search() {
         const searchField = document.getElementById("search-field") as HTMLInputElement;
-        const searchQuery = searchField.value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        const searchQuery = searchField.value;
         setSearchQuery(searchQuery);
         const resultCount = document.getElementById("result-count") as HTMLParagraphElement;
 
@@ -121,7 +123,7 @@ export default function Home() {
         for (const entry of entries ?? []) {
             const matches: RegExpExecArray[] = [];
             for (const queryFragment of searchQuery.split(" OR ")) {
-                matches.push(...entry.content.matchAll(new RegExp(queryFragment, "gi")));
+                matches.push(...entry.content.matchAll(new RegExp(queryFragment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi")));
             }
 
             const searchResult = { date: entry.date, matches: [] } as SearchResultType;
@@ -179,7 +181,7 @@ export default function Home() {
     return (
         <main className="search">
             <div className="search-wrap">
-                <input value={searchQuery} id="search-field" placeholder="Search..." onInput={search} autoFocus onKeyDown={navigate} />
+                <input id="search-field" placeholder="Search..." onInput={search} autoFocus onKeyDown={navigate} />
                 <a id="plot-button" href={`/search-plot?q=${searchQuery}`}>
                     <FontAwesomeIcon icon={faChartLine} />
                 </a>
