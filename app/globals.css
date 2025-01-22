@@ -66,3 +66,11 @@ body {
 svg.svg-inline--fa {
     max-height: 1em;
 }
+
+a.back-arrow {
+    font-size: 2rem;
+    color: white;
+    position: absolute;
+    top: 0.2em;
+    left: 0.5em;
+}

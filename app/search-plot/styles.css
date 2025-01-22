@@ -1,0 +1,19 @@
+.wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100svh;
+    gap: 2.5em;
+}
+
+#heading {
+    font-feature-settings: "ss03";
+    font-size: 3.5em;
+    font-weight: 600;
+}
+
+.height-fix {
+    height: 75vh;
+    width: 80vw;
+}

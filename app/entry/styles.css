@@ -75,14 +75,6 @@ main.date {
     display: block;
 }
 
-main.date a.back {
-    font-size: 2em;
-    color: white;
-    position: absolute;
-    top: 0.2em;
-    left: 0.5em;
-}
-
 #loadingEntry {
     position: absolute;
     top: 50%;

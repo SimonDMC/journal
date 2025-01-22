@@ -68,14 +68,6 @@ main.search {
     scroll-behavior: smooth;
 }
 
-main.search a.back {
-    font-size: 2rem;
-    color: white;
-    position: absolute;
-    top: 0.2em;
-    left: 0.5em;
-}
-
 @media (max-width: 600px) {
     .search-wrap {
         height: 80vh;

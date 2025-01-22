@@ -173,7 +173,7 @@ function EntryContent() {
                 <div className="line"></div>
                 <Editor content={initialContent} onKeyUp={countWords} setContent={handleContentChange} date={date} />
             </div>
-            <Link href="/overview" className="back">
+            <Link href="/overview" className="back-arrow">
                 <FontAwesomeIcon icon={faArrowLeft} />
             </Link>
             <EditorBubble saveEntry={save} mood={mood} location={location} year={date.substring(0, 4)} />
