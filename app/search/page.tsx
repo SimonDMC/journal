@@ -49,6 +49,12 @@ export default function Home() {
                 router.push("/overview");
                 event.preventDefault();
             }
+
+            // focus input on /
+            if (event.key === "/" && document.activeElement?.id != "search-field") {
+                document.getElementById("search-field")?.focus();
+                event.preventDefault();
+            }
         };
         document.addEventListener("keydown", keydown);
 
