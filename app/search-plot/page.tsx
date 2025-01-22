@@ -3,7 +3,7 @@
 import "./styles.css";
 import { db } from "@/database/db";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { Chart, LinearScale, CategoryScale, PointElement, LineElement, Tooltip, ChartOptions, defaults } from "chart.js";
 import Link from "next/link";
@@ -32,8 +32,7 @@ const MONTH_NAMES = [
     "December",
 ];
 
-export default function SearchPlot() {
-    const [query, setQuery] = useState<string>();
+function SearchPlotContent() {
     const [results, setResults] = useState<{ [key: string]: number }>({});
     const searchParams = useSearchParams();
     const router = useRouter();
@@ -57,7 +56,6 @@ export default function SearchPlot() {
             const results: { [key: string]: number } = {};
 
             if (!query) return;
-            setQuery(query);
 
             let year = parseInt(startDate.substring(0, 4));
             let month = parseInt(startDate.substring(5, 7));
@@ -160,5 +158,13 @@ export default function SearchPlot() {
                 <FontAwesomeIcon icon={faArrowLeft} />
             </Link>
         </main>
+    );
+}
+
+export default function SearchPlot() {
+    return (
+        <Suspense>
+            <SearchPlotContent />
+        </Suspense>
     );
 }
