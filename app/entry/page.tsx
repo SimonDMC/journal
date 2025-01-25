@@ -2,15 +2,16 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import "./styles.css";
-import { MutableRefObject, Suspense, useEffect, useRef, useState } from "react";
+import { MutableRefObject, Ref, Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { today } from "@/components/calendar/Calendar.tsx";
 import dynamic from "next/dynamic";
-import EditorBubble from "@/components/editor-bubble/EditorBubble.tsx";
+import EditorBubble, { moods } from "@/components/editor-bubble/EditorBubble.tsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { db } from "@/database/db.ts";
 import { syncEntry } from "@/database/sync.ts";
+import Select from "react-select/dist/declarations/src/Select";
 
 const Editor = dynamic(() => import("../../components/editor/Editor.tsx"), { ssr: false });
 
@@ -18,6 +19,7 @@ function EntryContent() {
     const word_count = useRef(0);
     const router = useRouter();
     const contentRef = useRef("");
+    const moodSelectRef: Ref<Select> = useRef(null);
     const searchParams = useSearchParams();
     const date = searchParams.get("date") as string;
 
@@ -80,10 +82,32 @@ function EntryContent() {
         });
 
         const keyDown = async (event: KeyboardEvent) => {
-            // exit on esc
             if (event.key === "Escape") {
-                router.back();
                 event.preventDefault();
+
+                // unfocus text on esc
+                if (document.activeElement?.tagName != "BODY") {
+                    (document.activeElement as HTMLElement).blur();
+                } else {
+                    // or exit if text is unfocused
+                    router.back();
+                }
+            }
+
+            // select mood
+            if (event.key == "m" && !document.activeElement?.classList.contains("ck-content") && moodSelectRef.current) {
+                moodSelectRef.current.focus();
+            }
+
+            if (
+                parseInt(event.key) >= 1 &&
+                parseInt(event.key) <= 7 &&
+                moodSelectRef.current &&
+                document.activeElement?.id == "react-select-mood-input"
+            ) {
+                moodSelectRef.current.setValue([moods[parseInt(event.key) - 1]], "select-option");
+                mood.current = parseInt(event.key);
+                moodSelectRef.current.blur();
             }
 
             // capture ctrl + s
@@ -178,7 +202,13 @@ function EntryContent() {
             <Link href="/overview" className="back-arrow">
                 <FontAwesomeIcon icon={faArrowLeft} />
             </Link>
-            <EditorBubble saveEntry={save} mood={mood} location={location} year={date.substring(0, 4)} />
+            <EditorBubble
+                saveEntry={save}
+                mood={mood}
+                location={location}
+                year={date.substring(0, 4)}
+                ref={moodSelectRef as MutableRefObject<null>}
+            />
         </main>
     );
 }
