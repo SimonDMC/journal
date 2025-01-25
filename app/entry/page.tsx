@@ -35,8 +35,7 @@ function EntryContent() {
         }
 
         let prevText: string;
-        let prevMood = mood;
-        let prevLocation = location;
+        let prevMood = mood.current;
         let initialized = false;
 
         // Autosave every 10 seconds if on today's entry
@@ -49,19 +48,21 @@ function EntryContent() {
                     return;
                 }
 
-                if (initialized && text && (text !== prevText || mood !== prevMood || location !== prevLocation)) {
+                if (initialized && text && (text !== prevText || mood.current !== prevMood)) {
                     console.log("Autosaving locally");
                     saveEntry(text, date);
                     prevText = text;
-                    prevMood = mood;
-                    prevLocation = location;
+                    prevMood = mood.current;
                 }
             }, 10000);
         }
 
         // load entry
         db.entries.get(date).then(async (data) => {
-            if (!data) return;
+            if (!data) {
+                initialized = true;
+                return;
+            }
 
             if (data.mood) {
                 mood.current = data.mood;
@@ -71,6 +72,7 @@ function EntryContent() {
             }
 
             contentRef.current = data.content;
+            prevText = data.content;
             setInitialContent(data.content);
 
             initialized = true;
