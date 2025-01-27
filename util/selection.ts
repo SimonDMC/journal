@@ -90,3 +90,18 @@ function getCaretPixelTop(node: HTMLElement, offsetY: number = 0): number | null
 
     return null; // fallback if selection isn't available
 }
+export function moveCursorToEnd(contentEle: HTMLElement) {
+    const range = document.createRange();
+    const selection = window.getSelection();
+    range.setStart(contentEle, contentEle.childNodes.length);
+    range.collapse(true);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+
+    const lastChild = contentEle.lastElementChild!;
+    const lastLineRect = lastChild.getBoundingClientRect();
+    const contentRect = contentEle.getBoundingClientRect();
+
+    // scroll into view if too far down
+    if (lastLineRect.bottom > contentRect.bottom) lastChild!.scrollIntoView();
+}

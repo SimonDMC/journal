@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { highlightNthOccurrence } from "../../util/selection";
+import { highlightNthOccurrence, moveCursorToEnd } from "../../util/selection";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 
 import {
@@ -26,22 +26,6 @@ import {
 import "ckeditor5/ckeditor5.css";
 import { today } from "../calendar/Calendar";
 import { useSearchParams } from "next/navigation";
-
-export function moveCursorToEnd(contentEle: HTMLElement) {
-    const range = document.createRange();
-    const selection = window.getSelection();
-    range.setStart(contentEle, contentEle.childNodes.length);
-    range.collapse(true);
-    selection?.removeAllRanges();
-    selection?.addRange(range);
-
-    const lastChild = contentEle.lastElementChild!;
-    const lastLineRect = lastChild.getBoundingClientRect();
-    const contentRect = contentEle.getBoundingClientRect();
-
-    // scroll into view if too far down
-    if (lastLineRect.bottom > contentRect.bottom) lastChild!.scrollIntoView();
-}
 
 export default function App(props: { content: string; onKeyUp: GetCallback<BaseEvent>; setContent: Function; date: string }) {
     const [isLayoutReady, setIsLayoutReady] = useState(false);

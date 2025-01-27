@@ -2,7 +2,6 @@ import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 import ToastProvider from "@/components/toast-provider/ToastProvider";
 import { Metadata, Viewport } from "next";
-import { useEffect } from "react";
 
 export const metadata: Metadata = {
     title: "Journal",
