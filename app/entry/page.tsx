@@ -12,6 +12,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { db } from "@/database/db.ts";
 import { syncEntry } from "@/database/sync.ts";
 import Select from "react-select/dist/declarations/src/Select";
+import { moveCursorToEnd } from "../../components/editor/Editor.tsx";
 
 const Editor = dynamic(() => import("../../components/editor/Editor.tsx"), { ssr: false });
 
@@ -108,6 +109,12 @@ function EntryContent() {
                 moodSelectRef.current.setValue([moods[parseInt(event.key) - 1]], "select-option");
                 mood.current = parseInt(event.key);
                 moodSelectRef.current.blur();
+            }
+
+            // refocus entry
+            if ((event.key == "Enter" || event.key == " ") && !document.activeElement?.classList.contains("ck-content")) {
+                moveCursorToEnd(document.querySelector(".ck-content")!);
+                event.preventDefault();
             }
 
             // capture ctrl + s

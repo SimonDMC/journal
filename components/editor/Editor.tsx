@@ -27,6 +27,22 @@ import "ckeditor5/ckeditor5.css";
 import { today } from "../calendar/Calendar";
 import { useSearchParams } from "next/navigation";
 
+export function moveCursorToEnd(contentEle: HTMLElement) {
+    const range = document.createRange();
+    const selection = window.getSelection();
+    range.setStart(contentEle, contentEle.childNodes.length);
+    range.collapse(true);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+
+    const lastChild = contentEle.lastElementChild!;
+    const lastLineRect = lastChild.getBoundingClientRect();
+    const contentRect = contentEle.getBoundingClientRect();
+
+    // scroll into view if too far down
+    if (lastLineRect.bottom > contentRect.bottom) lastChild!.scrollIntoView();
+}
+
 export default function App(props: { content: string; onKeyUp: GetCallback<BaseEvent>; setContent: Function; date: string }) {
     const [isLayoutReady, setIsLayoutReady] = useState(false);
     const editorRef = useRef(null);
@@ -73,22 +89,6 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
             props.setContent(editorData); // send content up to parent
         }
     }
-
-    const moveCursorToEnd = (contentEle: HTMLElement) => {
-        const range = document.createRange();
-        const selection = window.getSelection();
-        range.setStart(contentEle, contentEle.childNodes.length);
-        range.collapse(true);
-        selection?.removeAllRanges();
-        selection?.addRange(range);
-
-        const lastChild = contentEle.lastElementChild!;
-        const lastLineRect = lastChild.getBoundingClientRect();
-        const contentRect = contentEle.getBoundingClientRect();
-
-        // scroll into view if too far down
-        if (lastLineRect.bottom > contentRect.bottom) lastChild!.scrollIntoView();
-    };
 
     function handleLineBreaks(text: string) {
         return text
