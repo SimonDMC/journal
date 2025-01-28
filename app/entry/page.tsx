@@ -13,6 +13,7 @@ import { db } from "@/database/db.ts";
 import { syncEntry } from "@/database/sync.ts";
 import Select from "react-select/dist/declarations/src/Select";
 import { moveCursorToEnd } from "../../util/selection.ts";
+import { enforceAuth, RouteType } from "@/util/auth.ts";
 
 const Editor = dynamic(() => import("../../components/editor/Editor.tsx"), { ssr: false });
 
@@ -28,14 +29,8 @@ function EntryContent() {
     const mood: MutableRefObject<number | null> = useRef(null);
     const location: MutableRefObject<number | null> = useRef(null);
 
-    // wrapped to only run on the client
     useEffect(() => {
-        // check login status
-        if (!localStorage.getItem("logged-in")) {
-            router.push("/login");
-        } else if (!sessionStorage.getItem("codeword")) {
-            router.push("/codeword");
-        }
+        enforceAuth(router, RouteType.Authed);
 
         let prevText: string;
         let prevMood = mood.current;

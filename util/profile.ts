@@ -96,7 +96,7 @@ export async function upload() {
             // wipe all local entries
             await db.entries.clear();
 
-            const res = await fetch(`${API_URL}/upload?codeword=${sessionStorage.getItem("codeword")}`, {
+            const res = await fetch(`${API_URL}/upload`, {
                 method: "POST",
                 body: JSON.stringify(json.results ?? json),
             });
@@ -117,4 +117,12 @@ export async function upload() {
 export async function wipeLocalDatabase() {
     await db.entries.clear();
     successToast("Database wiped successfully.");
+}
+
+export function getUserName() {
+    return localStorage.getItem("username") ?? "User";
+}
+
+export function getOptions() {
+    return JSON.parse(localStorage.getItem(`options-${getUserName()}`) ?? "{}");
 }

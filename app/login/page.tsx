@@ -4,25 +4,16 @@ import { useRouter } from "next/navigation";
 import { API_URL } from "../../util/config";
 import "./styles.css";
 import { useEffect } from "react";
-import { Slide, toast } from "react-toastify";
 import { checkForUpdate } from "@/util/update";
 import { db } from "@/database/db";
 import { errorToast } from "@/util/toast";
+import { enforceAuth, RouteType } from "@/util/auth";
 
 export default function Home() {
     const router = useRouter();
 
-    // wrapped to only run on the client
     useEffect(() => {
-        // check login status
-        if (localStorage.getItem("logged-in") && sessionStorage.getItem("codeword")) {
-            router.push("/overview");
-        } else if (localStorage.getItem("logged-in")) {
-            router.push("/codeword");
-        } else {
-            sessionStorage.removeItem("codeword");
-        }
-
+        enforceAuth(router, RouteType.Unauthed);
         checkForUpdate();
 
         // add event listener to login on enter

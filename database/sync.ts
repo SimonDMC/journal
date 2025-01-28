@@ -20,7 +20,7 @@ export async function syncDatabase() {
     // - differing entries
     // - excess entries
 
-    const clientSyncResponse = await fetch(`${API_URL}/client-sync?codeword=${sessionStorage.getItem("codeword")}`, {
+    const clientSyncResponse = await fetch(`${API_URL}/client-sync`, {
         method: "POST",
         body: JSON.stringify(entries),
     });
@@ -118,7 +118,7 @@ export async function syncDatabase() {
     }
 
     if (serverSyncEntries.length > 0) {
-        const serverSyncResponse = await fetch(`${API_URL}/server-sync?codeword=${sessionStorage.getItem("codeword")}`, {
+        const serverSyncResponse = await fetch(`${API_URL}/server-sync`, {
             method: "POST",
             body: JSON.stringify(serverSyncEntries),
         });
@@ -137,7 +137,7 @@ export async function syncEntry(date: string) {
     const encryptedContent = await encryptEntry(entry.content);
     if (!encryptedContent) return false;
 
-    fetch(`${API_URL}/entry/${date}?codeword=${sessionStorage.getItem("codeword")}`, {
+    fetch(`${API_URL}/entry/${date}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

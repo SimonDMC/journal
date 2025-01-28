@@ -12,6 +12,7 @@ import { syncDatabase } from "@/database/sync";
 import { checkForUpdate } from "@/util/update";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/database/db";
+import { enforceAuth, RouteType } from "@/util/auth";
 
 export default function Home() {
     const [oneYearAgo, setOneYearAgo] = useState("");
@@ -22,15 +23,8 @@ export default function Home() {
     const entries = entriesFull.map((entry) => entry.date);
     const wordCount = entriesFull.reduce((acc, cur) => (acc += cur.word_count), 0);
 
-    // wrapped to only run on the client
     useEffect(() => {
-        // check login status
-        if (!localStorage.getItem("logged-in")) {
-            router.push("/login");
-        } else if (!sessionStorage.getItem("codeword")) {
-            router.push("/codeword");
-        }
-
+        enforceAuth(router, RouteType.Authed);
         checkForUpdate();
         syncDatabase();
 
@@ -129,7 +123,7 @@ export default function Home() {
             <Link href={`/entry?date=${oneYearAgo}`} id="lastYear" className="nav-link inactive">
                 One Year Ago
             </Link>
-            <ProfileIcon></ProfileIcon>
+            <ProfileIcon />
             <div className="stats">
                 <p className="entryCount">Entry Count: {commaFormat(entries.length)}</p>
                 <p className="wordCount">Total Words: {commaFormat(wordCount)}</p>

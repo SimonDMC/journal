@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faChartLine } from "@fortawesome/free-solid-svg-icons";
 import { db } from "@/database/db";
 import { useLiveQuery } from "dexie-react-hooks";
+import { enforceAuth, RouteType } from "@/util/auth";
 
 export type JournalEntry = {
     date: string;
@@ -34,14 +35,8 @@ export default function Home() {
         return entry;
     });
 
-    // wrapped to only run on the client
     useEffect(() => {
-        // check login status
-        if (!localStorage.getItem("logged-in")) {
-            router.push("/login");
-        } else if (!sessionStorage.getItem("codeword")) {
-            router.push("/codeword");
-        }
+        enforceAuth(router, RouteType.Authed);
 
         const keydown = async (event: KeyboardEvent) => {
             // exit on esc

@@ -9,6 +9,7 @@ import { Chart, LinearScale, CategoryScale, PointElement, LineElement, Tooltip, 
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { enforceAuth, RouteType } from "@/util/auth";
 
 Chart.register(LinearScale, CategoryScale, PointElement, LineElement, Tooltip);
 
@@ -38,6 +39,8 @@ function SearchPlotContent() {
     const router = useRouter();
 
     useEffect(() => {
+        enforceAuth(router, RouteType.Authed);
+
         if (!searchParams.get("q")) {
             router.push("/overview");
             return;

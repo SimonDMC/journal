@@ -16,6 +16,7 @@
     font-size: 1.2em;
     padding: 0.2em 0.5em;
     color: #ccc;
+    user-select: none;
 }
 
 .dropdown-item {

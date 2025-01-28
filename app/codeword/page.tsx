@@ -1,25 +1,19 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { API_URL } from "../../util/config";
 import "./styles.css";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { errorToast } from "@/util/toast";
+import { enforceAuth, logout, RouteType } from "@/util/auth";
+import { getOptions } from "@/util/profile";
 
 export default function Home() {
     const router = useRouter();
 
-    // wrapped to only run on the client
     useEffect(() => {
-        // check login status
-        if (localStorage.getItem("logged-in") && sessionStorage.getItem("codeword")) {
-            router.push("/overview");
-        } else if (!localStorage.getItem("logged-in")) {
-            router.push("/login");
-        }
-    });
+        enforceAuth(router, RouteType.Auth2FA);
+    }, []);
 
     function selectInput() {
         const input = document.getElementById("codeword") as HTMLInputElement;
@@ -39,45 +33,20 @@ export default function Home() {
         const display = document.getElementById("codeword-display") as HTMLElement;
 
         if (event.key == "Enter") {
-            display.innerText = "...";
+            const encoder = new TextEncoder();
+            const data = encoder.encode(input.value);
+            const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
-            await fetch(`${API_URL}/codeword`, {
-                method: "POST",
-                body: input.value,
-            })
-                .then(async (res) => {
-                    if (res.ok) {
-                        console.log("Codeword verified.");
-                        display.innerText = "☺";
-                        display.classList.add("smiley");
-
-                        sessionStorage.setItem("codeword", input.value);
-                        router.push("/overview");
-                    } else {
-                        display.innerText = "x";
-                        input.value = "";
-
-                        // probably missing cookie or something, log out
-                        if (res.status == 401) {
-                            localStorage.removeItem("logged-in");
-                            router.push("/login");
-                        }
-                    }
-                })
-                .catch((err) => {
-                    errorToast("Something went wrong. Please try again later.");
-                    console.error(err);
-                });
+            if (hashHex == getOptions().codeword) {
+                sessionStorage.setItem("2fa-authed", "true");
+                router.push("/overview");
+            } else {
+                display.innerText = "x";
+                input.value = "";
+            }
         }
-    }
-
-    async function logout() {
-        await fetch(`${API_URL}/logout`, {
-            method: "POST",
-        });
-        localStorage.removeItem("logged-in");
-        sessionStorage.removeItem("codeword");
-        router.push("/login");
     }
 
     return (
@@ -86,7 +55,7 @@ export default function Home() {
             <div className="visible">
                 <span id="codeword-display">0</span>
             </div>
-            <a onClick={logout} className="logout-icon">
+            <a onClick={() => logout(router)} className="logout-icon">
                 <FontAwesomeIcon icon={faArrowRightFromBracket} />
             </a>
         </main>

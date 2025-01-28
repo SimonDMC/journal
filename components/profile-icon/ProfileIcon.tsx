@@ -1,5 +1,5 @@
 import "./ProfileIcon.css";
-import { uploadKey, downloadKey, download, upload, wipeLocalDatabase } from "@/util/profile";
+import { uploadKey, downloadKey, download, upload, wipeLocalDatabase, getOptions, getUserName } from "@/util/profile";
 import { forceReload } from "@/util/update";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,20 +7,22 @@ import Dropdown from "../dropdown/Dropdown";
 import DropdownItem from "../dropdown/DropdownItem";
 import DropdownSeparator from "../dropdown/DropdownSeparator";
 import DropdownText from "../dropdown/DropdownText";
-import { API_URL } from "@/util/config";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import DropdownHeading from "../dropdown/DropdownHeading";
-import { successToast } from "@/util/toast";
+import { logout } from "@/util/auth";
+import { Options, setCodeword, setupBioAuth, switch2fa } from "@/util/options";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+    const [options, setOptions] = useState({} as Options);
     const router = useRouter();
     const username = useRef("User");
 
     useEffect(() => {
-        username.current = localStorage.getItem("username") ?? "User";
+        username.current = getUserName();
 
+        // close when clicking outside of dropdown
         const clickOutside = (e: MouseEvent) => {
             if (!document.getElementById("profile-dropdown")?.contains(e.target as HTMLElement)) {
                 setProfileDropdownOpen(false);
@@ -28,19 +30,12 @@ export default function ProfileIcon() {
         };
         document.addEventListener("click", clickOutside);
 
+        setOptions(getOptions());
+
         return () => {
             document.removeEventListener("click", clickOutside);
         };
     }, []);
-
-    async function logout() {
-        await fetch(`${API_URL}/logout`, {
-            method: "POST",
-        });
-        localStorage.removeItem("logged-in");
-        sessionStorage.removeItem("codeword");
-        router.push("/login");
-    }
 
     return (
         <div className="top-right" id="profile-dropdown">
@@ -64,6 +59,16 @@ export default function ProfileIcon() {
                     onClick={upload}
                 />
                 <DropdownSeparator />
+                <DropdownHeading label="2FA" />
+                <DropdownItem
+                    label="Switch 2FA"
+                    description="Switch between no 2fa, codeword and biometric auth"
+                    onClick={() => switch2fa(options, setOptions)}
+                />
+                {/* only render "set codeword" or "setup bioauth" if the corresponding settings are selected */}
+                {options["2fa_method"] == 1 && <DropdownItem label="Set Codeword" onClick={() => setCodeword(options, setOptions)} />}
+                {options["2fa_method"] == 2 && <DropdownItem label="Setup BioAuth" onClick={() => setupBioAuth(options, setOptions)} />}
+                <DropdownSeparator />
                 <DropdownHeading label="Debug" />
                 <DropdownItem label="Force Reload" description="Delete local page cache and reload" onClick={forceReload} />
                 <DropdownItem
@@ -71,9 +76,8 @@ export default function ProfileIcon() {
                     description="Delete all locally saved entries (resyncs with the database on page reload)"
                     onClick={wipeLocalDatabase}
                 />
-                {/* <DropdownItem label="Sample Toast" onClick={() => successToast("Toast!")} /> */}
                 <DropdownSeparator />
-                <DropdownItem label="Log Out" onClick={logout} />
+                <DropdownItem label="Log Out" onClick={() => logout(router)} />
             </Dropdown>
         </div>
     );

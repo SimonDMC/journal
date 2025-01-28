@@ -1,0 +1,17 @@
+.bioauth {
+    height: 100svh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.bioauth .logout-icon svg {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    font-size: min(2em, 6vw);
+    cursor: pointer;
+    z-index: 5;
+}

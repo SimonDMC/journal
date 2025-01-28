@@ -1,6 +1,6 @@
 {
     "name": "Journal",
-    "description": "You keep your experiences here",
+    "description": "Until I can preserve my memories indefinitely, this will have to do.",
     "icons": [
         {
             "src": "maskable.png",
@@ -10,7 +10,7 @@
         }
     ],
     "id": "com.simondmc.journal",
-    "start_url": "https://journal.simondmc.com/codeword",
+    "start_url": "https://journal.simondmc.com",
     "display": "standalone",
     "theme_color": "#ffffff",
     "background_color": "#000000"
