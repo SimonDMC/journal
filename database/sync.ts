@@ -20,12 +20,17 @@ export async function syncDatabase() {
     // - differing entries
     // - excess entries
 
-    const clientSyncResponse = await fetch(`${API_URL}/client-sync`, {
-        method: "POST",
-        body: JSON.stringify(entries),
-    });
+    let clientSyncResponse;
+    try {
+        clientSyncResponse = await fetch(`${API_URL}/client-sync`, {
+            method: "POST",
+            body: JSON.stringify(entries),
+        });
 
-    if (!clientSyncResponse.ok) {
+        if (!clientSyncResponse.ok) {
+            throw new Error();
+        }
+    } catch (e) {
         warningToast("Sync failed (client request)");
         return;
     }
