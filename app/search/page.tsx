@@ -94,7 +94,7 @@ export default function Home() {
             if (event.ctrlKey) {
                 document.getElementById("plot-button")?.click();
             } else {
-                const activeResult = document.querySelector(".result.active") as HTMLElement;
+                const activeResult = document.querySelector(".result.active :nth-child(2)") as HTMLElement;
                 if (activeResult) activeResult.click();
             }
         }
