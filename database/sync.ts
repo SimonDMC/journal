@@ -31,7 +31,8 @@ export async function syncDatabase() {
             throw new Error();
         }
     } catch (e) {
-        warningToast("Sync failed (client request)");
+        // show offline mode
+        document.getElementById("offline")?.classList.remove("invis");
         return;
     }
 

@@ -111,6 +111,9 @@ export default function Home() {
             <div id="keyless-bar" className="hidden">
                 Warning: Missing Key
             </div>
+            <div id="offline" className="invis">
+                Offline Mode
+            </div>
             <Calendar
                 month={new Date(new Date(dayAdjustedTime).getFullYear(), month, 1).toISOString().substring(0, 10)}
                 previousMonth={previousMonth}
