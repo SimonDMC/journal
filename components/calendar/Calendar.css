@@ -106,8 +106,8 @@ span.offset:first-of-type {
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 500px) {
     .calendar {
-        margin-bottom: 0.8em;
+        border-radius: .5em;
     }
 }

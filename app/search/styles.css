@@ -69,7 +69,7 @@ main.search {
     scroll-behavior: smooth;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 500px) {
     .search-wrap {
         height: 80vh;
     }

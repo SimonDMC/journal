@@ -82,8 +82,8 @@ export default function Home() {
             const lastYearString = lastYear.toISOString().substring(0, 10);
             setOneYearAgo(lastYearString);
             const lastYearLink = document.getElementById("lastYear") as HTMLAnchorElement;
-            if (entries.find((entry) => entry === lastYearString)) {
-                lastYearLink.classList.remove("inactive");
+            if (!entries.find((entry) => entry === lastYearString)) {
+                lastYearLink.classList.add("inactive");
             }
         } else {
             entriesLoaded.current = true;
@@ -120,7 +120,7 @@ export default function Home() {
             <Link href={`/entry?date=${today}`} id="today" className="nav-link">
                 Today
             </Link>
-            <Link href={`/entry?date=${oneYearAgo}`} id="lastYear" className="nav-link inactive">
+            <Link href={`/entry?date=${oneYearAgo}`} id="lastYear" className="nav-link">
                 One Year Ago
             </Link>
             <ProfileIcon />

@@ -48,14 +48,12 @@ main {
 
 .controls {
     position: absolute;
-    bottom: calc(0.3em * 1.6);
-    right: 0.9em;
-    display: flex;
-    gap: 1.4em;
+    bottom: 1em;
+    right: 1em;
 }
 
 .controls a {
-    font-size: min(2em, 6vw);
+    font-size: 2em;
     cursor: pointer;
 }
 
@@ -77,13 +75,17 @@ main {
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 500px) {
 
     .stats,
     .controls {
         margin-bottom: 1.2em;
         margin-left: 0.5em;
         margin-right: 0.5em;
+    }
+
+    .stats {
+        font-size: min(1.6em, 6vw);
     }
 
     #keyless-bar {

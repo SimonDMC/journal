@@ -89,7 +89,7 @@ form {
     }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 500px) {
     .input {
         flex-direction: column;
         justify-content: center;
