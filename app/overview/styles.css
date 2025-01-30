@@ -102,7 +102,7 @@ main {
     }
 
     .stats {
-        font-size: min(1.6em, 6vw);
+        font-size: min(1.6em, 5vw);
     }
 
     #keyless-bar {
