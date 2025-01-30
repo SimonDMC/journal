@@ -96,7 +96,7 @@ main {
 
     .stats,
     .controls {
-        margin-bottom: 1.2em;
+        margin-bottom: .5em;
         margin-left: 0.5em;
         margin-right: 0.5em;
     }
