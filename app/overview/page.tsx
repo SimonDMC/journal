@@ -76,17 +76,17 @@ export default function Home() {
     }, []);
 
     useEffect(() => {
-        if (entriesLoaded.current) {
+        if (entries.length > 0) {
             const lastYear = new Date(dayAdjustedTime);
             lastYear.setFullYear(lastYear.getFullYear() - 1);
             const lastYearString = lastYear.toISOString().substring(0, 10);
             setOneYearAgo(lastYearString);
             const lastYearLink = document.getElementById("lastYear") as HTMLAnchorElement;
             if (!entries.find((entry) => entry === lastYearString)) {
+                console.log(entries);
+
                 lastYearLink.classList.add("inactive");
             }
-        } else {
-            entriesLoaded.current = true;
         }
     }, [entries]);
 
