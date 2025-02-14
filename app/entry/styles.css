@@ -1,4 +1,4 @@
-main.date {
+main.entry {
     display: flex;
     width: 100%;
     justify-content: center;
@@ -55,6 +55,11 @@ main.date {
     scrollbar-width: none;
 }
 
+/* i wish i knew why this is necessary */
+.safari .ck-content {
+    background-size: 100% calc(1.8em - 0.3px);
+}
+
 .ck-content code {
     line-height: 1em;
 }
@@ -96,7 +101,7 @@ main.date {
 }
 
 @media (max-width: 1350px) {
-    main.date {
+    main.entry {
         justify-content: flex-start;
     }
 

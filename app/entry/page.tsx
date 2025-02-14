@@ -26,11 +26,20 @@ function EntryContent() {
     const date = searchParams.get("date") as string;
 
     const [initialContent, setInitialContent] = useState("");
+    const [isSafari, setIsSafari] = useState(false);
     const mood: MutableRefObject<number | null> = useRef(null);
     const location: MutableRefObject<number | null> = useRef(null);
 
     useEffect(() => {
         enforceAuth(router, RouteType.Authed);
+
+        setIsSafari(
+            (navigator.vendor &&
+                navigator.vendor.indexOf("Apple") > -1 &&
+                navigator.userAgent &&
+                navigator.userAgent.indexOf("CriOS") == -1 &&
+                navigator.userAgent.indexOf("FxiOS") == -1) as boolean
+        );
 
         let prevText: string;
         let prevMood = mood.current;
@@ -194,7 +203,7 @@ function EntryContent() {
     }
 
     return (
-        <main className="date">
+        <main className={`entry ${isSafari ? "safari" : ""}`}>
             <div className="sidebar invis"></div>
             <div id="loadingEntry">Loading...</div>
             <div className="content">
