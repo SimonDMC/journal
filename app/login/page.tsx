@@ -57,7 +57,7 @@ export default function Home() {
                 await db.entries.clear();
             }
             localStorage.setItem("username", username);
-            router.push("/codeword");
+            router.push("/overview");
         } else {
             errorToast("Incorrect username or password.");
         }
