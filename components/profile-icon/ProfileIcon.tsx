@@ -1,5 +1,5 @@
 import "./ProfileIcon.css";
-import { uploadKey, downloadKey, download, upload, wipeLocalDatabase, getOptions, getUserName } from "@/util/profile";
+import { uploadKey, downloadKey, download, upload, wipeLocalDatabase, getOptions, getUserName, changePassword } from "@/util/profile";
 import { forceReload } from "@/util/update";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -58,6 +58,7 @@ export default function ProfileIcon() {
                     description="Import entries from a JSON file - DELETES ALL CURRENTLY SAVED ENTRIES FROM THE DATABASE!"
                     onClick={upload}
                 />
+                <DropdownItem label="Change Password" onClick={changePassword} />
                 <DropdownSeparator />
                 <DropdownHeading label="2FA" />
                 <DropdownItem
@@ -67,7 +68,7 @@ export default function ProfileIcon() {
                 />
                 {/* only render "set codeword" or "setup bioauth" if the corresponding settings are selected */}
                 {options["2fa_method"] == 1 && <DropdownItem label="Set Codeword" onClick={() => setCodeword(options, setOptions)} />}
-                {options["2fa_method"] == 2 && <DropdownItem label="Setup BioAuth" onClick={() => setupBioAuth(options, setOptions)} />}
+                {options["2fa_method"] == 2 && <DropdownItem label="Setup Biometry" onClick={() => setupBioAuth(options, setOptions)} />}
                 <DropdownSeparator />
                 <DropdownHeading label="Debug" />
                 <DropdownItem label="Force Reload" description="Delete local page cache and reload" onClick={forceReload} />

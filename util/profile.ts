@@ -57,10 +57,8 @@ export async function download() {
 
 export async function upload() {
     if (
-        !confirm(`
-            This operation will wipe all your existing entries.
-            Are you sure you want to continue?
-        `)
+        !confirm(`This operation will wipe all your existing entries.
+Are you sure you want to continue?`)
     )
         return;
 
@@ -117,6 +115,22 @@ export async function upload() {
 export async function wipeLocalDatabase() {
     await db.entries.clear();
     successToast("Database wiped successfully.");
+}
+
+export async function changePassword() {
+    const password = prompt("Set a new password:");
+    if (!password) return;
+
+    const res = await fetch(`${API_URL}/change-password`, {
+        method: "POST",
+        body: JSON.stringify({ password }),
+    });
+
+    if (res.ok) {
+        successToast("Password changed successfully!");
+    } else {
+        errorToast("Failed to change password.");
+    }
 }
 
 export function getUserName() {
