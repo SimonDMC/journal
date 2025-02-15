@@ -206,7 +206,7 @@ function EntryContent() {
         <main className={`entry ${isSafari ? "safari" : ""}`}>
             <div className="sidebar invis"></div>
             <div id="loadingEntry">Loading...</div>
-            <div className="content">
+            <div className={`content ${date?.substring(0, 4) === "2024" ? "short" : ""}`}>
                 <div className="line"></div>
                 <Editor content={initialContent} onKeyUp={countWords} setContent={handleContentChange} date={date} />
             </div>

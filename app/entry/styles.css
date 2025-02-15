@@ -125,8 +125,12 @@ main.entry {
         margin-bottom: 1em;
     }
 
-    .content {
+    .content.short {
         margin-bottom: 17.5rem;
+    }
+
+    .content {
+        margin-bottom: 15.5rem;
         margin-top: 3em;
         height: 100%;
     }
