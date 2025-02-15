@@ -1,4 +1,4 @@
-import { API_URL } from "./config";
+import { API_URL, KEY_GENERATOR } from "./config";
 import { today } from "@/components/calendar/Calendar";
 import { encryptEntry } from "./encryption";
 import { db } from "@/database/db";
@@ -131,6 +131,20 @@ export async function changePassword() {
     } else {
         errorToast("Failed to change password.");
     }
+}
+
+export async function generateKey() {
+    if (localStorage.getItem("key")) {
+        if (!confirm("You already have a key saved. Are you sure you want to generate a new one?")) return;
+    }
+
+    const key = await window.crypto.subtle.generateKey(KEY_GENERATOR, true, ["encrypt", "decrypt"]);
+    const exported = await window.crypto.subtle.exportKey("raw", key);
+    const buffer = new Uint8Array(exported);
+    const json = JSON.stringify([...buffer]);
+    localStorage.setItem("key", json);
+
+    successToast("Key generated!");
 }
 
 export function getUserName() {

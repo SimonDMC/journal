@@ -1,5 +1,15 @@
 import "./ProfileIcon.css";
-import { uploadKey, downloadKey, download, upload, wipeLocalDatabase, getOptions, getUserName, changePassword } from "@/util/profile";
+import {
+    uploadKey,
+    downloadKey,
+    download,
+    upload,
+    wipeLocalDatabase,
+    getOptions,
+    getUserName,
+    changePassword,
+    generateKey,
+} from "@/util/profile";
 import { forceReload } from "@/util/update";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -47,10 +57,11 @@ export default function ProfileIcon() {
                 <DropdownSeparator />
                 <DropdownHeading label="Actions" />
                 <DropdownItem
-                    label="Upload Key"
-                    description="Upload a local key to encrypt and decrypt entries with; used when communicating with the remote database"
-                    onClick={uploadKey}
+                    label="Generate Key"
+                    description="Generate a new key to encrypt and decrypt all of your entries with when communicating with the remote database"
+                    onClick={generateKey}
                 />
+                <DropdownItem label="Upload Key" description="Upload a key from a KEY file" onClick={uploadKey} />
                 <DropdownItem label="Download Key" description="Export the locally saved key into a KEY file" onClick={downloadKey} />
                 <DropdownItem label="Export" description="Export all entries saved locally into a JSON file" onClick={download} />
                 <DropdownItem

@@ -83,8 +83,6 @@ export default function Home() {
             setOneYearAgo(lastYearString);
             const lastYearLink = document.getElementById("lastYear") as HTMLAnchorElement;
             if (!entries.find((entry) => entry === lastYearString)) {
-                console.log(entries);
-
                 lastYearLink.classList.add("inactive");
             }
         }
