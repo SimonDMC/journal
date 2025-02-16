@@ -5,6 +5,7 @@
     display: none;
     overflow: hidden;
     background-color: black;
+    z-index: 2;
 }
 
 .dropdown.open {
