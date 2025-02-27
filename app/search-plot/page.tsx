@@ -10,6 +10,7 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { enforceAuth, RouteType } from "@/util/auth";
+import { MONTH_NAMES } from "@/util/months";
 
 Chart.register(LinearScale, CategoryScale, PointElement, LineElement, Tooltip);
 
@@ -17,21 +18,6 @@ defaults.borderColor = "#222";
 defaults.color = "#ccc";
 defaults.font.size = 13;
 defaults.font.family = "Inter";
-
-const MONTH_NAMES = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-];
 
 function SearchPlotContent() {
     const [results, setResults] = useState<{ [key: string]: number }>({});

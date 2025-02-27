@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { highlightNthOccurrence, moveCursorToEnd } from "../../util/selection";
+import { QuoteButton } from "../quote-button/QuoteButton";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 
 import {
@@ -47,7 +48,7 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
 
     const editorConfig = {
         toolbar: {
-            items: ["bold", "italic", "underline", "strikethrough", "subscript", "superscript", "code"],
+            items: ["bold", "italic", "underline", "strikethrough", "subscript", "superscript", "code", "quote"],
             shouldNotGroupWhenFull: false,
         },
         plugins: [
@@ -64,6 +65,7 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
             Superscript,
             TextTransformation,
             Underline,
+            QuoteButton,
         ],
     };
 

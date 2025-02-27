@@ -1,0 +1,97 @@
+#quoteImageBg {
+    position: fixed;
+    width: 100vw;
+    height: 100svh;
+    background-color: #00000088;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity .3s;
+    z-index: 5;
+}
+
+#quoteImageBg:not(.visible) {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.quoteImageFrame {
+    max-width: 43em;
+    box-shadow: 0 0 2em #000;
+    position: relative;
+    font-size: min(1em, 2.1vw);
+}
+
+.quoteImageBorder {
+    border: 2px solid #222;
+    border-radius: 1em;
+    overflow: hidden;
+}
+
+#quoteImage {
+    background-color: black;
+    padding: 4em 5em 2em 5em;
+    font-size: 1.5em;
+}
+
+.quoteStart, .quoteEnd {
+    color: #ffffff22;
+    position: absolute;
+    font-size: 7em;
+    font-weight: 900;
+}
+
+.quoteStart {
+    left: 0;
+    margin-left: .1em;
+    margin-top: -.7em;
+}
+
+.quoteEnd {
+    right: 0;
+    margin-right: .1em;
+    margin-top: -.7em;
+}
+
+#quoteText {
+    margin-bottom: 2.5em;
+    word-wrap: break-word;
+}
+
+.quoteFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+#quoteDate {
+    font-size: .8em;
+    color: #ffffff44;
+    margin-left: 2em;
+    font-weight: 500;
+}
+
+.quoteButtons {
+    position: absolute;
+    right: -.4em;
+    top: -.4em;
+    display: flex;
+    gap: .3em;
+}
+
+.quoteButtons button {
+    border: 2px solid #222;
+    background-color: #000;
+    border-radius: .3em;
+    padding: .2em;
+    transition: background-color .2s;
+}
+
+.quoteButtons button:hover {
+    background-color: #111;
+}
+
+.quoteButtons svg {
+    width: 1.8em;
+    height: 1.8em;
+}

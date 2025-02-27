@@ -14,6 +14,7 @@ import { syncEntry } from "@/database/sync.ts";
 import Select from "react-select/dist/declarations/src/Select";
 import { moveCursorToEnd } from "../../util/selection.ts";
 import { enforceAuth, RouteType } from "@/util/auth.ts";
+import QuoteImage from "@/components/quote-image/QuoteImage.tsx";
 
 const Editor = dynamic(() => import("../../components/editor/Editor.tsx"), { ssr: false });
 
@@ -220,6 +221,7 @@ function EntryContent() {
                 year={date?.substring(0, 4)}
                 ref={moodSelectRef as MutableRefObject<null>}
             />
+            <QuoteImage />
         </main>
     );
 }
