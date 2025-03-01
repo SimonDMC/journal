@@ -8,6 +8,9 @@ export function checkForUpdate() {
 
             // clear cache and reload if there's a newer build available
             const cachedAt = localStorage.getItem("cached-at");
+            if (!cachedAt) {
+                localStorage.setItem("cached-at", Date.now().toString());
+            }
             if (cachedAt && parseInt(cachedAt) < buildTimestamp) {
                 window.caches.delete("journal-cache");
 
