@@ -4,15 +4,15 @@ import "./styles.css";
 import { db } from "@/database/db";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
-import { Chart, LinearScale, CategoryScale, PointElement, LineElement, Tooltip, ChartOptions, defaults } from "chart.js";
+import { Bar } from "react-chartjs-2";
+import { Chart, LinearScale, CategoryScale, PointElement, BarElement, Tooltip, ChartOptions, defaults } from "chart.js";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { enforceAuth, RouteType } from "@/util/auth";
 import { MONTH_NAMES } from "@/util/months";
 
-Chart.register(LinearScale, CategoryScale, PointElement, LineElement, Tooltip);
+Chart.register(LinearScale, CategoryScale, PointElement, BarElement, Tooltip);
 
 defaults.borderColor = "#222";
 defaults.color = "#ccc";
@@ -33,7 +33,7 @@ function SearchPlotContent() {
         }
 
         const heading = document.getElementById("heading") as HTMLElement;
-        heading.innerText = `Usage of “${searchParams.get("q")}” over time`;
+        heading.innerText = `Mentions of “${searchParams.get("q")}” over time`;
 
         async function getData() {
             const startDate = (await db.entries.toArray())[0].date;
@@ -101,7 +101,7 @@ function SearchPlotContent() {
         };
     }, []);
 
-    const options: ChartOptions<"line"> = {
+    const options: ChartOptions<"bar"> = {
         scales: {
             y: {
                 title: {
@@ -130,7 +130,7 @@ function SearchPlotContent() {
             {
                 data: Object.values(results),
                 label: "# of entries containing query",
-                borderColor: "#36A2EB",
+                backgroundColor: "#36A2EB",
             },
         ],
     };
@@ -140,7 +140,7 @@ function SearchPlotContent() {
             <div className="wrap">
                 <p id="heading"></p>
                 <div className="height-fix">
-                    <Line options={options} data={data} />
+                    <Bar options={options} data={data} />
                 </div>
             </div>
             <Link href="/overview" className="back-arrow">
