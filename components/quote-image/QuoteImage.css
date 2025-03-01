@@ -16,7 +16,7 @@
 }
 
 .quoteImageFrame {
-    max-width: 43em;
+    max-width: 44.5em;
     box-shadow: 0 0 2em #000;
     position: relative;
     font-size: min(1em, 2.1vw);
@@ -30,31 +30,36 @@
 
 #quoteImage {
     background-color: black;
-    padding: 4em 5em 2em 5em;
+    padding: 3.5em 5.5em 2em 5.5em;
     font-size: 1.5em;
 }
 
-.quoteStart, .quoteEnd {
+.quoteStartContainer, .quoteEndContainer {
     color: #ffffff22;
     position: absolute;
-    font-size: 7em;
-    font-weight: 900;
+    width: 5.5em;
+    height: 5.5em;
+    z-index: 10;
+    pointer-events: none;
 }
 
-.quoteStart {
+.quoteStart, .quoteEnd {
+    width: 100%;
+    height: 100%;
+}
+
+.quoteStartContainer {
     left: 0;
-    margin-left: .1em;
-    margin-top: -.7em;
+    translate: 1.2em -2.6em;
 }
 
-.quoteEnd {
+.quoteEndContainer {
     right: 0;
-    margin-right: .1em;
-    margin-top: -.7em;
+    translate: .3em -5.7em;
 }
 
 #quoteText {
-    margin-bottom: 2.5em;
+    margin-bottom: 3.5em;
     word-wrap: break-word;
 }
 
@@ -94,4 +99,8 @@
 .quoteButtons svg {
     width: 1.8em;
     height: 1.8em;
+}
+
+svg.hidden {
+    display: none;
 }

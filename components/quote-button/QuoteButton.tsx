@@ -18,7 +18,8 @@ export class QuoteButton extends Plugin {
 
             button.on("execute", () => {
                 document.getElementById("quoteImageBg")?.classList.add("visible");
-                document.getElementById("quoteText")!.innerText = document.getSelection()!.toString();
+                const quoteHTML = editor.data.stringify(editor.model.getSelectedContent(editor.model.document.selection));
+                document.getElementById("quoteText")!.innerHTML = quoteHTML;
                 document.getElementById("quoteCredit")!.innerText = `– ${getUserName()}`;
 
                 const date = new URLSearchParams(window.location.search).get("date");

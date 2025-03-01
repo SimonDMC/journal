@@ -91,8 +91,11 @@ function EntryContent() {
             if (event.key === "Escape") {
                 event.preventDefault();
 
-                // unfocus text on esc
-                if (document.activeElement?.tagName != "BODY") {
+                // unfocus text or close popup on esc
+                const quoteImageBg = document.getElementById("quoteImageBg")!;
+                if (quoteImageBg.classList.contains("visible")) {
+                    quoteImageBg.classList.remove("visible");
+                } else if (document.activeElement?.tagName != "BODY") {
                     (document.activeElement as HTMLElement).blur();
                 } else {
                     // or exit if text is unfocused

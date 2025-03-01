@@ -49,7 +49,7 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
     const editorConfig = {
         toolbar: {
             items: ["bold", "italic", "underline", "strikethrough", "subscript", "superscript", "code", "quote"],
-            shouldNotGroupWhenFull: false,
+            shouldNotGroupWhenFull: true,
         },
         plugins: [
             AccessibilityHelp,
