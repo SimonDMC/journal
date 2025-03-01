@@ -161,7 +161,8 @@ export async function syncEntry(date: string) {
             return res.ok;
         })
         .catch((err) => {
-            console.error(err);
-            return true;
+            // silently ignore not being able to sync
+            // (is this a good idea? possibly revisit later)
+            return false;
         });
 }
