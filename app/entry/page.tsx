@@ -34,13 +34,7 @@ function EntryContent() {
     useEffect(() => {
         enforceAuth(router, RouteType.Authed);
 
-        setIsSafari(
-            (navigator.vendor &&
-                navigator.vendor.indexOf("Apple") > -1 &&
-                navigator.userAgent &&
-                navigator.userAgent.indexOf("CriOS") == -1 &&
-                navigator.userAgent.indexOf("FxiOS") == -1) as boolean
-        );
+        setIsSafari((navigator.vendor && navigator.vendor.indexOf("Apple") > -1) as boolean);
 
         let prevText: string;
         let prevMood = mood.current;
