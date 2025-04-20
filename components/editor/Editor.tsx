@@ -130,7 +130,7 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
                 if (props.content == "") setDataCallback();
 
                 // fancify apostrophes
-                editor.keystrokes.set("'", (data, stop) => {
+                /* editor.keystrokes.set("'", (data, stop) => {
                     stop();
                     editor.model.change((writer) => {
                         const selection = editor.model.document.selection;
@@ -147,7 +147,7 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
                             console.log(commonAncestor.data);
                         }
 
-                        /* const precedingCharacter = 
+                        const precedingCharacter = 
 
                         console.log("Preceding Character:", precedingCharacter);
 
@@ -158,9 +158,9 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
                         } else {
                             // Fallback if no preceding character found
                             writer.insertText("'", position);
-                        } */
+                        }
                     });
-                });
+                }); */
 
                 model.on("change:data", setEditorContent);
             }}
