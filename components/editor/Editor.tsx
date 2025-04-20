@@ -22,6 +22,7 @@ import {
     Underline,
     GetCallback,
     BaseEvent,
+    Text,
 } from "ckeditor5";
 
 import "ckeditor5/ckeditor5.css";
@@ -127,6 +128,39 @@ export default function App(props: { content: string; onKeyUp: GetCallback<BaseE
                 if (props.content) editor.setData(handleLineBreaks(props.content));
                 // or focus if theres nothing
                 if (props.content == "") setDataCallback();
+
+                // fancify apostrophes
+                editor.keystrokes.set("'", (data, stop) => {
+                    stop();
+                    editor.model.change((writer) => {
+                        const selection = editor.model.document.selection;
+                        const range = selection.getFirstRange();
+                        if (!range) return;
+                        const position = range.start;
+
+                        console.log("Position offset:", position.offset);
+
+                        const commonAncestor = range.getCommonAncestor();
+
+                        // If it's a text node, return its data directly
+                        if (commonAncestor?.is("$text")) {
+                            console.log(commonAncestor.data);
+                        }
+
+                        /* const precedingCharacter = 
+
+                        console.log("Preceding Character:", precedingCharacter);
+
+                        // Your logic for inserting quote based on preceding character
+                        if (precedingCharacter) {
+                            const isSpace = precedingCharacter === " ";
+                            writer.insertText(isSpace ? "‘" : "’", position);
+                        } else {
+                            // Fallback if no preceding character found
+                            writer.insertText("'", position);
+                        } */
+                    });
+                });
 
                 model.on("change:data", setEditorContent);
             }}

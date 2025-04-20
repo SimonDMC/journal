@@ -22,6 +22,7 @@ import { useEffect, useRef, useState } from "react";
 import DropdownHeading from "../dropdown/DropdownHeading";
 import { logout } from "@/util/auth";
 import { Options, setCodeword, setupBioAuth, switch2fa } from "@/util/options";
+import { showKeyHash } from "@/util/encryption";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -83,6 +84,11 @@ export default function ProfileIcon() {
                 <DropdownSeparator />
                 <DropdownHeading label="Debug" />
                 <DropdownItem label="Force Reload" description="Delete local page cache and reload" onClick={forceReload} />
+                <DropdownItem
+                    label="Show Key Hash"
+                    description="Show a hash of your encryption key for debug purposes"
+                    onClick={showKeyHash}
+                />
                 <DropdownItem
                     label="Wipe Local DB"
                     description="Delete all locally saved entries (resyncs with the database on page reload)"

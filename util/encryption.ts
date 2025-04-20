@@ -1,7 +1,7 @@
 import { KEY_GENERATOR } from "./config";
 
 let cryptoKey: CryptoKey | undefined;
-async function getKey() {
+async function getKey(): Promise<CryptoKey | null> {
     if (cryptoKey) return cryptoKey;
 
     const storedKey = localStorage.getItem("key");
@@ -10,6 +10,19 @@ async function getKey() {
     const keyBuffer = new Uint8Array(JSON.parse(storedKey));
     const key = await crypto.subtle.importKey("raw", keyBuffer, KEY_GENERATOR, true, ["encrypt", "decrypt"]);
     return key;
+}
+
+export async function showKeyHash() {
+    const storedKey = localStorage.getItem("key");
+    if (!storedKey) {
+        alert("No key saved.");
+        return;
+    }
+
+    const keyBuffer = new Uint8Array(JSON.parse(storedKey));
+    const hashBuffer = await crypto.subtle.digest("SHA-256", keyBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    alert(`Your key hash: ${hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")}\nThis is safe to share.`);
 }
 
 export async function encryptEntry(entry: string): Promise<string | null> {
