@@ -42,7 +42,7 @@ export async function syncDatabase() {
     // 3. Save all missing entries locally
     for (const entry of json.missing) {
         const decrypted = await decryptEntry(entry.content);
-        if (!decrypted) {
+        if (decrypted === null) {
             warningToast("Sync failed (decryption)");
             return;
         }
@@ -84,7 +84,7 @@ export async function syncDatabase() {
             await db.entries.delete(entry.date);
 
             const decrypted = await decryptEntry(entry.content);
-            if (!decrypted) {
+            if (decrypted === null) {
                 warningToast("Sync failed (decryption)");
                 return;
             }
