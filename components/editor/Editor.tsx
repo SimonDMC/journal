@@ -20,19 +20,18 @@ import {
     Superscript,
     TextTransformation,
     Underline,
-    GetCallback,
-    BaseEvent,
-    Text,
+    type GetCallback,
+    type BaseEvent,
 } from "ckeditor5";
 
 import "ckeditor5/ckeditor5.css";
 import { today } from "../calendar/Calendar";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams } from "react-router";
 
-export default function App(props: { content: string; onKeyUp: GetCallback<BaseEvent>; setContent: Function; date: string }) {
+export default function Editor(props: { content: string; onKeyUp: GetCallback<BaseEvent>; setContent: Function; date: string }) {
     const [isLayoutReady, setIsLayoutReady] = useState(false);
     const editorRef = useRef(null);
-    const searchParams = useSearchParams();
+    const [searchParams] = useSearchParams();
 
     useEffect(() => {
         setIsLayoutReady(true);

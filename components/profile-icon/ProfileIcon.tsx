@@ -9,25 +9,25 @@ import {
     getUserName,
     changePassword,
     generateKey,
-} from "@/util/profile";
-import { forceReload } from "@/util/update";
+} from "../../util/profile";
+import { forceReload } from "../../util/update";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Dropdown from "../dropdown/Dropdown";
 import DropdownItem from "../dropdown/DropdownItem";
 import DropdownSeparator from "../dropdown/DropdownSeparator";
 import DropdownText from "../dropdown/DropdownText";
-import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import DropdownHeading from "../dropdown/DropdownHeading";
-import { logout } from "@/util/auth";
-import { Options, setCodeword, setupBioAuth, switch2fa } from "@/util/options";
-import { showKeyHash } from "@/util/encryption";
+import { logout } from "../../util/auth";
+import { type Options, setCodeword, setupBioAuth, switch2fa } from "../../util/options";
+import { showKeyHash } from "../../util/encryption";
+import { useNavigate } from "react-router";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
     const [options, setOptions] = useState({} as Options);
-    const router = useRouter();
+    const navigate = useNavigate();
     const username = useRef("User");
 
     useEffect(() => {
@@ -95,7 +95,7 @@ export default function ProfileIcon() {
                     onClick={wipeLocalDatabase}
                 />
                 <DropdownSeparator />
-                <DropdownItem label="Log Out" onClick={() => logout(router)} />
+                <DropdownItem label="Log Out" onClick={() => logout(navigate)} />
             </Dropdown>
         </div>
     );

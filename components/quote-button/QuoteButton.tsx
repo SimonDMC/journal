@@ -1,5 +1,5 @@
-import { MONTH_NAMES } from "@/util/months";
-import { getUserName } from "@/util/profile";
+import { MONTH_NAMES } from "../../util/months";
+import { getUserName } from "../../util/profile";
 import { Plugin, ButtonView } from "ckeditor5";
 
 export class QuoteButton extends Plugin {

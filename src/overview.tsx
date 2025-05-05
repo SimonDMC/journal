@@ -1,30 +1,26 @@
-"use client";
-
-import "./styles.css";
-import { useEffect, useRef, useState } from "react";
-import Calendar, { dayAdjustedTime, today } from "@/components/calendar/Calendar";
-import ProfileIcon from "@/components/profile-icon/ProfileIcon";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import "./overview.css";
+import { useEffect, useState } from "react";
+import Calendar, { dayAdjustedTime, today } from "../components/calendar/Calendar";
+import ProfileIcon from "../components/profile-icon/ProfileIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { syncDatabase } from "@/database/sync";
-import { checkForUpdate } from "@/util/update";
+import { syncDatabase } from "../database/sync";
+import { checkForUpdate } from "../util/update";
 import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "@/database/db";
-import { enforceAuth, RouteType } from "@/util/auth";
+import { db } from "../database/db";
+import { enforceAuth, RouteType } from "../util/auth";
+import { Link, useNavigate } from "react-router";
 
-export default function Home() {
+export default function Overview() {
+    const navigate = useNavigate();
     const [oneYearAgo, setOneYearAgo] = useState("");
-    const entriesLoaded = useRef(false);
-    const router = useRouter();
 
     const entriesFull = useLiveQuery(() => db.entries.toArray()) ?? [];
     const entries = entriesFull.map((entry) => entry.date);
     const wordCount = entriesFull.reduce((acc, cur) => (acc += cur.word_count), 0);
 
     useEffect(() => {
-        enforceAuth(router, RouteType.Authed);
+        enforceAuth(navigate, RouteType.Authed);
         checkForUpdate();
         syncDatabase();
 
@@ -118,10 +114,10 @@ export default function Home() {
                 nextMonth={nextMonth}
                 entries={entries}
             />
-            <Link href={`/entry?date=${today}`} id="today" className="nav-link">
+            <Link to={`/entry?date=${today}`} id="today" className="nav-link">
                 Today
             </Link>
-            <Link href={`/entry?date=${oneYearAgo}`} id="lastYear" className="nav-link">
+            <Link to={`/entry?date=${oneYearAgo}`} id="lastYear" className="nav-link">
                 One Year Ago
             </Link>
             <ProfileIcon />
@@ -130,7 +126,7 @@ export default function Home() {
                 <p className="wordCount">Total Words: {commaFormat(wordCount)}</p>
             </div>
             <div className="controls">
-                <Link href="/search" id="search">
+                <Link to="/search" id="search">
                     <FontAwesomeIcon icon={faMagnifyingGlass} />
                 </Link>
             </div>

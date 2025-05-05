@@ -1,19 +1,17 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { API_URL } from "../../util/config";
-import "./styles.css";
+import { API_URL } from "../util/config";
+import "./login.css";
 import { useEffect } from "react";
-import { checkForUpdate } from "@/util/update";
-import { db } from "@/database/db";
-import { errorToast } from "@/util/toast";
-import { enforceAuth, RouteType } from "@/util/auth";
+import { checkForUpdate } from "../util/update";
+import { db } from "../database/db";
+import { errorToast } from "../util/toast";
+import { enforceAuth, RouteType } from "../util/auth";
+import { useNavigate } from "react-router";
 
-export default function Home() {
-    const router = useRouter();
+export default function Login() {
+    const navigate = useNavigate();
 
     useEffect(() => {
-        enforceAuth(router, RouteType.Unauthed);
+        enforceAuth(navigate, RouteType.Unauthed);
         checkForUpdate();
 
         // add event listener to login on enter
@@ -57,7 +55,7 @@ export default function Home() {
                 await db.entries.clear();
             }
             localStorage.setItem("username", username);
-            router.push("/overview");
+            navigate("/overview");
         } else {
             errorToast("Incorrect username or password.");
         }

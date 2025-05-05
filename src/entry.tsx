@@ -1,29 +1,25 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import "./styles.css";
-import { MutableRefObject, Ref, Suspense, useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import { today } from "@/components/calendar/Calendar.tsx";
-import dynamic from "next/dynamic";
-import EditorBubble, { moods } from "@/components/editor-bubble/EditorBubble.tsx";
+import "./entry.css";
+import { type MutableRefObject, type Ref, Suspense, useEffect, useRef, useState } from "react";
+import { today } from "../components/calendar/Calendar.tsx";
+import EditorBubble, { moods } from "../components/editor-bubble/EditorBubble.tsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { db } from "@/database/db.ts";
-import { syncEntry } from "@/database/sync.ts";
-import Select from "react-select/dist/declarations/src/Select";
-import { moveCursorToEnd } from "../../util/selection.ts";
-import { enforceAuth, RouteType } from "@/util/auth.ts";
-import QuoteImage from "@/components/quote-image/QuoteImage.tsx";
-
-const Editor = dynamic(() => import("../../components/editor/Editor.tsx"), { ssr: false });
+import { db } from "../database/db.ts";
+import { syncEntry } from "../database/sync.ts";
+import { moveCursorToEnd } from "../util/selection.ts";
+import { enforceAuth, RouteType } from "../util/auth.ts";
+import QuoteImage from "../components/quote-image/QuoteImage.tsx";
+import { Link, useNavigate, useSearchParams } from "react-router";
+import Editor from "../components/editor/Editor.tsx";
 
 function EntryContent() {
     const word_count = useRef(0);
-    const router = useRouter();
+    const navigate = useNavigate();
     const contentRef = useRef("");
-    const moodSelectRef: Ref<Select> = useRef(null);
-    const searchParams = useSearchParams();
+    const moodSelectRef: Ref<any> = useRef(null);
+    const [searchParams] = useSearchParams();
     const date = searchParams.get("date") as string;
 
     const [initialContent, setInitialContent] = useState("");
@@ -32,7 +28,7 @@ function EntryContent() {
     const location: MutableRefObject<number | null> = useRef(null);
 
     useEffect(() => {
-        enforceAuth(router, RouteType.Authed);
+        enforceAuth(navigate, RouteType.Authed);
 
         setIsSafari((navigator.vendor && navigator.vendor.indexOf("Apple") > -1) as boolean);
 
@@ -93,7 +89,7 @@ function EntryContent() {
                     (document.activeElement as HTMLElement).blur();
                 } else {
                     // or exit if text is unfocused
-                    router.back();
+                    //router.back();
                 }
             }
 
@@ -208,7 +204,7 @@ function EntryContent() {
                 <div className="line"></div>
                 <Editor content={initialContent} onKeyUp={countWords} setContent={handleContentChange} date={date} />
             </div>
-            <Link href="/overview" className="back-arrow">
+            <Link to="/overview" className="back-arrow">
                 <FontAwesomeIcon icon={faArrowLeft} />
             </Link>
             <EditorBubble

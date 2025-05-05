@@ -1,8 +1,8 @@
 import { API_URL, KEY_GENERATOR } from "./config";
-import { today } from "@/components/calendar/Calendar";
+import { today } from "../components/calendar/Calendar";
 import { encryptEntry } from "./encryption";
-import { db } from "@/database/db";
-import { syncDatabase } from "@/database/sync";
+import { db } from "../database/db";
+import { syncDatabase } from "../database/sync";
 import { errorToast, successToast } from "./toast";
 
 export function uploadKey() {

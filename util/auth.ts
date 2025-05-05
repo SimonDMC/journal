@@ -1,6 +1,6 @@
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { getOptions } from "./profile";
 import { API_URL } from "./config";
+import type { NavigateFunction } from "react-router";
 
 export enum RouteType {
     Unauthed,
@@ -20,24 +20,24 @@ export function is2faAuthed() {
     return false;
 }
 
-export function enforceAuth(router: AppRouterInstance, route: RouteType) {
+export function enforceAuth(navigate: NavigateFunction, route: RouteType) {
     const options = getOptions();
     if (localStorage.getItem("logged-in") && is2faAuthed()) {
-        if (route != RouteType.Authed) router.push("/overview");
+        if (route != RouteType.Authed) navigate("/overview");
     } else if (localStorage.getItem("logged-in") && options["2fa_method"] == 1 && !is2faAuthed()) {
-        router.push("/codeword");
+        navigate("/codeword");
     } else if (localStorage.getItem("logged-in") && options["2fa_method"] == 2 && !is2faAuthed()) {
-        router.push("/bioauth");
+        navigate("/bioauth");
     } else {
-        router.push("/login");
+        navigate("/login");
     }
 }
 
-export async function logout(router: AppRouterInstance) {
+export async function logout(navigate: NavigateFunction) {
     await fetch(`${API_URL}/logout`, {
         method: "POST",
     });
     localStorage.removeItem("logged-in");
     sessionStorage.removeItem("codeword");
-    router.push("/login");
+    navigate("/login");
 }

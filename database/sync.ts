@@ -1,7 +1,7 @@
 import { db } from "./db";
-import { API_URL } from "@/util/config";
-import { decryptEntry, encryptEntry } from "@/util/encryption";
-import { warningToast } from "@/util/toast";
+import { API_URL } from "../util/config";
+import { decryptEntry, encryptEntry } from "../util/encryption";
+import { warningToast } from "../util/toast";
 
 type ClientSyncBody = {
     [key: string]: string;
