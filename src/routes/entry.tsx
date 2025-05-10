@@ -1,26 +1,43 @@
-"use client";
-
-import "./entry.css";
-import { type MutableRefObject, type Ref, Suspense, useEffect, useRef, useState } from "react";
-import { today } from "../components/calendar/Calendar.tsx";
-import EditorBubble, { moods } from "../components/editor-bubble/EditorBubble.tsx";
+import "../styles/entry.css";
+import { type MutableRefObject, type Ref, useEffect, useRef, useState } from "react";
+import EditorBubble, { moods } from "../../components/editor-bubble/EditorBubble.tsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { db } from "../database/db.ts";
-import { syncEntry } from "../database/sync.ts";
-import { moveCursorToEnd } from "../util/selection.ts";
-import { enforceAuth, RouteType } from "../util/auth.ts";
-import QuoteImage from "../components/quote-image/QuoteImage.tsx";
-import { Link, useNavigate, useSearchParams } from "react-router";
-import Editor from "../components/editor/Editor.tsx";
+import { db } from "../../database/db.ts";
+import { syncEntry } from "../../database/sync.ts";
+import { moveCursorToEnd } from "../../util/selection.ts";
+import { enforceAuth, RouteType } from "../../util/auth.ts";
+import QuoteImage from "../../components/quote-image/QuoteImage.tsx";
+import Editor from "../../components/editor/Editor.tsx";
+import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
+import type { SelectInstance } from "react-select";
+import { today } from "../../util/time.ts";
 
-function EntryContent() {
+export type EntrySearchParams = {
+    date: string;
+    query?: string;
+    index?: number;
+};
+
+export const Route = createFileRoute("/entry")({
+    component: Entry,
+    validateSearch: (search: Record<string, unknown>): EntrySearchParams => {
+        // validate and parse the search params into a typed state
+        return {
+            date: search.date as string,
+            query: search.query as string,
+            index: search.index as number,
+        };
+    },
+});
+
+export function Entry() {
     const word_count = useRef(0);
     const navigate = useNavigate();
+    const router = useRouter();
     const contentRef = useRef("");
-    const moodSelectRef: Ref<any> = useRef(null);
-    const [searchParams] = useSearchParams();
-    const date = searchParams.get("date") as string;
+    const moodSelectRef: Ref<SelectInstance> = useRef(null);
+    const { date } = Route.useSearch();
 
     const [initialContent, setInitialContent] = useState("");
     const [isSafari, setIsSafari] = useState(false);
@@ -89,7 +106,7 @@ function EntryContent() {
                     (document.activeElement as HTMLElement).blur();
                 } else {
                     // or exit if text is unfocused
-                    //router.back();
+                    router.history.back();
                 }
             }
 
@@ -216,13 +233,5 @@ function EntryContent() {
             />
             <QuoteImage />
         </main>
-    );
-}
-
-export default function Entry() {
-    return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <EntryContent />
-        </Suspense>
     );
 }

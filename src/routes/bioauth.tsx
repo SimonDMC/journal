@@ -1,21 +1,23 @@
-"use client";
-
-import "./styles.css";
-import { useRouter } from "next/navigation";
+import "../styles/bioauth.css";
 import { useEffect, useRef } from "react";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { enforceAuth, logout, RouteType } from "@/util/auth";
-import { getOptions } from "@/util/profile";
+import { enforceAuth, logout, RouteType } from "../../util/auth";
+import { getOptions } from "../../util/profile";
 import { generateAuthenticationOptions, verifyAuthenticationResponse } from "@simplewebauthn/server";
 import { startAuthentication } from "@simplewebauthn/browser";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
-export default function Home() {
+export const Route = createFileRoute("/bioauth")({
+    component: BioAuth,
+});
+
+function BioAuth() {
     const authenticating = useRef(false);
-    const router = useRouter();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        enforceAuth(router, RouteType.Auth2FA);
+        enforceAuth(navigate, RouteType.Auth2FA);
 
         async function tryPasskey() {
             try {
@@ -76,7 +78,7 @@ export default function Home() {
                 await new Promise<void>((resolve) => setTimeout(() => resolve(), 1000));
             }
             sessionStorage.setItem("2fa-authed", "true");
-            router.push("/overview");
+            navigate({ to: "/overview" });
         }
 
         if (!authenticating.current) verify();
@@ -84,7 +86,7 @@ export default function Home() {
 
     return (
         <main className="bioauth">
-            <a onClick={() => logout(router)} className="logout-icon">
+            <a onClick={() => logout(navigate)} className="logout-icon">
                 <FontAwesomeIcon icon={faArrowRightFromBracket} />
             </a>
         </main>

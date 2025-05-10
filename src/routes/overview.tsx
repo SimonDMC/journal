@@ -1,17 +1,22 @@
-import "./overview.css";
+import "../styles/overview.css";
 import { useEffect, useState } from "react";
-import Calendar, { dayAdjustedTime, today } from "../components/calendar/Calendar";
-import ProfileIcon from "../components/profile-icon/ProfileIcon";
+import Calendar from "../../components/calendar/Calendar";
+import ProfileIcon from "../../components/profile-icon/ProfileIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { syncDatabase } from "../database/sync";
-import { checkForUpdate } from "../util/update";
+import { syncDatabase } from "../../database/sync";
+import { checkForUpdate } from "../../util/update";
 import { useLiveQuery } from "dexie-react-hooks";
-import { db } from "../database/db";
-import { enforceAuth, RouteType } from "../util/auth";
-import { Link, useNavigate } from "react-router";
+import { db } from "../../database/db";
+import { enforceAuth, RouteType } from "../../util/auth";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { dayAdjustedTime, today } from "../../util/time";
 
-export default function Overview() {
+export const Route = createFileRoute("/overview")({
+    component: Overview,
+});
+
+function Overview() {
     const navigate = useNavigate();
     const [oneYearAgo, setOneYearAgo] = useState("");
 
@@ -114,10 +119,10 @@ export default function Overview() {
                 nextMonth={nextMonth}
                 entries={entries}
             />
-            <Link to={`/entry?date=${today}`} id="today" className="nav-link">
+            <Link to="/entry" search={{ date: today }} id="today" className="nav-link">
                 Today
             </Link>
-            <Link to={`/entry?date=${oneYearAgo}`} id="lastYear" className="nav-link">
+            <Link to="/entry" search={{ date: oneYearAgo }} id="lastYear" className="nav-link">
                 One Year Ago
             </Link>
             <ProfileIcon />

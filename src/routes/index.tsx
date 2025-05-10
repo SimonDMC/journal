@@ -1,9 +1,14 @@
-"use client";
-
-import { enforceAuth, RouteType } from "../util/auth";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { enforceAuth, RouteType } from "../../util/auth";
 import { useEffect } from "react";
 
-export default function Home() {
+export const Route = createFileRoute("/")({
+    component: Home,
+});
+
+export function Home() {
+    const navigate = useNavigate();
+
     useEffect(() => {
         // register service worker
         if ("serviceWorker" in navigator) {
@@ -11,7 +16,7 @@ export default function Home() {
             if (!localStorage.getItem("cached-at")) localStorage.setItem("cached-at", Date.now().toString());
         }
 
-        /* enforceAuth(router, RouteType.Unauthed); */
+        enforceAuth(navigate, RouteType.Unauthed);
     }, []);
 
     return <main></main>;

@@ -1,16 +1,13 @@
-"use client";
-
-import "./styles.css";
-import { db } from "@/database/db";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import "../styles/search-plot.css";
+import { db } from "../../database/db";
+import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
-import { Chart, LinearScale, CategoryScale, PointElement, BarElement, Tooltip, ChartOptions, defaults } from "chart.js";
-import Link from "next/link";
+import { Chart, LinearScale, CategoryScale, PointElement, BarElement, Tooltip, type ChartOptions, defaults } from "chart.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { enforceAuth, RouteType } from "@/util/auth";
-import { MONTH_NAMES } from "@/util/months";
+import { enforceAuth, RouteType } from "../../util/auth";
+import { MONTH_NAMES } from "../../util/months";
+import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 
 Chart.register(LinearScale, CategoryScale, PointElement, BarElement, Tooltip);
 
@@ -19,28 +16,41 @@ defaults.color = "#ccc";
 defaults.font.size = 13;
 defaults.font.family = "Inter";
 
-function SearchPlotContent() {
+type SearchPlotSearchParams = {
+    query: string;
+};
+
+export const Route = createFileRoute("/search-plot")({
+    component: SearchPlot,
+    validateSearch: (search: Record<string, unknown>): SearchPlotSearchParams => {
+        // validate and parse the search params into a typed state
+        return {
+            query: search.query as string,
+        };
+    },
+});
+
+function SearchPlot() {
     const [results, setResults] = useState<{ [key: string]: number }>({});
-    const searchParams = useSearchParams();
+    const { query } = Route.useSearch();
     const router = useRouter();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        enforceAuth(router, RouteType.Authed);
+        enforceAuth(navigate, RouteType.Authed);
 
-        if (!searchParams.get("q")) {
-            router.push("/overview");
+        if (!query) {
+            navigate({ to: "/overview" });
             return;
         }
 
         const heading = document.getElementById("heading") as HTMLElement;
-        heading.innerText = `Mentions of “${searchParams.get("q")}” over time`;
+        heading.innerText = `Mentions of “${query}” over time`;
 
         async function getData() {
             const startDate = (await db.entries.toArray())[0].date;
             const endYear = new Date().getFullYear();
             const endMonth = new Date().getMonth() + 1;
-
-            const query = searchParams.get("q");
 
             const results: { [key: string]: number } = {};
 
@@ -89,7 +99,7 @@ function SearchPlotContent() {
         const keydown = async (event: KeyboardEvent) => {
             // exit on esc
             if (event.key === "Escape") {
-                router.back();
+                router.history.back();
                 event.preventDefault();
             }
         };
@@ -143,17 +153,9 @@ function SearchPlotContent() {
                     <Bar options={options} data={data} />
                 </div>
             </div>
-            <Link href="/overview" className="back-arrow">
+            <Link to="/overview" className="back-arrow">
                 <FontAwesomeIcon icon={faArrowLeft} />
             </Link>
         </main>
-    );
-}
-
-export default function SearchPlot() {
-    return (
-        <Suspense>
-            <SearchPlotContent />
-        </Suspense>
     );
 }

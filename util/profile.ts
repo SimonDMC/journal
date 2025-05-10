@@ -1,9 +1,9 @@
 import { API_URL, KEY_GENERATOR } from "./config";
-import { today } from "../components/calendar/Calendar";
 import { encryptEntry } from "./encryption";
 import { db } from "../database/db";
 import { syncDatabase } from "../database/sync";
 import { errorToast, successToast } from "./toast";
+import { today } from "./time";
 
 export function uploadKey() {
     const input = document.createElement("input");

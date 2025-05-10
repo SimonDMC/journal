@@ -1,15 +1,10 @@
 import "./Calendar.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router";
+import { Link } from "@tanstack/react-router";
+import { today } from "../../util/time";
 
-// calculate today's date by offsetting the current date by the timezone offset
-let adjustedTimestamp = Date.now() - new Date().getTimezoneOffset() * 60 * 1000;
-// additionally count "today" until 4am the next day
-export const dayAdjustedTime = new Date(adjustedTimestamp - 4 * 60 * 60 * 1000);
-export const today = dayAdjustedTime.toISOString().substring(0, 10);
-
-export default function Calendar(props: { month: string; previousMonth: Function; nextMonth: Function; entries: any }) {
+export default function Calendar(props: { month: string; previousMonth: () => void; nextMonth: () => void; entries: string[] }) {
     const currentMonth = new Date(props.month).getMonth();
     const currentYear = new Date(props.month).getFullYear();
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
@@ -78,7 +73,7 @@ export default function Calendar(props: { month: string; previousMonth: Function
                     const hasEntry = props.entries.includes(currentDay);
                     const isToday = today === currentDay;
 
-                    let classes: string[] = [];
+                    const classes: string[] = [];
                     if (hasEntry) {
                         classes.push("has-entry");
                     }
@@ -87,7 +82,7 @@ export default function Calendar(props: { month: string; previousMonth: Function
                     }
 
                     return (
-                        <Link className={`day ${classes.join(" ")}`} key={i} to={`/entry?date=${currentDay}`}>
+                        <Link to="/entry" search={{ date: currentDay }} className={`day ${classes.join(" ")}`} key={i}>
                             {i + 1}
                         </Link>
                     );

@@ -22,7 +22,7 @@ import DropdownHeading from "../dropdown/DropdownHeading";
 import { logout } from "../../util/auth";
 import { type Options, setCodeword, setupBioAuth, switch2fa } from "../../util/options";
 import { showKeyHash } from "../../util/encryption";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);

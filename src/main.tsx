@@ -1,25 +1,31 @@
-import "./globals.css";
+import "./styles/globals.css";
 import "react-toastify/dist/ReactToastify.css";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router";
-import Home from "./page";
-import Overview from "./overview";
-import Login from "./login";
 import { Slide, ToastContainer } from "react-toastify";
-import Entry from "./entry";
 
-const root = document.getElementById("root");
+// Import the generated route tree
+import { routeTree } from "./routeTree.gen";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { StrictMode } from "react";
 
-createRoot(root!).render(
-    <>
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/overview" element={<Overview />} />
-                <Route path="/entry" element={<Entry />} />
-            </Routes>
-        </BrowserRouter>
-        <ToastContainer transition={Slide} />
-    </>
-);
+// Create a new router instance
+const router = createRouter({ routeTree });
+
+// Register the router instance for type safety
+declare module "@tanstack/react-router" {
+    interface Register {
+        router: typeof router;
+    }
+}
+
+// Render the app
+const rootElement = document.getElementById("root")!;
+if (!rootElement.innerHTML) {
+    const root = createRoot(rootElement);
+    root.render(
+        <StrictMode>
+            <RouterProvider router={router} />
+            <ToastContainer transition={Slide} />
+        </StrictMode>
+    );
+}

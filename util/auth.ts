@@ -1,6 +1,6 @@
 import { getOptions } from "./profile";
 import { API_URL } from "./config";
-import type { NavigateFunction } from "react-router";
+import type { UseNavigateResult } from "@tanstack/router-core";
 
 export enum RouteType {
     Unauthed,
@@ -20,24 +20,24 @@ export function is2faAuthed() {
     return false;
 }
 
-export function enforceAuth(navigate: NavigateFunction, route: RouteType) {
+export function enforceAuth(navigate: UseNavigateResult<string>, route: RouteType) {
     const options = getOptions();
     if (localStorage.getItem("logged-in") && is2faAuthed()) {
-        if (route != RouteType.Authed) navigate("/overview");
+        if (route != RouteType.Authed) navigate({ to: "/overview" });
     } else if (localStorage.getItem("logged-in") && options["2fa_method"] == 1 && !is2faAuthed()) {
-        navigate("/codeword");
+        //navigate({ to: "/codeword" });
     } else if (localStorage.getItem("logged-in") && options["2fa_method"] == 2 && !is2faAuthed()) {
-        navigate("/bioauth");
+        //navigate({ to: "/bioauth" });
     } else {
-        navigate("/login");
+        navigate({ to: "/login" });
     }
 }
 
-export async function logout(navigate: NavigateFunction) {
+export async function logout(navigate: UseNavigateResult<string>) {
     await fetch(`${API_URL}/logout`, {
         method: "POST",
     });
     localStorage.removeItem("logged-in");
     sessionStorage.removeItem("codeword");
-    navigate("/login");
+    navigate({ to: "/login" });
 }

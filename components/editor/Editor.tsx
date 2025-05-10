@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import { highlightNthOccurrence, moveCursorToEnd } from "../../util/selection";
 import { QuoteButton } from "../quote-button/QuoteButton";
@@ -25,13 +23,15 @@ import {
 } from "ckeditor5";
 
 import "ckeditor5/ckeditor5.css";
-import { today } from "../calendar/Calendar";
-import { useSearchParams } from "react-router";
+import { getRouteApi } from "@tanstack/react-router";
+import { today } from "../../util/time";
+
+const entryRoute = getRouteApi("/entry");
 
 export default function Editor(props: { content: string; onKeyUp: GetCallback<BaseEvent>; setContent: Function; date: string }) {
     const [isLayoutReady, setIsLayoutReady] = useState(false);
     const editorRef = useRef(null);
-    const [searchParams] = useSearchParams();
+    const { query, index } = entryRoute.useSearch();
 
     useEffect(() => {
         setIsLayoutReady(true);
@@ -93,9 +93,7 @@ export default function Editor(props: { content: string; onKeyUp: GetCallback<Ba
         }
 
         // select occurrence if linked from search
-        const query = searchParams.get("q");
-        if (query) {
-            let index = parseInt(searchParams.get("i") ?? "0");
+        if (query && index) {
             // this also needs a delay for whatever reason
             requestAnimationFrame(() => highlightNthOccurrence(editorEl, query, index));
         }

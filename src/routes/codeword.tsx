@@ -1,18 +1,20 @@
-"use client";
-
-import "./styles.css";
-import { useRouter } from "next/navigation";
+import "../styles/codeword.css";
 import { useEffect } from "react";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { enforceAuth, logout, RouteType } from "@/util/auth";
-import { getOptions } from "@/util/profile";
+import { enforceAuth, logout, RouteType } from "../../util/auth";
+import { getOptions } from "../../util/profile";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
-export default function Home() {
-    const router = useRouter();
+export const Route = createFileRoute("/codeword")({
+    component: Codeword,
+});
+
+function Codeword() {
+    const navigate = useNavigate();
 
     useEffect(() => {
-        enforceAuth(router, RouteType.Auth2FA);
+        enforceAuth(navigate, RouteType.Auth2FA);
     }, []);
 
     function selectInput() {
@@ -41,7 +43,7 @@ export default function Home() {
 
             if (hashHex == getOptions().codeword) {
                 sessionStorage.setItem("2fa-authed", "true");
-                router.push("/overview");
+                navigate({ to: "/overview" });
             } else {
                 display.innerText = "x";
                 input.value = "";
@@ -55,7 +57,7 @@ export default function Home() {
             <div className="visible">
                 <span id="codeword-display">0</span>
             </div>
-            <a onClick={() => logout(router)} className="logout-icon">
+            <a onClick={() => logout(navigate)} className="logout-icon">
                 <FontAwesomeIcon icon={faArrowRightFromBracket} />
             </a>
         </main>

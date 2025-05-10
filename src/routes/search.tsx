@@ -1,15 +1,12 @@
-"use client";
-
-import "./styles.css";
+import "../styles/search.css";
 import { useEffect, useState } from "react";
-import SearchResult, { SearchResultType } from "@/components/search-result/SearchResult";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import SearchResult, { type SearchResultType } from "../../components/search-result/SearchResult";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faChartLine } from "@fortawesome/free-solid-svg-icons";
-import { db } from "@/database/db";
+import { db } from "../../database/db";
 import { useLiveQuery } from "dexie-react-hooks";
-import { enforceAuth, RouteType } from "@/util/auth";
+import { enforceAuth, RouteType } from "../../util/auth";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 
 export type JournalEntry = {
     date: string;
@@ -19,11 +16,15 @@ export type JournalEntry = {
     word_count: number;
 };
 
-export default function Home() {
+export const Route = createFileRoute("/search")({
+    component: Search,
+});
+
+function Search() {
     const [results, setResults] = useState<SearchResultType[]>([]);
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>("");
-    const router = useRouter();
+    const navigate = useNavigate();
 
     const entries = useLiveQuery(() => db.entries.toArray())?.map((entry) => {
         // strip html
@@ -36,12 +37,12 @@ export default function Home() {
     });
 
     useEffect(() => {
-        enforceAuth(router, RouteType.Authed);
+        enforceAuth(navigate, RouteType.Authed);
 
         const keydown = async (event: KeyboardEvent) => {
             // exit on esc
             if (event.key === "Escape") {
-                router.push("/overview");
+                navigate({ to: "/overview" });
                 event.preventDefault();
             }
 
@@ -77,7 +78,7 @@ export default function Home() {
         return index;
     }
 
-    async function navigate(event: React.KeyboardEvent<HTMLInputElement>) {
+    async function searchNavigate(event: React.KeyboardEvent<HTMLInputElement>) {
         if (event.key == "ArrowUp") {
             setActiveIndex(wrapIndex(activeIndex - 1));
             event.preventDefault();
@@ -182,7 +183,7 @@ export default function Home() {
     return (
         <main className="search">
             <div className="search-wrap">
-                <input id="search-field" placeholder="Search..." onInput={search} autoFocus onKeyDown={navigate} />
+                <input id="search-field" placeholder="Search..." onInput={search} autoFocus onKeyDown={searchNavigate} />
                 <a id="plot-button" href={`/search-plot?q=${searchQuery}`}>
                     <FontAwesomeIcon icon={faChartLine} />
                 </a>
@@ -200,7 +201,7 @@ export default function Home() {
                     ))}
                 </div>
             </div>
-            <Link href="/overview" className="back-arrow">
+            <Link to="/overview" className="back-arrow">
                 <FontAwesomeIcon icon={faArrowLeft} />
             </Link>
         </main>

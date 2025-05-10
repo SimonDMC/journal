@@ -1,13 +1,17 @@
-import { API_URL } from "../util/config";
-import "./login.css";
+import { API_URL } from "../../util/config";
+import "../styles/login.css";
 import { useEffect } from "react";
-import { checkForUpdate } from "../util/update";
-import { db } from "../database/db";
-import { errorToast } from "../util/toast";
-import { enforceAuth, RouteType } from "../util/auth";
-import { useNavigate } from "react-router";
+import { checkForUpdate } from "../../util/update";
+import { db } from "../../database/db";
+import { errorToast } from "../../util/toast";
+import { enforceAuth, RouteType } from "../../util/auth";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
-export default function Login() {
+export const Route = createFileRoute("/login")({
+    component: Login,
+});
+
+export function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -55,7 +59,7 @@ export default function Login() {
                 await db.entries.clear();
             }
             localStorage.setItem("username", username);
-            navigate("/overview");
+            navigate({ to: "/overview" });
         } else {
             errorToast("Incorrect username or password.");
         }
@@ -66,7 +70,7 @@ export default function Login() {
         dialog.showModal();
     }
 
-    function closeInfo(event: any) {
+    function closeInfo(event: React.MouseEvent) {
         if (event.target !== event.currentTarget) return;
         const dialog = document.querySelector("dialog") as HTMLDialogElement;
         dialog.close();

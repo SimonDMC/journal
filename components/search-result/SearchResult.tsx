@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Link } from "@tanstack/react-router";
 import "./SearchResult.css";
 import parse from "html-react-parser";
 
@@ -36,7 +36,12 @@ export default function SearchResult(props: SearchResultType) {
         <div className={`result ${props.active && "active"}`} onMouseOver={() => props.setActiveIndex!(props.id)}>
             <div className="date">{props.date}</div>
             {props.matches.map((result: SearchMatch) => (
-                <Link className="match" key={result.index} href={`/entry?date=${props.date}&q=${result.query}&i=${result.index}`}>
+                <Link
+                    to="/entry"
+                    search={{ date: props.date, query: result.query, index: result.index }}
+                    className="match"
+                    key={result.index}
+                >
                     {result.fromStart || <span className="ellipsis">...</span>}
                     {fixupText(result.match.substring(0, result.startIndex))}
                     <span className="highlight">{fixupText(result.match.substring(result.startIndex, result.endIndex))}</span>
