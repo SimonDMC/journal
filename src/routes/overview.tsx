@@ -66,6 +66,8 @@ function Overview() {
             if (e.key === "s" || e.key === "f" || e.key === "/") {
                 const search = document.getElementById("search") as HTMLAnchorElement;
                 search.click();
+                // ensure the search keybind doesn't get typed into search query box
+                e.preventDefault();
             }
         };
         document.addEventListener("keydown", keydown);

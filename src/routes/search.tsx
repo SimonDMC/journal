@@ -184,9 +184,9 @@ function Search() {
         <main className="search">
             <div className="search-wrap">
                 <input id="search-field" placeholder="Search..." onInput={search} autoFocus onKeyDown={searchNavigate} />
-                <a id="plot-button" href={`/search-plot?q=${searchQuery}`}>
+                <Link to="/search-plot" search={{ query: searchQuery }} id="plot-button">
                     <FontAwesomeIcon icon={faChartLine} />
-                </a>
+                </Link>
                 <p id="result-count"></p>
                 <div className="results">
                     {results.map((result, index) => (

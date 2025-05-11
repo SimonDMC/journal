@@ -14,7 +14,7 @@ const html2canvasOptions = {
 function downloadImage() {
     html2canvas(document.getElementById("quoteImage")!, html2canvasOptions).then((canvas) => {
         document.body.appendChild(canvas);
-        var link = document.createElement("a");
+        const link = document.createElement("a");
         document.body.appendChild(link);
         link.download = "journal-quote.png";
         link.href = document.querySelector("canvas")!.toDataURL();

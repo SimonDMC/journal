@@ -1,6 +1,6 @@
 import "../styles/entry.css";
-import { type MutableRefObject, type Ref, useEffect, useRef, useState } from "react";
-import EditorBubble, { moods } from "../../components/editor-bubble/EditorBubble.tsx";
+import { type MutableRefObject, useEffect, useRef, useState } from "react";
+import EditorBubble from "../../components/editor-bubble/EditorBubble.tsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { db } from "../../database/db.ts";
@@ -12,6 +12,7 @@ import Editor from "../../components/editor/Editor.tsx";
 import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 import type { SelectInstance } from "react-select";
 import { today } from "../../util/time.ts";
+import { moods } from "../../util/parameters.ts";
 
 export type EntrySearchParams = {
     date: string;
@@ -36,7 +37,7 @@ export function Entry() {
     const navigate = useNavigate();
     const router = useRouter();
     const contentRef = useRef("");
-    const moodSelectRef: Ref<SelectInstance> = useRef(null);
+    const moodSelectRef: MutableRefObject<SelectInstance | null> = useRef(null);
     const { date } = Route.useSearch();
 
     const [initialContent, setInitialContent] = useState("");
@@ -224,13 +225,7 @@ export function Entry() {
             <Link to="/overview" className="back-arrow">
                 <FontAwesomeIcon icon={faArrowLeft} />
             </Link>
-            <EditorBubble
-                saveEntry={save}
-                mood={mood}
-                location={location}
-                year={date?.substring(0, 4)}
-                ref={moodSelectRef as MutableRefObject<null>}
-            />
+            <EditorBubble saveEntry={save} mood={mood} location={location} year={date?.substring(0, 4)} ref={moodSelectRef} />
             <QuoteImage />
         </main>
     );

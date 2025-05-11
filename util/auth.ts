@@ -25,9 +25,9 @@ export function enforceAuth(navigate: UseNavigateResult<string>, route: RouteTyp
     if (localStorage.getItem("logged-in") && is2faAuthed()) {
         if (route != RouteType.Authed) navigate({ to: "/overview" });
     } else if (localStorage.getItem("logged-in") && options["2fa_method"] == 1 && !is2faAuthed()) {
-        //navigate({ to: "/codeword" });
+        navigate({ to: "/codeword" });
     } else if (localStorage.getItem("logged-in") && options["2fa_method"] == 2 && !is2faAuthed()) {
-        //navigate({ to: "/bioauth" });
+        navigate({ to: "/bioauth" });
     } else {
         navigate({ to: "/login" });
     }

@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import { errorToast } from "./toast";
 import { getUserName } from "./profile";
 import {
-    AuthenticatorTransportFuture,
-    CredentialDeviceType,
+    type AuthenticatorTransportFuture,
+    type CredentialDeviceType,
     generateRegistrationOptions,
     verifyRegistrationResponse,
 } from "@simplewebauthn/server";

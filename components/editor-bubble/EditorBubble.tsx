@@ -1,30 +1,18 @@
-import Select from "react-select";
 import "./EditorBubble.css";
-import { MutableRefObject, useState } from "react";
+import Select, { type SelectInstance } from "react-select";
+import { type MutableRefObject, useState } from "react";
+import { moods, locations } from "../../util/parameters";
 
-export const moods = [
-    { value: 1, label: "1 - Worst day ever" },
-    { value: 2, label: "2 - Awful" },
-    { value: 3, label: "3 - Bad" },
-    { value: 4, label: "4 - Average" },
-    { value: 5, label: "5 - Good" },
-    { value: 6, label: "6 - Great" },
-    { value: 7, label: "7 - Best day ever" },
-];
-
-export const locations = [
-    { value: 1, label: "Mom's" },
-    { value: 2, label: "Dad's" },
-    { value: 3, label: "Cottage" },
-    { value: 4, label: "Not home!" },
-];
+interface Option {
+    readonly value: number;
+}
 
 export default function EditorBubble(props: {
-    saveEntry: Function;
-    mood: MutableRefObject<Number | null>;
-    location: MutableRefObject<Number | null>;
+    saveEntry: () => void;
+    mood: MutableRefObject<number | null>;
+    location: MutableRefObject<number | null>;
     year: string;
-    ref: MutableRefObject<null>;
+    ref: MutableRefObject<SelectInstance | null>;
 }) {
     const [, setForceRender] = useState(false);
 
@@ -50,8 +38,8 @@ export default function EditorBubble(props: {
                     value={moods.find((mood) => mood.value === props.mood.current)}
                     menuPlacement="top"
                     isSearchable={false}
-                    onChange={(option) => {
-                        if (option) props.mood.current = option.value;
+                    onChange={(option: unknown) => {
+                        if (option) props.mood.current = (option as Option).value;
                         // this is ugly but i have to use useRef because useState didn't pass it to parent properly
                         setForceRender((prev) => !prev);
                     }}

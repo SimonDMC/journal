@@ -30,7 +30,7 @@ export async function syncDatabase() {
         if (!clientSyncResponse.ok) {
             throw new Error();
         }
-    } catch (e) {
+    } catch {
         // show offline mode
         document.getElementById("offline")?.classList.remove("invis");
         return;
@@ -65,7 +65,7 @@ export async function syncDatabase() {
     }
 
     // 4. Decide based off last modification date which version of differing entries to use
-    let serverSyncEntries = [];
+    const serverSyncEntries = [];
     for (const entry of json.differing) {
         const localEntry = await db.entries.get(entry.date);
         if (!localEntry) {
@@ -160,7 +160,7 @@ export async function syncEntry(date: string) {
         .then((res) => {
             return res.ok;
         })
-        .catch((err) => {
+        .catch(() => {
             // silently ignore not being able to sync
             // (is this a good idea? possibly revisit later)
             return false;

@@ -1,4 +1,4 @@
-import { Slide, toast, ToastOptions } from "react-toastify";
+import { Slide, toast, type ToastOptions } from "react-toastify";
 
 const toastOptions = {
     position: "top-right",

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type MutableRefObject } from "react";
 import { highlightNthOccurrence, moveCursorToEnd } from "../../util/selection";
 import { QuoteButton } from "../quote-button/QuoteButton";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
@@ -28,9 +28,14 @@ import { today } from "../../util/time";
 
 const entryRoute = getRouteApi("/entry");
 
-export default function Editor(props: { content: string; onKeyUp: GetCallback<BaseEvent>; setContent: Function; date: string }) {
-    const [isLayoutReady, setIsLayoutReady] = useState(false);
-    const editorRef = useRef(null);
+export default function Editor(props: {
+    content: string;
+    onKeyUp: GetCallback<BaseEvent>;
+    setContent: (newContent: string) => void;
+    date: string;
+}) {
+    const [, setIsLayoutReady] = useState(false);
+    const editorRef: MutableRefObject<BalloonEditor | null> = useRef(null);
     const { query, index } = entryRoute.useSearch();
 
     useEffect(() => {
@@ -42,7 +47,7 @@ export default function Editor(props: { content: string; onKeyUp: GetCallback<Ba
     useEffect(() => {
         if (editorRef.current && props.content) {
             focusContent();
-            (editorRef.current as any).setData(handleLineBreaks(props.content)); // update editor when content changes
+            editorRef.current.setData(handleLineBreaks(props.content)); // update editor when content changes
         }
     }, [props.content]);
 
@@ -71,7 +76,7 @@ export default function Editor(props: { content: string; onKeyUp: GetCallback<Ba
 
     function setEditorContent() {
         if (editorRef.current) {
-            const editorData = (editorRef.current as any).getData();
+            const editorData = editorRef.current.getData();
             props.setContent(editorData); // send content up to parent
         }
     }
@@ -109,7 +114,7 @@ export default function Editor(props: { content: string; onKeyUp: GetCallback<Ba
             editor={BalloonEditor}
             config={editorConfig}
             onReady={(editor) => {
-                (editorRef.current as any) = editor;
+                editorRef.current = editor;
 
                 const model = editor.model.document;
                 const setDataCallback = () => {

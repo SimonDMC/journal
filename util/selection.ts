@@ -34,7 +34,7 @@ export function highlightNthOccurrence(container: Node, searchText: string, n: n
                 index += searchText.length;
             }
         } else if (node.nodeType === Node.ELEMENT_NODE) {
-            for (let child of node.childNodes) {
+            for (const child of node.childNodes) {
                 if (findAndHighlight(child)) {
                     return true; // bubble up if found
                 }
@@ -50,7 +50,7 @@ export function highlightNthOccurrence(container: Node, searchText: string, n: n
 function getCaretPixelTop(node: HTMLElement, offsetY: number = 0): number | null {
     if (!node) return null;
 
-    let nodeTop = node.offsetTop;
+    const nodeTop = node.offsetTop;
 
     if (window.getSelection) {
         const selection = window.getSelection();
@@ -60,7 +60,7 @@ function getCaretPixelTop(node: HTMLElement, offsetY: number = 0): number | null
             try {
                 // adjust the range to avoid empty selection issues
                 range.setStart(range.startContainer, range.startOffset - 1);
-            } catch (e) {
+            } catch {
                 // ignore if start offset is out of range
             }
 
