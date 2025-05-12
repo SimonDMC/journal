@@ -1,11 +1,11 @@
 import "../styles/search.css";
 import { useEffect, useState } from "react";
-import SearchResult, { type SearchResultType } from "../../components/search-result/SearchResult";
+import SearchResult, { type SearchResultType } from "../components/search-result/SearchResult";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faChartLine } from "@fortawesome/free-solid-svg-icons";
-import { db } from "../../database/db";
+import { db } from "../database/db";
 import { useLiveQuery } from "dexie-react-hooks";
-import { enforceAuth, RouteType } from "../../util/auth";
+import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 
 export type JournalEntry = {

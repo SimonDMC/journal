@@ -5,9 +5,12 @@ import parse from "html-react-parser";
 export type SearchResultType = {
     date: string;
     matches: SearchMatch[];
-    active?: boolean;
-    id?: number;
-    setActiveIndex?: (_: number) => void;
+};
+
+export type SearchResultProps = SearchResultType & {
+    active: boolean;
+    id: number;
+    setActiveIndex: (_: number) => void;
 };
 
 type SearchMatch = {
@@ -31,9 +34,9 @@ function fixupText(text: string) {
     );
 }
 
-export default function SearchResult(props: SearchResultType) {
+export default function SearchResult(props: SearchResultProps) {
     return (
-        <div className={`result ${props.active && "active"}`} onMouseOver={() => props.setActiveIndex!(props.id!)}>
+        <div className={`result ${props.active && "active"}`} onMouseOver={() => props.setActiveIndex!(props.id)}>
             <div className="date">{props.date}</div>
             {props.matches.map((result: SearchMatch) => (
                 <Link

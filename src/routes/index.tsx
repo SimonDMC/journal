@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { enforceAuth, RouteType } from "../../util/auth";
+import { enforceAuth, RouteType } from "../util/auth";
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/")({

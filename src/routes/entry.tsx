@@ -1,18 +1,18 @@
 import "../styles/entry.css";
 import { type MutableRefObject, useEffect, useRef, useState } from "react";
-import EditorBubble from "../../components/editor-bubble/EditorBubble.tsx";
+import EditorBubble from "../components/editor-bubble/EditorBubble.tsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { db } from "../../database/db.ts";
-import { syncEntry } from "../../database/sync.ts";
-import { moveCursorToEnd } from "../../util/selection.ts";
-import { enforceAuth, RouteType } from "../../util/auth.ts";
-import QuoteImage from "../../components/quote-image/QuoteImage.tsx";
-import Editor from "../../components/editor/Editor.tsx";
+import { db } from "../database/db.ts";
+import { syncEntry } from "../database/sync.ts";
+import { moveCursorToEnd } from "../util/selection.ts";
+import { enforceAuth, RouteType } from "../util/auth.ts";
+import QuoteImage from "../components/quote-image/QuoteImage.tsx";
+import Editor from "../components/editor/Editor.tsx";
 import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 import type { SelectInstance } from "react-select";
-import { today } from "../../util/time.ts";
-import { moods } from "../../util/parameters.ts";
+import { today } from "../util/time.ts";
+import { moods } from "../util/parameters.ts";
 
 export type EntrySearchParams = {
     date: string;

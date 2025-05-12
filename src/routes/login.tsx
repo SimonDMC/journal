@@ -1,10 +1,10 @@
-import { API_URL } from "../../util/config";
+import { API_URL } from "../util/config";
 import "../styles/login.css";
 import { useEffect } from "react";
-import { checkForUpdate } from "../../util/update";
-import { db } from "../../database/db";
-import { errorToast } from "../../util/toast";
-import { enforceAuth, RouteType } from "../../util/auth";
+import { checkForUpdate } from "../util/update";
+import { db } from "../database/db";
+import { errorToast } from "../util/toast";
+import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/login")({

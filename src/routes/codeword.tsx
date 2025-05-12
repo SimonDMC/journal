@@ -2,8 +2,8 @@ import "../styles/codeword.css";
 import { useEffect } from "react";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { enforceAuth, logout, RouteType } from "../../util/auth";
-import { getOptions } from "../../util/profile";
+import { enforceAuth, logout, RouteType } from "../util/auth";
+import { getOptions } from "../util/profile";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/codeword")({

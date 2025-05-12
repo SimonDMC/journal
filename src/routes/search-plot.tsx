@@ -1,12 +1,12 @@
 import "../styles/search-plot.css";
-import { db } from "../../database/db";
+import { db } from "../database/db";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart, LinearScale, CategoryScale, PointElement, BarElement, Tooltip, type ChartOptions, defaults } from "chart.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { enforceAuth, RouteType } from "../../util/auth";
-import { MONTH_NAMES } from "../../util/months";
+import { enforceAuth, RouteType } from "../util/auth";
+import { MONTH_NAMES } from "../util/months";
 import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 
 Chart.register(LinearScale, CategoryScale, PointElement, BarElement, Tooltip);
