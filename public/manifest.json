@@ -12,6 +12,6 @@
     "id": "com.simondmc.journal",
     "start_url": "https://journal.simondmc.com",
     "display": "standalone",
-    "theme_color": "#ffffff",
+    "theme_color": "#000000",
     "background_color": "#000000"
 }

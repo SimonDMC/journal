@@ -29,10 +29,10 @@ self.addEventListener("fetch", (event) => {
     }
 
     // Don't cache local requests while developing
-    /* if (url.host.includes("localhost") || url.host.includes("127.0.0.1")) {
+    if (url.host.includes("localhost") || url.host.includes("127.0.0.1")) {
         event.respondWith(fetch(event.request));
         return;
-    } */
+    }
 
     // Normal caching logic for other requests
     event.respondWith(
