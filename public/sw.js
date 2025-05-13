@@ -29,10 +29,10 @@ self.addEventListener("fetch", (event) => {
     }
 
     // Don't cache local requests while developing
-    if (url.host == "localhost:3000") {
+    /* if (url.host.includes("localhost") || url.host.includes("127.0.0.1")) {
         event.respondWith(fetch(event.request));
         return;
-    }
+    } */
 
     // Normal caching logic for other requests
     event.respondWith(
@@ -41,26 +41,14 @@ self.addEventListener("fetch", (event) => {
                 return cachedResponse;
             }
 
-            // Cache <Link>-based entry and full-load entry separately since
-            // only caching the <Link> one fails when reloading the entry page
-            // while only caching the full-load one renders CKEditor every page load
-            if (url.pathname == "/entry" && !url.searchParams.get("_rsc")) {
+            // Cache entry separately due to ?date= varying
+            if (url.pathname == "/entry") {
                 const cache = await caches.open(CACHE_NAME);
                 let entryPage = await cache.match(`/entry`);
 
                 if (!entryPage) {
                     entryPage = await fetch(event.request);
                     await cache.put(`/entry`, entryPage.clone());
-                }
-
-                return entryPage;
-            } else if (url.pathname == "/entry") {
-                const cache = await caches.open(CACHE_NAME);
-                let entryPage = await cache.match(`/entry-rsc`);
-
-                if (!entryPage) {
-                    entryPage = await fetch(event.request);
-                    await cache.put(`/entry-rsc`, entryPage.clone());
                 }
 
                 return entryPage;
