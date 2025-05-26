@@ -163,8 +163,6 @@ export default function Editor(props: {
                 // or focus if theres nothing
                 if (props.content == "") setDataCallback();
 
-                // fancify apostrophes
-
                 model.on("change:data", setEditorContent);
             }}
         />
