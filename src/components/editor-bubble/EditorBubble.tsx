@@ -14,6 +14,7 @@ export default function EditorBubble(props: {
     location: MutableRefObject<number | null>;
     year: string;
     ref: MutableRefObject<SelectInstance | null>;
+    wordCount: number;
 }) {
     const [, setForceRender] = useState(false);
 
@@ -30,7 +31,7 @@ export default function EditorBubble(props: {
 
     return (
         <div className="bubble">
-            <p id="word-count">Word Count: 0</p>
+            <p id="word-count">Word Count: {props.wordCount}</p>
             <div className="selections">
                 <Select
                     instanceId="mood"

@@ -32,7 +32,7 @@ export const Route = createFileRoute("/entry")({
 });
 
 export function Entry() {
-    const word_count = useRef(0);
+    const [wordCount, setWordCount] = useState(0);
     const navigate = useNavigate();
     const router = useRouter();
     const contentRef = useRef("");
@@ -125,9 +125,7 @@ export function Entry() {
     };
 
     function countWords() {
-        const wordCountEl = document.getElementById("word-count") as HTMLParagraphElement;
-        word_count.current = contentRef.current.split(/\s+/).filter((word) => word !== "").length;
-        wordCountEl.innerText = `Word Count: ${word_count.current}`;
+        setWordCount(contentRef.current.split(/\s+/).filter((word) => word !== "").length);
     }
 
     async function saveRemotely() {
@@ -164,7 +162,7 @@ export function Entry() {
                 content: text,
                 mood: mood.current,
                 location: location.current,
-                word_count: word_count.current,
+                word_count: wordCount,
                 hash: hashed,
                 last_modified: new Date().toISOString(),
             });
@@ -175,7 +173,7 @@ export function Entry() {
                 content: text,
                 mood: mood.current,
                 location: location.current,
-                word_count: word_count.current,
+                word_count: wordCount,
                 hash: hashed,
                 last_modified: new Date().toISOString(),
             });
@@ -200,6 +198,7 @@ export function Entry() {
                 location={location}
                 year={date?.substring(0, 4)}
                 ref={moodSelectRef}
+                wordCount={wordCount}
             />
             <QuoteImage />
         </main>
