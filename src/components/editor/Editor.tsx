@@ -75,18 +75,21 @@ export default function Editor(props: {
         typing: {
             transformations: {
                 include: [
+                    // dots, en dash, em dash
+                    "typography",
                     // replace single and double quotes
-                    // -- if preceding character is space or “ (or is the first character), use “; otherwise use ”
+                    // if preceding character is space or the quote is the first character, use “
+                    // otherwise use ”
                     {
                         from: /^(')$/,
                         to: "‘",
                     },
                     {
-                        from: /([\s‘])(')$/,
+                        from: /(\s)(')$/,
                         to: [null, "‘"],
                     },
                     {
-                        from: /([^\s‘])(')$/,
+                        from: /(\S)(')$/,
                         to: [null, "’"],
                     },
                     {
@@ -94,11 +97,11 @@ export default function Editor(props: {
                         to: "“",
                     },
                     {
-                        from: /([\s“])(")$/,
+                        from: /(\s)(")$/,
                         to: [null, "“"],
                     },
                     {
-                        from: /([^\s“])(")$/,
+                        from: /(\S)(")$/,
                         to: [null, "”"],
                     },
                 ],
