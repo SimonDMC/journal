@@ -11,7 +11,6 @@ import QuoteImage from "../components/quote-image/QuoteImage.tsx";
 import Editor from "../components/editor/Editor.tsx";
 import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 import type { SelectInstance } from "react-select";
-import { today } from "../util/time.ts";
 import { moods } from "../util/parameters.ts";
 
 export type EntrySearchParams = {
@@ -50,35 +49,9 @@ export function Entry() {
 
         setIsSafari((navigator.vendor && navigator.vendor.indexOf("Apple") > -1) as boolean);
 
-        let prevText: string;
-        let prevMood = mood.current;
-        let initialized = false;
-
-        // Autosave every 10 seconds if on today's entry
-        let autosaveInterval: NodeJS.Timer;
-        if (today === date) {
-            autosaveInterval = setInterval(() => {
-                const text = contentRef.current;
-                if (!prevText) {
-                    prevText = text;
-                    return;
-                }
-
-                if (initialized && text && (text !== prevText || mood.current !== prevMood)) {
-                    console.log("Autosaving locally");
-                    saveEntry(text, date);
-                    prevText = text;
-                    prevMood = mood.current;
-                }
-            }, 10000);
-        }
-
         // load entry
         db.entries.get(date).then(async (data) => {
-            if (!data) {
-                initialized = true;
-                return;
-            }
+            if (!data) return;
 
             if (data.mood) {
                 mood.current = data.mood;
@@ -88,11 +61,7 @@ export function Entry() {
             }
 
             contentRef.current = data.content;
-            prevText = data.content;
             setInitialContent(data.content);
-
-            initialized = true;
-            countWords();
         });
 
         const keyDown = async (event: KeyboardEvent) => {
@@ -139,7 +108,7 @@ export function Entry() {
                 event.preventDefault();
 
                 // save the entry
-                save();
+                saveRemotely();
             }
         };
         document.addEventListener("keydown", keyDown);
@@ -147,11 +116,10 @@ export function Entry() {
         // remove listener on unmount
         return () => {
             document.removeEventListener("keydown", keyDown);
-            clearInterval(autosaveInterval);
         };
     }, []);
 
-    const handleContentChange = (newContent: string) => {
+    const handleContentChange = async (newContent: string) => {
         contentRef.current = newContent;
         countWords();
     };
@@ -162,9 +130,8 @@ export function Entry() {
         wordCountEl.innerText = `Word Count: ${word_count.current}`;
     }
 
-    async function save() {
-        const text = contentRef.current;
-        await saveEntry(text, date);
+    async function saveRemotely() {
+        await saveLocally();
         const saveButton = document.getElementById("save-button") as HTMLButtonElement;
         saveButton.innerText = "Saved!";
         setTimeout(() => {
@@ -174,7 +141,8 @@ export function Entry() {
         syncEntry(date);
     }
 
-    async function saveEntry(text: string, date: string) {
+    async function saveLocally() {
+        const text = contentRef.current;
         // compute hash -- docs/hash.md
         const toHashObject: { content: string; mood?: number; location?: number } = {
             content: text,
@@ -220,12 +188,19 @@ export function Entry() {
             <div id="loadingEntry">Loading...</div>
             <div className={`content ${date?.substring(0, 4) === "2024" ? "short" : ""}`}>
                 <div className="line"></div>
-                <Editor content={initialContent} onKeyUp={countWords} setContent={handleContentChange} date={date} />
+                <Editor content={initialContent} setContent={handleContentChange} saveLocally={saveLocally} date={date} />
             </div>
             <Link to="/overview" className="back-arrow">
                 <FontAwesomeIcon icon={faArrowLeft} />
             </Link>
-            <EditorBubble saveEntry={save} mood={mood} location={location} year={date?.substring(0, 4)} ref={moodSelectRef} />
+            <EditorBubble
+                saveEntry={saveRemotely}
+                saveLocally={saveLocally}
+                mood={mood}
+                location={location}
+                year={date?.substring(0, 4)}
+                ref={moodSelectRef}
+            />
             <QuoteImage />
         </main>
     );

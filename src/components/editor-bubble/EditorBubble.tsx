@@ -8,7 +8,8 @@ interface Option {
 }
 
 export default function EditorBubble(props: {
-    saveEntry: () => void;
+    saveEntry: () => Promise<void>;
+    saveLocally: () => Promise<void>;
     mood: MutableRefObject<number | null>;
     location: MutableRefObject<number | null>;
     year: string;
@@ -40,6 +41,7 @@ export default function EditorBubble(props: {
                     isSearchable={false}
                     onChange={(option: unknown) => {
                         if (option) props.mood.current = (option as Option).value;
+                        props.saveLocally();
                         // this is ugly but i have to use useRef because useState didn't pass it to parent properly
                         setForceRender((prev) => !prev);
                     }}
@@ -59,6 +61,7 @@ export default function EditorBubble(props: {
                             isSearchable={false}
                             onChange={(option) => {
                                 if (option) props.location.current = option.value;
+                                props.saveLocally();
                                 setForceRender((prev) => !prev);
                             }}
                             classNames={selectStyles}

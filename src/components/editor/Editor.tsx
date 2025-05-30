@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type MutableRefObject } from "react";
+import { useEffect, useRef, type MutableRefObject } from "react";
 import { highlightNthOccurrence, moveCursorToEnd } from "../../util/selection";
 import { QuoteButton } from "../quote-button/QuoteButton";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
@@ -18,8 +18,6 @@ import {
     Superscript,
     TextTransformation,
     Underline,
-    type GetCallback,
-    type BaseEvent,
 } from "ckeditor5";
 
 import "ckeditor5/ckeditor5.css";
@@ -30,19 +28,13 @@ const entryRoute = getRouteApi("/entry");
 
 export default function Editor(props: {
     content: string;
-    onKeyUp: GetCallback<BaseEvent>;
     setContent: (newContent: string) => void;
+    saveLocally: () => Promise<void>;
     date: string;
 }) {
-    const [, setIsLayoutReady] = useState(false);
     const editorRef: MutableRefObject<BalloonEditor | null> = useRef(null);
+    const autosaveLoaded: MutableRefObject<boolean> = useRef(false);
     const { query, index } = entryRoute.useSearch();
-
-    useEffect(() => {
-        setIsLayoutReady(true);
-
-        return () => setIsLayoutReady(false);
-    }, []);
 
     useEffect(() => {
         if (editorRef.current && props.content) {
@@ -72,6 +64,20 @@ export default function Editor(props: {
             Underline,
             QuoteButton,
         ],
+        autosave: {
+            // only save max every second
+            waitingTime: 1000,
+            async save() {
+                if (today === props.date) {
+                    if (autosaveLoaded.current) {
+                        console.log("Autosaving locally!");
+                        await props.saveLocally();
+                    } else {
+                        autosaveLoaded.current = true;
+                    }
+                }
+            },
+        },
         typing: {
             transformations: {
                 include: [
@@ -152,20 +158,10 @@ export default function Editor(props: {
                 editorRef.current = editor;
 
                 const model = editor.model.document;
-                const setDataCallback = () => {
-                    focusContent();
+                editor.setData(handleLineBreaks(props.content));
+                focusContent();
 
-                    // remove the listener so it only runs once
-                    model.off("change:data", setDataCallback);
-                };
-
-                model.on("change:data", setDataCallback);
-
-                // set data if already loaded
-                if (props.content) editor.setData(handleLineBreaks(props.content));
-                // or focus if theres nothing
-                if (props.content == "") setDataCallback();
-
+                // propagate edits to parent
                 model.on("change:data", setEditorContent);
             }}
         />
