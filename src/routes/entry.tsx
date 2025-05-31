@@ -12,6 +12,7 @@ import Editor from "../components/editor/Editor.tsx";
 import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
 import type { SelectInstance } from "react-select";
 import { moods } from "../util/parameters.ts";
+import { formatDate } from "../util/time.ts";
 
 export type EntrySearchParams = {
     date: string;
@@ -188,6 +189,7 @@ export function Entry() {
                 <div className="line"></div>
                 <Editor content={initialContent} setContent={handleContentChange} saveLocally={saveLocally} date={date} />
             </div>
+            <div className="date">{formatDate(date)}</div>
             <Link to="/overview" className="back-arrow">
                 <FontAwesomeIcon icon={faArrowLeft} />
             </Link>
