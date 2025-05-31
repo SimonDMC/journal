@@ -36,16 +36,23 @@ export function Login() {
         const username = (document.getElementById("username") as HTMLInputElement).value;
         const password = (document.getElementById("password") as HTMLInputElement).value;
 
-        const res = await fetch(`${API_URL}/login`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password,
-            }),
-        });
+        let res;
+        try {
+            res = await fetch(`${API_URL}/login`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                }),
+            });
+        } catch (e) {
+            console.error(e);
+            errorToast("Couldn't reach server.");
+            return;
+        }
 
         if (res.ok) {
             console.log("Logged in.");

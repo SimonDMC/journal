@@ -1,6 +1,7 @@
 import { getOptions } from "./profile";
 import { API_URL } from "./config";
 import type { UseNavigateResult } from "@tanstack/router-core";
+import { errorToast } from "./toast";
 
 export enum RouteType {
     Unauthed,
@@ -34,9 +35,15 @@ export function enforceAuth(navigate: UseNavigateResult<string>, route: RouteTyp
 }
 
 export async function logout(navigate: UseNavigateResult<string>) {
-    await fetch(`${API_URL}/logout`, {
-        method: "POST",
-    });
+    try {
+        await fetch(`${API_URL}/logout`, {
+            method: "POST",
+        });
+    } catch (e) {
+        console.error(e);
+        errorToast("Couldn't reach server.");
+        return;
+    }
     localStorage.removeItem("logged-in");
     sessionStorage.removeItem("codeword");
     navigate({ to: "/login" });
