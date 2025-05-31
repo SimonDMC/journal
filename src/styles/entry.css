@@ -57,7 +57,7 @@ main.entry {
 
 /* i wish i knew why this is necessary */
 .safari .ck-content {
-    background-size: 100% calc(1.8em - 0.3px);
+    background-size: 100% calc(1.8em - 0.7px);
 }
 
 .ck-content code {
