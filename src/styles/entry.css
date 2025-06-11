@@ -64,6 +64,10 @@ main.entry {
     line-height: 1em;
 }
 
+.ck-content p:first-child {
+    anchor-name: --entry-content;
+}
+
 main.entry .date {
     position: absolute;
     top: .4em;
@@ -75,10 +79,9 @@ main.entry .date {
 .line {
     width: 2px;
     position: absolute;
-    height: calc(100% - 0.5em);
+    height: 100%;
     background-color: #333;
     margin-left: 2em;
-    margin-top: 0.5em;
     z-index: 1;
     /* hide until editor loads */
     display: none;

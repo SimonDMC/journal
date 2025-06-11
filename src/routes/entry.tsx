@@ -188,6 +188,7 @@ export function Entry() {
             <div className={`content ${date?.substring(0, 4) === "2024" ? "short" : ""}`}>
                 <div className="line"></div>
                 <Editor content={initialContent} setContent={handleContentChange} saveLocally={saveLocally} date={date} />
+                <div className="line-clip"></div>
             </div>
             <div className="date">{formatDate(date)}</div>
             <Link to="/overview" className="back-arrow">
