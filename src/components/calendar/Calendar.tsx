@@ -38,13 +38,13 @@ export default function Calendar(props: { month: string; previousMonth: () => vo
         <div id="calendar" className="calendar" onTouchStart={touchStart} onTouchEnd={touchEnd}>
             <div className="top-bar">
                 <div className="inner">
-                    <button onClick={() => props.previousMonth()}>
+                    <button className="arrow" onClick={() => props.previousMonth()}>
                         <FontAwesomeIcon icon={faArrowLeft} />
                     </button>
-                    <span>
+                    <span className="month">
                         {monthName} {currentYear}
                     </span>
-                    <button onClick={() => props.nextMonth()}>
+                    <button className="arrow" onClick={() => props.nextMonth()}>
                         <FontAwesomeIcon icon={faArrowRight} />
                     </button>
                 </div>

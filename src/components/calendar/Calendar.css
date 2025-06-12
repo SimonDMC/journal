@@ -45,12 +45,8 @@
     font-size: 1.1em;
 }
 
-.top-bar span {
+.top-bar .month {
     font-size: 1.2em;
-}
-
-.top-bar button {
-    outline: none;
 }
 
 .week-days .inner {
@@ -58,10 +54,11 @@
     font-size: 0.8em;
 }
 
-.top-bar button {
+.top-bar .arrow {
+    outline: none;
     border: none;
     font-size: 1em;
-    padding: 0;
+    margin: 0 .25em;
 }
 
 .days {
@@ -109,5 +106,13 @@ span.offset:first-of-type {
 @media (max-width: 500px) {
     .calendar {
         border-radius: .5em;
+    }
+
+    .top-bar .month {
+        font-size: 1.4em;
+    }
+
+    .top-bar .arrow {
+        font-size: 1.3em;
     }
 }
