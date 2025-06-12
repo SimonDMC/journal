@@ -7,6 +7,7 @@ import { Slide, ToastContainer } from "react-toastify";
 import { routeTree } from "./routeTree.gen";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
+import BottomMargin from "./components/bottom-margin/BottomMargin";
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -18,12 +19,17 @@ declare module "@tanstack/react-router" {
     }
 }
 
+// Figure out if we need a bottom mobile PWA margin
+// @ts-expect-error: Standalone does not exist on navigator (ios only)
+const bottomMarginVisible = window.navigator.standalone || window.matchMedia("(display-mode: standalone)").matches;
+
 // Render the app
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
     const root = createRoot(rootElement);
     root.render(
         <StrictMode>
+            <BottomMargin visible={bottomMarginVisible} />
             <RouterProvider router={router} />
             <ToastContainer transition={Slide} />
         </StrictMode>

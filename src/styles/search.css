@@ -70,8 +70,16 @@ main.search {
 }
 
 @media (max-width: 500px) {
+    main.search {
+        justify-content: flex-start;
+        font-size: 1.2em;
+    }
+
     .search-wrap {
-        height: 80vh;
+        margin-top: 3em;
+        height: calc(100% - 3em);
+        padding: 0;
+        border: none;
     }
 
     /* hide plot button */

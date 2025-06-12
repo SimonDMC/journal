@@ -46,15 +46,16 @@ main {
     translate: -0.3em 0.2em;
 }
 
-.controls {
+.bottom-right {
     position: absolute;
     bottom: 1em;
     right: 1em;
 }
 
-.controls a {
+.bottom-right a {
     font-size: 2em;
     cursor: pointer;
+    display: flex;
 }
 
 #keyless-bar {
@@ -96,9 +97,8 @@ main {
 
     .stats,
     .controls {
-        margin-bottom: .7em;
-        margin-left: 0.5em;
-        margin-right: 0.5em;
+        margin-left: 0.2em;
+        margin-right: 0.2em;
     }
 
     .stats {

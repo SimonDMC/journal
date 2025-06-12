@@ -132,7 +132,7 @@ function Overview() {
                 <p className="entryCount">Entry Count: {commaFormat(entries.length)}</p>
                 <p className="wordCount">Total Words: {commaFormat(wordCount)}</p>
             </div>
-            <div className="controls">
+            <div className="bottom-right">
                 <Link to="/search" id="search">
                     <FontAwesomeIcon icon={faMagnifyingGlass} />
                 </Link>

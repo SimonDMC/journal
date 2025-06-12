@@ -53,6 +53,10 @@
         white-space: unset;
     }
 
+    .result .match {
+        font-size: 1.2em;
+    }
+
     /* first is date, second is first match */
     .result .match:not(:nth-child(2)) {
         border-top: 2px dotted #555;

@@ -16,7 +16,6 @@ export function Home() {
             if (!localStorage.getItem("cached-at")) localStorage.setItem("cached-at", Date.now().toString());
         }
 
-        console.log("wsp");
         enforceAuth(navigate, RouteType.Unauthed);
     }, []);
 
