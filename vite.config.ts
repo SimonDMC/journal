@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import type { OutputBundle, OutputOptions } from "rollup";
 import fs from "fs";
 import path from "path";
 
@@ -16,9 +17,22 @@ function createUpdate() {
     };
 }
 
+function generateAssetList() {
+    return {
+        name: "generate-asset-list",
+        generateBundle(_: OutputOptions, bundle: OutputBundle) {
+            const assets = Object.keys(bundle);
+
+            const outputPath = path.join(__dirname, "public", "asset-list.json");
+            fs.writeFileSync(outputPath, JSON.stringify(assets, null, 2));
+            console.log(`\n📝 Asset list written to ${outputPath}`);
+        },
+    };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [TanStackRouterVite({ target: "react", autoCodeSplitting: true }), react(), createUpdate()],
+    plugins: [TanStackRouterVite({ target: "react", autoCodeSplitting: true }), react(), createUpdate(), generateAssetList()],
     server: {
         hmr: {
             host: "localhost",
