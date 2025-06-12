@@ -1,4 +1,4 @@
 .bottom-margin+main {
-    height: calc(100svh - env(safe-area-inset-bottom, .7em));
+    height: calc(100svh - .8em);
     position: relative;
 }

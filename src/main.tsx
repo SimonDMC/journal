@@ -20,8 +20,7 @@ declare module "@tanstack/react-router" {
 }
 
 // Figure out if we need a bottom mobile PWA margin
-// @ts-expect-error: Standalone does not exist on navigator (ios only)
-const bottomMarginVisible = window.navigator.standalone || window.matchMedia("(display-mode: standalone)").matches;
+const bottomMarginVisible = window.matchMedia("(display-mode: standalone)").matches ? true : false;
 
 // Render the app
 const rootElement = document.getElementById("root")!;
