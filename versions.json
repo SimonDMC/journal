@@ -1,10 +1,15 @@
 {
   "current": {
-    "version": "0.0.2",
-    "desc": "Fix bottom margin on desktop",
-    "released": 1749933890669
+    "version": "0.0.3",
+    "desc": "Extend search page to the bottom on mobile",
+    "released": 1749934772360
   },
   "history": [
+    {
+      "version": "0.0.3",
+      "desc": "Extend search page to the bottom on mobile",
+      "released": 1749934772360
+    },
     {
       "version": "0.0.2",
       "desc": "Fix bottom margin on desktop",

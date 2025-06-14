@@ -1,6 +1,6 @@
 /* only apply on mobile */
 @media (pointer: coarse) {
-    .bottom-margin+main {
+    .bottom-margin+main:not(.margin-bypass) {
         height: calc(100svh - 1.2em);
         position: relative;
     }
