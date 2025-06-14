@@ -1,4 +1,7 @@
-.bottom-margin+main {
-    height: calc(100svh - 1.2em);
-    position: relative;
+/* only apply on mobile */
+@media (pointer: coarse) {
+    .bottom-margin+main {
+        height: calc(100svh - 1.2em);
+        position: relative;
+    }
 }
