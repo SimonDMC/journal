@@ -8,6 +8,7 @@ import { routeTree } from "./routeTree.gen";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import BottomMargin from "./components/bottom-margin/BottomMargin";
+import UpdatePopup from "./components/update-popup/UpdatePopup";
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -31,6 +32,7 @@ if (!rootElement.innerHTML) {
             <BottomMargin visible={bottomMarginVisible} />
             <RouterProvider router={router} />
             <ToastContainer transition={Slide} />
+            <UpdatePopup />
         </StrictMode>
     );
 }

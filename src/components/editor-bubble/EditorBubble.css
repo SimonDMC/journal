@@ -104,8 +104,4 @@ select {
     .select-option:hover {
         background-color: #333 !important;
     }
-
-    option:hover {
-        background-color: #f00;
-    }
 }

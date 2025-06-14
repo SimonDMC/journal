@@ -13,7 +13,6 @@ export function Home() {
         // register service worker
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("/sw.js");
-            if (!localStorage.getItem("cached-at")) localStorage.setItem("cached-at", Date.now().toString());
         }
 
         enforceAuth(navigate, RouteType.Unauthed);

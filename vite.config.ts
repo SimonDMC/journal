@@ -1,38 +1,48 @@
-import { defineConfig } from "vite";
+import { defineConfig, type ResolvedConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 import type { OutputBundle, OutputOptions } from "rollup";
 import fs from "fs";
 import path from "path";
 
-function createUpdate() {
-    return {
-        name: "write-build-meta",
-        buildStart() {
-            const buildTimestamp = Date.now();
-            const outputPath = path.join(__dirname, "public", "build-meta.json");
-            fs.writeFileSync(outputPath, JSON.stringify({ buildTimestamp }));
-            console.log(`⬆️  Build timestamp written to ${outputPath}`);
-        },
-    };
-}
+function generateBuildMeta() {
+    let config: ResolvedConfig;
 
-function generateAssetList() {
     return {
-        name: "generate-asset-list",
+        name: "generate-build-meta",
+
+        configResolved(resolvedConfig: ResolvedConfig) {
+            config = resolvedConfig;
+        },
+
         generateBundle(_: OutputOptions, bundle: OutputBundle) {
+            // generate asset list
             const assets = Object.keys(bundle);
 
-            const outputPath = path.join(__dirname, "public", "asset-list.json");
-            fs.writeFileSync(outputPath, JSON.stringify(assets, null, 2));
-            console.log(`\n📝 Asset list written to ${outputPath}`);
+            const assetListPath = path.join(__dirname, config.build.outDir, "asset-list.json");
+            fs.writeFileSync(assetListPath, JSON.stringify({ assets }, null, 2));
+            console.log(`📝 Asset list written to ${assetListPath}`);
         },
     };
 }
 
 // https://vite.dev/config/
 export default defineConfig({
-    plugins: [TanStackRouterVite({ target: "react", autoCodeSplitting: true }), react(), createUpdate(), generateAssetList()],
+    plugins: [
+        TanStackRouterVite({
+            target: "react",
+            autoCodeSplitting: true,
+        }),
+        react(),
+        generateBuildMeta(),
+        viteStaticCopy({
+            targets: [
+                { src: "versions.json", dest: "" },
+                { src: "src/sw.js", dest: "" },
+            ],
+        }),
+    ],
     server: {
         hmr: {
             host: "localhost",
