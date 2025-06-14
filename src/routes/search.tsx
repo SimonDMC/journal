@@ -181,7 +181,7 @@ function Search() {
     }
 
     return (
-        <main className="search">
+        <main className="search margin-bypass">
             <div className="search-wrap">
                 <input id="search-field" placeholder="Search..." onInput={search} autoFocus onKeyDown={searchNavigate} />
                 <Link to="/search-plot" search={{ query: searchQuery }} id="plot-button">
