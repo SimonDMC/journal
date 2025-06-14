@@ -12,6 +12,9 @@
 /.next/
 /out/
 
+# wrangler
+.wrangler
+
 # production
 /build
 /dist
@@ -35,7 +38,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# update meta
-public/asset-list.json
-public/build-meta.json

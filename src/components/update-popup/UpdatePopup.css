@@ -1,0 +1,65 @@
+.up-bg {
+    width: 100vw;
+    height: 100svh;
+    background-color: #00000088;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.up-body {
+    background-color: black;
+    border: 2px solid #555;
+    font-size: 1.5em;
+    padding: 1em 1.5em;
+    border-radius: .3em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: min(18em, 95vw);
+}
+
+.up-body h1 {
+    font-weight: 600;
+    font-size: 1.2em;
+}
+
+.up-body .version {
+    text-align: center;
+    margin-bottom: .8em;
+}
+
+.up-body .version .monospace {
+    font-family: monospace;
+    margin: 0 .4em;
+    font-size: 1.2em;
+}
+
+.up-body .changelog {
+    align-self: flex-start;
+}
+
+.up-body ul {
+    list-style-type: initial;
+    margin: 0 1em;
+    align-self: flex-start;
+    margin-bottom: 1em;
+}
+
+.up-body button.yes {
+    width: fit-content;
+    border: 2px solid #333;
+    padding: 0.2em 0.6em;
+    border-radius: 0.3em;
+    transition: background-color 0.2s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .up-body button.yes:hover {
+        background-color: #1b1b1b;
+    }
+}
