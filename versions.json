@@ -1,10 +1,15 @@
 {
   "current": {
-    "version": "0.0.4",
-    "desc": "Added enter keybind to update popup",
-    "released": 1749996904782
+    "version": "0.0.5",
+    "desc": "Improved update popup",
+    "released": 1749998461097
   },
   "history": [
+    {
+      "version": "0.0.5",
+      "desc": "Improved update popup",
+      "released": 1749998461097
+    },
     {
       "version": "0.0.4",
       "desc": "Added enter keybind to update popup",

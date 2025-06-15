@@ -61,11 +61,13 @@ export default function UpdatePopup() {
                     <span className="monospace">{newVersion}</span>
                 </div>
                 <span className="changelog">Changelog:</span>
-                <ul>
-                    {changelog.map((line, i) => (
-                        <li key={i}>{line}</li>
-                    ))}
-                </ul>
+                <div className="changelog-wrap">
+                    <ul>
+                        {changelog.map((line, i) => (
+                            <li key={i}>{line}</li>
+                        ))}
+                    </ul>
+                </div>
                 <div className="progress-txt"></div>
                 <div className="progress-bar"></div>
                 <button className="yes" onClick={applyUpdate}>

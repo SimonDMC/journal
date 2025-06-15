@@ -94,6 +94,19 @@ export default function ProfileIcon() {
                     description="Delete all locally saved entries (resyncs with the database on page reload)"
                     onClick={wipeLocalDatabase}
                 />
+                {/* <DropdownItem
+                    label="Invoke Update Popup"
+                    onClick={() => {
+                        updateDownload.dispatchEvent(
+                            new CustomEvent("done", {
+                                detail: {
+                                    version: "0.0.0",
+                                    changelogs: ["Example update log"],
+                                },
+                            })
+                        );
+                    }}
+                /> */}
                 <DropdownSeparator />
                 <DropdownItem label="Log Out" onClick={() => logout(navigate)} />
             </Dropdown>
