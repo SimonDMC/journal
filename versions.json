@@ -1,18 +1,23 @@
 {
   "current": {
-    "version": "0.0.3",
-    "desc": "Extend search page to the bottom on mobile",
-    "released": 1749934772360
+    "version": "0.0.4",
+    "desc": "Added enter keybind to update popup",
+    "released": 1749996904782
   },
   "history": [
     {
+      "version": "0.0.4",
+      "desc": "Added enter keybind to update popup",
+      "released": 1749996904782
+    },
+    {
       "version": "0.0.3",
-      "desc": "Extend search page to the bottom on mobile",
+      "desc": "Extended search page to the bottom on mobile",
       "released": 1749934772360
     },
     {
       "version": "0.0.2",
-      "desc": "Fix bottom margin on desktop",
+      "desc": "Fixed bottom margin on desktop",
       "released": 1749933890669
     },
     {

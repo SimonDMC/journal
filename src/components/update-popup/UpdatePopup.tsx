@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import "./UpdatePopup.css";
 import { updateDownload } from "../../util/update";
 
+export let updatePopupOpen = false;
+
 export default function UpdatePopup() {
     const [open, setOpen] = useState(false);
     const [oldVersion, setOldVersion] = useState("");
@@ -9,6 +11,10 @@ export default function UpdatePopup() {
     const [changelog, setChangelog] = useState([""]);
 
     useEffect(() => {
+        // expose open state, so that Enter keypress gets disabled elsewhere
+        updatePopupOpen = open;
+
+        // initialize popup data and open whenever update is available
         const handler = (e: Event) => {
             const { version, changelogs } = (e as CustomEvent).detail;
             setOpen(true);
@@ -18,10 +24,20 @@ export default function UpdatePopup() {
         };
         updateDownload.addEventListener("done", handler);
 
+        const keydown = async (event: KeyboardEvent) => {
+            // apply update using enter
+            if (event.key === "Enter" && open) {
+                applyUpdate();
+            }
+        };
+        document.addEventListener("keydown", keydown);
+
+        // remove listeners on unmount
         return () => {
             updateDownload.removeEventListener("done", handler);
+            document.removeEventListener("keydown", keydown);
         };
-    }, []);
+    }, [open]);
 
     async function applyUpdate() {
         localStorage.setItem("journal-version", newVersion);

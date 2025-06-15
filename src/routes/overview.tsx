@@ -11,6 +11,7 @@ import { db } from "../database/db";
 import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { dayAdjustedTime, today } from "../util/time";
+import { updatePopupOpen } from "../components/update-popup/UpdatePopup";
 
 export const Route = createFileRoute("/overview")({
     component: Overview,
@@ -41,6 +42,9 @@ function Overview() {
 
         // keybinds
         const keydown = (e: KeyboardEvent) => {
+            // don't let user navigate if the update popup is open
+            if (updatePopupOpen) return;
+
             // calendar navigation
             if (e.key === "ArrowLeft") {
                 const previous = document.querySelector(".top-bar button:first-child") as HTMLButtonElement;
