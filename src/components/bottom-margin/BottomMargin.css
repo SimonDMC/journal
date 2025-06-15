@@ -1,7 +1,7 @@
 /* only apply on mobile */
 @media (pointer: coarse) {
     .bottom-margin+main:not(.margin-bypass) {
-        height: calc(100svh - 1.2em);
+        height: calc(100svh - .9em);
         position: relative;
     }
 }
