@@ -49,7 +49,10 @@ export default defineConfig({
             protocol: "ws",
         },
     },
-    build: {
+    // This splits code into separate .js files for each package, but since the app is always
+    // downloaded and installed at once, the only metric that matters is the total bundle size,
+    // which remains unchanged. Though it's still useful for auditing bundle size of each package.
+    /* build: {
         rollupOptions: {
             output: {
                 manualChunks(id) {
@@ -59,5 +62,5 @@ export default defineConfig({
                 },
             },
         },
-    },
+    }, */
 });

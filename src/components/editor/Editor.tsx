@@ -1,3 +1,4 @@
+import "./Editor.css";
 import { useEffect, useRef, type MutableRefObject } from "react";
 import { highlightNthOccurrence, moveCursorToEnd } from "../../util/selection";
 import { QuoteButton } from "../quote-button/QuoteButton";
@@ -5,25 +6,24 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 
 import {
     BalloonEditor,
-    AccessibilityHelp,
     Autosave,
     Bold,
     Code,
     Essentials,
     Italic,
-    Paragraph,
-    SelectAll,
     Strikethrough,
     Subscript,
     Superscript,
     TextTransformation,
     Underline,
+    EmojiMention,
+    Mention,
+    Paragraph,
 } from "ckeditor5";
 
 import "ckeditor5/ckeditor5.css";
 import { getRouteApi } from "@tanstack/react-router";
 import { today } from "../../util/time";
-
 const entryRoute = getRouteApi("/entry");
 
 export default function Editor(props: {
@@ -44,25 +44,26 @@ export default function Editor(props: {
     }, [props.content]);
 
     const editorConfig = {
+        licenseKey: "GPL",
         toolbar: {
             items: ["bold", "italic", "underline", "strikethrough", "subscript", "superscript", "code", "quote"],
             shouldNotGroupWhenFull: true,
         },
         plugins: [
-            AccessibilityHelp,
             Autosave,
             Bold,
             Code,
+            EmojiMention,
             Essentials,
             Italic,
+            Mention,
             Paragraph,
-            SelectAll,
+            QuoteButton,
             Strikethrough,
             Subscript,
             Superscript,
             TextTransformation,
             Underline,
-            QuoteButton,
         ],
         autosave: {
             // only save max every second
@@ -112,6 +113,9 @@ export default function Editor(props: {
                     },
                 ],
             },
+        },
+        emoji: {
+            definitionsUrl: `${window.location.origin}/emoji.json`,
         },
     };
 

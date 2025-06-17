@@ -15,6 +15,9 @@
 # wrangler
 .wrangler
 
+# tanstack
+.tanstack
+
 # production
 /build
 /dist
@@ -38,3 +41,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# files to be transformed
+public/emoji-in.json

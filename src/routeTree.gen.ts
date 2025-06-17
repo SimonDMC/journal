@@ -8,132 +8,56 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as SearchPlotRouteImport } from './routes/search-plot'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as OverviewRouteImport } from './routes/overview'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as EntryRouteImport } from './routes/entry'
+import { Route as CodewordRouteImport } from './routes/codeword'
+import { Route as BioauthRouteImport } from './routes/bioauth'
+import { Route as IndexRouteImport } from './routes/index'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as SearchPlotImport } from './routes/search-plot'
-import { Route as SearchImport } from './routes/search'
-import { Route as OverviewImport } from './routes/overview'
-import { Route as LoginImport } from './routes/login'
-import { Route as EntryImport } from './routes/entry'
-import { Route as CodewordImport } from './routes/codeword'
-import { Route as BioauthImport } from './routes/bioauth'
-import { Route as IndexImport } from './routes/index'
-
-// Create/Update Routes
-
-const SearchPlotRoute = SearchPlotImport.update({
+const SearchPlotRoute = SearchPlotRouteImport.update({
   id: '/search-plot',
   path: '/search-plot',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const SearchRoute = SearchImport.update({
+const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const OverviewRoute = OverviewImport.update({
+const OverviewRoute = OverviewRouteImport.update({
   id: '/overview',
   path: '/overview',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const LoginRoute = LoginImport.update({
+const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const EntryRoute = EntryImport.update({
+const EntryRoute = EntryRouteImport.update({
   id: '/entry',
   path: '/entry',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const CodewordRoute = CodewordImport.update({
+const CodewordRoute = CodewordRouteImport.update({
   id: '/codeword',
   path: '/codeword',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const BioauthRoute = BioauthImport.update({
+const BioauthRoute = BioauthRouteImport.update({
   id: '/bioauth',
   path: '/bioauth',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/bioauth': {
-      id: '/bioauth'
-      path: '/bioauth'
-      fullPath: '/bioauth'
-      preLoaderRoute: typeof BioauthImport
-      parentRoute: typeof rootRoute
-    }
-    '/codeword': {
-      id: '/codeword'
-      path: '/codeword'
-      fullPath: '/codeword'
-      preLoaderRoute: typeof CodewordImport
-      parentRoute: typeof rootRoute
-    }
-    '/entry': {
-      id: '/entry'
-      path: '/entry'
-      fullPath: '/entry'
-      preLoaderRoute: typeof EntryImport
-      parentRoute: typeof rootRoute
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginImport
-      parentRoute: typeof rootRoute
-    }
-    '/overview': {
-      id: '/overview'
-      path: '/overview'
-      fullPath: '/overview'
-      preLoaderRoute: typeof OverviewImport
-      parentRoute: typeof rootRoute
-    }
-    '/search': {
-      id: '/search'
-      path: '/search'
-      fullPath: '/search'
-      preLoaderRoute: typeof SearchImport
-      parentRoute: typeof rootRoute
-    }
-    '/search-plot': {
-      id: '/search-plot'
-      path: '/search-plot'
-      fullPath: '/search-plot'
-      preLoaderRoute: typeof SearchPlotImport
-      parentRoute: typeof rootRoute
-    }
-  }
-}
-
-// Create and export the route tree
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -145,7 +69,6 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/search-plot': typeof SearchPlotRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bioauth': typeof BioauthRoute
@@ -156,9 +79,8 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/search-plot': typeof SearchPlotRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/bioauth': typeof BioauthRoute
   '/codeword': typeof CodewordRoute
@@ -168,7 +90,6 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/search-plot': typeof SearchPlotRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
@@ -202,7 +123,6 @@ export interface FileRouteTypes {
     | '/search-plot'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BioauthRoute: typeof BioauthRoute
@@ -212,6 +132,67 @@ export interface RootRouteChildren {
   OverviewRoute: typeof OverviewRoute
   SearchRoute: typeof SearchRoute
   SearchPlotRoute: typeof SearchPlotRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/search-plot': {
+      id: '/search-plot'
+      path: '/search-plot'
+      fullPath: '/search-plot'
+      preLoaderRoute: typeof SearchPlotRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/overview': {
+      id: '/overview'
+      path: '/overview'
+      fullPath: '/overview'
+      preLoaderRoute: typeof OverviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entry': {
+      id: '/entry'
+      path: '/entry'
+      fullPath: '/entry'
+      preLoaderRoute: typeof EntryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/codeword': {
+      id: '/codeword'
+      path: '/codeword'
+      fullPath: '/codeword'
+      preLoaderRoute: typeof CodewordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bioauth': {
+      id: '/bioauth'
+      path: '/bioauth'
+      fullPath: '/bioauth'
+      preLoaderRoute: typeof BioauthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -224,51 +205,6 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   SearchPlotRoute: SearchPlotRoute,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/bioauth",
-        "/codeword",
-        "/entry",
-        "/login",
-        "/overview",
-        "/search",
-        "/search-plot"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/bioauth": {
-      "filePath": "bioauth.tsx"
-    },
-    "/codeword": {
-      "filePath": "codeword.tsx"
-    },
-    "/entry": {
-      "filePath": "entry.tsx"
-    },
-    "/login": {
-      "filePath": "login.tsx"
-    },
-    "/overview": {
-      "filePath": "overview.tsx"
-    },
-    "/search": {
-      "filePath": "search.tsx"
-    },
-    "/search-plot": {
-      "filePath": "search-plot.tsx"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
