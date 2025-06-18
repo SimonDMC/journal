@@ -126,7 +126,14 @@ export function Entry() {
     }
 
     function calculateWords(content: string): number {
-        return content.split(/\s+/).filter((word) => word !== "").length;
+        // strip html tags and normalize spaces for word count calculation
+        // also don't count "empty" words so e.g. ` word ` gets calc'd as
+        // one word instead of three
+        return content
+            .replaceAll("&nbsp;", " ")
+            .replaceAll(/<.*?>/g, "")
+            .split(/\s+/)
+            .filter((word) => word !== "").length;
     }
 
     async function saveRemotely() {

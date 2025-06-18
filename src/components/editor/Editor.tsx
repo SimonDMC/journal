@@ -160,13 +160,14 @@ export default function Editor(props: {
             config={editorConfig}
             onReady={(editor) => {
                 editorRef.current = editor;
-
                 const model = editor.model.document;
-                editor.setData(handleLineBreaks(props.content));
-                focusContent();
 
                 // propagate edits to parent
                 model.on("change:data", setEditorContent);
+
+                const content = handleLineBreaks(props.content);
+                editor.setData(content);
+                focusContent();
             }}
         />
     );
