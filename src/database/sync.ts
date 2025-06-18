@@ -76,7 +76,10 @@ export async function syncDatabase() {
         const remoteTime = new Date(entry.last_modified).getTime();
         const localTime = new Date(localEntry.last_modified).getTime();
 
-        if (localTime >= remoteTime) {
+        // crucially, remote wins if the updated time is identical. otherwise we could get into
+        // a loop where two clients have differing entries with the same timestamp and sync
+        // keeps alternating between the two
+        if (localTime > remoteTime) {
             // local wins
             serverSyncEntries.push(localEntry);
         } else {

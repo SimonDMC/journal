@@ -120,13 +120,13 @@ export function Entry() {
         };
     }, []);
 
-    const handleContentChange = async (newContent: string) => {
+    async function handleContentChange(newContent: string) {
         contentRef.current = newContent;
-        countWords();
-    };
+        setWordCount(calculateWords(newContent));
+    }
 
-    function countWords() {
-        setWordCount(contentRef.current.split(/\s+/).filter((word) => word !== "").length);
+    function calculateWords(content: string): number {
+        return content.split(/\s+/).filter((word) => word !== "").length;
     }
 
     async function saveRemotely() {
@@ -163,7 +163,7 @@ export function Entry() {
                 content: text,
                 mood: mood.current,
                 location: location.current,
-                word_count: wordCount,
+                word_count: calculateWords(text),
                 hash: hashed,
                 last_modified: new Date().toISOString(),
             });
@@ -174,7 +174,7 @@ export function Entry() {
                 content: text,
                 mood: mood.current,
                 location: location.current,
-                word_count: wordCount,
+                word_count: calculateWords(text),
                 hash: hashed,
                 last_modified: new Date().toISOString(),
             });

@@ -82,7 +82,7 @@ export default function Editor(props: {
         typing: {
             transformations: {
                 include: [
-                    // dots, en dash, em dash
+                    // ellipsis, en dash, em dash
                     "typography",
                     // replace single and double quotes
                     // if preceding character is space or the quote is the first character, use “

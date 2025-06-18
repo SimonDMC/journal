@@ -19,7 +19,7 @@
         "@fortawesome/react-fontawesome": "^0.2.2",
         "@simplewebauthn/browser": "^13.1.0",
         "@simplewebauthn/server": "^13.1.1",
-        "@tanstack/react-router": "^1.120.3",
+        "@tanstack/react-router": "^1.121.21",
         "chart.js": "^4.4.8",
         "ckeditor5": "^45.2.0",
         "dexie": "^4.0.11",
@@ -35,7 +35,7 @@
     },
     "devDependencies": {
         "@eslint/js": "^9.26.0",
-        "@tanstack/router-plugin": "^1.120.3",
+        "@tanstack/router-plugin": "^1.121.22",
         "@types/bun": "^1.2.16",
         "@types/node": "20.4.2",
         "@types/react": "18.2.15",
