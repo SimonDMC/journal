@@ -13,6 +13,7 @@ import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-r
 import type { SelectInstance } from "react-select";
 import { moods } from "../util/parameters.ts";
 import { formatDate } from "../util/time.ts";
+import { calculateWords } from "../util/words.ts";
 
 export type EntrySearchParams = {
     date: string;
@@ -125,17 +126,6 @@ export function Entry() {
         setWordCount(calculateWords(newContent));
     }
 
-    function calculateWords(content: string): number {
-        // strip html tags and normalize spaces for word count calculation
-        // also don't count "empty" words so e.g. ` word ` gets calc'd as
-        // one word instead of three
-        return content
-            .replaceAll("&nbsp;", " ")
-            .replaceAll(/<.*?>/g, "")
-            .split(/\s+/)
-            .filter((word) => word !== "").length;
-    }
-
     async function saveRemotely() {
         await saveLocally();
         const saveButton = document.getElementById("save-button") as HTMLButtonElement;
@@ -164,27 +154,21 @@ export function Entry() {
 
         const existingEntry = await db.entries.get(date);
 
+        const entryJson = {
+            content: text,
+            mood: mood.current,
+            location: location.current,
+            word_count: calculateWords(text),
+            hash: hashed,
+            last_modified: new Date().toISOString(),
+        };
+
         if (existingEntry) {
             // update existing entry
-            await db.entries.update(date, {
-                content: text,
-                mood: mood.current,
-                location: location.current,
-                word_count: calculateWords(text),
-                hash: hashed,
-                last_modified: new Date().toISOString(),
-            });
+            await db.entries.update(date, entryJson);
         } else {
             // create new entry
-            await db.entries.add({
-                date: date,
-                content: text,
-                mood: mood.current,
-                location: location.current,
-                word_count: calculateWords(text),
-                hash: hashed,
-                last_modified: new Date().toISOString(),
-            });
+            await db.entries.add({ date: date, ...entryJson });
         }
     }
 

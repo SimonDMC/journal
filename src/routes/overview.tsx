@@ -12,6 +12,7 @@ import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { dayAdjustedTime, today } from "../util/time";
 import { updatePopupOpen } from "../components/update-popup/UpdatePopup";
+import { runMigrations } from "../util/migrations";
 
 export const Route = createFileRoute("/overview")({
     component: Overview,
@@ -28,7 +29,8 @@ function Overview() {
     useEffect(() => {
         enforceAuth(navigate, RouteType.Authed);
         checkForUpdate();
-        syncDatabase();
+        // run potential migrations only after fully syncing database
+        syncDatabase().then(() => runMigrations());
 
         // check key status
         if (!localStorage.getItem("key")) {
