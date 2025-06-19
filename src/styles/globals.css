@@ -25,10 +25,15 @@ button {
     font-size: inherit;
     color: inherit;
     line-height: inherit;
+    cursor: pointer;
 }
 
 input {
     font-family: inherit;
+}
+
+svg {
+    display: block;
 }
 
 /* CSS reset end */
