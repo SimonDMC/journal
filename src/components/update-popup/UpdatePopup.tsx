@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { eventTarget, UpdateReadyEvent } from "../../util/events";
 import "./UpdatePopup.css";
-import { updateDownload } from "../../util/update";
+import { useEffect, useState } from "react";
 
 export let updatePopupOpen = false;
 
@@ -16,13 +16,13 @@ export default function UpdatePopup() {
 
         // initialize popup data and open whenever update is available
         const handler = (e: Event) => {
-            const { version, changelogs } = (e as CustomEvent).detail;
+            const { version, changelogs } = (e as UpdateReadyEvent).detail;
             setOpen(true);
             setOldVersion(localStorage.getItem("journal-version") ?? "0.0.0");
             setNewVersion(version);
             setChangelog(changelogs);
         };
-        updateDownload.addEventListener("done", handler);
+        eventTarget.addEventListener("update-ready", handler);
 
         const keydown = async (event: KeyboardEvent) => {
             // apply update using enter
@@ -34,7 +34,7 @@ export default function UpdatePopup() {
 
         // remove listeners on unmount
         return () => {
-            updateDownload.removeEventListener("done", handler);
+            eventTarget.removeEventListener("update-ready", handler);
             document.removeEventListener("keydown", keydown);
         };
     }, [open]);

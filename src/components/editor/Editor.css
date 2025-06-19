@@ -72,6 +72,11 @@
     padding: .25em 0 !important;
 }
 
+/* fix toolbar button click sometimes showing white border */
+.ck-button {
+    border: none !important;
+}
+
 @media (max-width: 1350px) {
 
     /* removing this causes mobile autocomplete to screw up (?????) */

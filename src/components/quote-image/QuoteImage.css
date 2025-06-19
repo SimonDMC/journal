@@ -10,11 +10,6 @@
     z-index: 5;
 }
 
-#quoteImageBg:not(.visible) {
-    opacity: 0;
-    pointer-events: none;
-}
-
 .quoteImageFrame {
     max-width: 44.5em;
     box-shadow: 0 0 2em #000;
@@ -99,8 +94,4 @@
 .quoteButtons svg {
     width: 1.8em;
     height: 1.8em;
-}
-
-svg.hidden {
-    display: none;
 }

@@ -24,6 +24,7 @@ import {
 import "ckeditor5/ckeditor5.css";
 import { getRouteApi } from "@tanstack/react-router";
 import { today } from "../../util/time";
+
 const entryRoute = getRouteApi("/entry");
 
 export default function Editor(props: {

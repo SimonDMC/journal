@@ -14,6 +14,7 @@ import type { SelectInstance } from "react-select";
 import { moods } from "../util/parameters.ts";
 import { formatDate } from "../util/time.ts";
 import { calculateWords } from "../util/words.ts";
+import { eventTarget } from "../util/events.ts";
 
 export type EntrySearchParams = {
     date: string;
@@ -43,6 +44,7 @@ export function Entry() {
 
     const [initialContent, setInitialContent] = useState("");
     const [isSafari, setIsSafari] = useState(false);
+    const [quoteImageOpen, setQuoteImageOpen] = useState(false);
     const mood: MutableRefObject<number | null> = useRef(null);
     const location: MutableRefObject<number | null> = useRef(null);
 
@@ -71,9 +73,8 @@ export function Entry() {
                 event.preventDefault();
 
                 // unfocus text or close popup on esc
-                const quoteImageBg = document.getElementById("quoteImageBg")!;
-                if (quoteImageBg.classList.contains("visible")) {
-                    quoteImageBg.classList.remove("visible");
+                if (quoteImageOpen) {
+                    setQuoteImageOpen(false);
                 } else if (document.activeElement?.tagName != "BODY") {
                     (document.activeElement as HTMLElement).blur();
                 } else {
@@ -115,11 +116,16 @@ export function Entry() {
         };
         document.addEventListener("keydown", keyDown);
 
-        // remove listener on unmount
+        // open quote image on toolbar button press
+        const quoteImageHandler = () => setQuoteImageOpen(true);
+        eventTarget.addEventListener("quote-image-open", quoteImageHandler);
+
+        // remove listeners on unmount
         return () => {
             document.removeEventListener("keydown", keyDown);
+            eventTarget.removeEventListener("quote-image-open", quoteImageHandler);
         };
-    }, []);
+    }, [quoteImageOpen]);
 
     async function handleContentChange(newContent: string) {
         contentRef.current = newContent;
@@ -194,7 +200,7 @@ export function Entry() {
                 ref={moodSelectRef}
                 wordCount={wordCount}
             />
-            <QuoteImage />
+            <QuoteImage open={quoteImageOpen} setOpen={setQuoteImageOpen} />
         </main>
     );
 }

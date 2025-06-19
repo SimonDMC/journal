@@ -6,8 +6,8 @@ import { Chart, LinearScale, CategoryScale, PointElement, BarElement, Tooltip, t
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { enforceAuth, RouteType } from "../util/auth";
-import { MONTH_NAMES } from "../util/months";
 import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { MONTH_NAMES } from "../util/time";
 
 Chart.register(LinearScale, CategoryScale, PointElement, BarElement, Tooltip);
 
@@ -43,9 +43,6 @@ function SearchPlot() {
             navigate({ to: "/overview" });
             return;
         }
-
-        const heading = document.getElementById("heading") as HTMLElement;
-        heading.innerText = `Mentions of “${query}” over time`;
 
         async function getData() {
             const startDate = (await db.entries.toArray())[0].date;
@@ -148,7 +145,7 @@ function SearchPlot() {
     return (
         <main className="plot">
             <div className="wrap">
-                <p id="heading"></p>
+                <p id="heading">Mentions of “${query}” over time</p>
                 <div className="height-fix">
                     <Bar options={options} data={data} />
                 </div>

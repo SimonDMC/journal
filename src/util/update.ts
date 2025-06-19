@@ -1,3 +1,5 @@
+import { eventTarget, UpdateReadyEvent } from "./events";
+
 type VersionsFile = {
     current: {
         version: string;
@@ -10,8 +12,6 @@ type VersionsFile = {
         released: number;
     }[];
 };
-
-export const updateDownload = new EventTarget();
 
 export async function checkForUpdate() {
     const res = await fetch("/versions.json");
@@ -31,13 +31,11 @@ export async function checkForUpdate() {
             await installApp(version);
         }
 
-        updateDownload.dispatchEvent(
-            new CustomEvent("done", {
-                detail: {
-                    version,
-                    // only show what's new
-                    changelogs: json.history.filter((v) => compareVersions(currentVersion, v.version)).map((v) => v.desc),
-                },
+        eventTarget.dispatchEvent(
+            new UpdateReadyEvent({
+                version,
+                // only show what's new
+                changelogs: json.history.filter((v) => compareVersions(currentVersion, v.version)).map((v) => v.desc),
             })
         );
     }
