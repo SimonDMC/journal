@@ -145,7 +145,7 @@ function SearchPlot() {
     return (
         <main className="plot">
             <div className="wrap">
-                <p id="heading">Mentions of “${query}” over time</p>
+                <p id="heading">Mentions of “{query}” over time</p>
                 <div className="height-fix">
                     <Bar options={options} data={data} />
                 </div>
