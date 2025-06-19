@@ -6,6 +6,8 @@ import type { OutputBundle, OutputOptions } from "rollup";
 import fs from "fs";
 import path from "path";
 
+const STATIC_ASSETS = ["emoji.json"];
+
 function generateBuildMeta() {
     let config: ResolvedConfig;
 
@@ -17,12 +19,12 @@ function generateBuildMeta() {
         },
 
         generateBundle(_: OutputOptions, bundle: OutputBundle) {
-            // generate asset list
-            const assets = Object.keys(bundle);
+            // compile asset list
+            const assets = [...STATIC_ASSETS, ...Object.keys(bundle)];
 
             const assetListPath = path.join(__dirname, config.build.outDir, "asset-list.json");
             fs.writeFileSync(assetListPath, JSON.stringify({ assets }, null, 2));
-            console.log(`📝 Asset list written to ${assetListPath}`);
+            console.log(`\n📝 Asset list written to ${assetListPath}`);
         },
     };
 }

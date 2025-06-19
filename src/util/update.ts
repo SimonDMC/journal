@@ -81,7 +81,7 @@ export async function installApp(version: string) {
 export async function forceReload() {
     const caches = await window.caches.keys();
     for (const cache of caches) {
-        window.caches.delete(cache);
+        await window.caches.delete(cache);
     }
 
     const res = await fetch("/versions.json");
