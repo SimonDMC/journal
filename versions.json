@@ -1,10 +1,15 @@
 {
   "current": {
-    "version": "0.0.8",
-    "desc": "Fixed word counts",
-    "released": 1750275804766
+    "version": "0.0.9",
+    "desc": "Fixed login page",
+    "released": 1750434085820
   },
   "history": [
+    {
+      "version": "0.0.9",
+      "desc": "Fixed login page",
+      "released": 1750434085820
+    },
     {
       "version": "0.0.8",
       "desc": "Fixed word counts",
