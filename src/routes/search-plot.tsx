@@ -14,7 +14,7 @@ Chart.register(LinearScale, CategoryScale, PointElement, BarElement, Tooltip);
 defaults.borderColor = "#222";
 defaults.color = "#ccc";
 defaults.font.size = 13;
-defaults.font.family = "Inter";
+defaults.font.family = "InterVariable";
 
 type SearchPlotSearchParams = {
     query: string;

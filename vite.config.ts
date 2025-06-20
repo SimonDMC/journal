@@ -8,7 +8,7 @@ import fs from "fs";
 import path from "path";
 import chalk from "chalk";
 
-const STATIC_ASSETS = ["emoji.json"];
+const STATIC_ASSETS = ["emoji.json", "InterVariable.woff2"];
 
 function generateBuildMeta() {
     let config: ResolvedConfig;

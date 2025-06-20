@@ -67,7 +67,7 @@
 }
 
 .ck-mentions .ck-button__label {
-    font-family: Inter, sans-serif !important;
+    font-family: InterVariable, sans-serif !important;
     font-size: 1.2em !important;
     padding: .25em 0 !important;
 }
