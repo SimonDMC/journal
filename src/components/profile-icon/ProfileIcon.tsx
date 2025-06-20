@@ -108,12 +108,10 @@ export default function ProfileIcon() {
                         {/* <DropdownItem
                             label="Invoke Update Popup"
                             onClick={() => {
-                                updateDownload.dispatchEvent(
-                                    new CustomEvent("done", {
-                                        detail: {
-                                            version: "0.0.0",
-                                            changelogs: ["Example update log"],
-                                        },
+                                eventTarget.dispatchEvent(
+                                    new UpdateReadyEvent({
+                                        version: "0.0.0",
+                                        changelogs: ["Example update log"],
                                     })
                                 );
                             }}

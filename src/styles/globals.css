@@ -15,6 +15,7 @@ html {
     color-scheme: dark;
     max-width: 100%;
     overflow-x: hidden;
+    overflow-y: hidden;
     line-height: 1.5;
     background-color: black;
 }
