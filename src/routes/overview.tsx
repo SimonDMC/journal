@@ -36,7 +36,6 @@ function Overview() {
         if (!localStorage.getItem("key")) {
             document.getElementById("keyless-bar")?.classList.remove("hidden");
             document.querySelector(".stats")?.classList.add("hidden");
-            document.querySelector(".controls")?.classList.add("hidden");
         }
 
         const month = sessionStorage.getItem("month");

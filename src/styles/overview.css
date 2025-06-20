@@ -95,8 +95,7 @@ main {
 
 @media (max-width: 500px) {
 
-    .stats,
-    .controls {
+    .stats {
         margin-left: 0.2em;
         margin-right: 0.2em;
     }

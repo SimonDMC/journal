@@ -8,6 +8,9 @@ type ClientSyncBody = {
 };
 
 export async function syncDatabase() {
+    // don't sync if no key is set
+    if (!localStorage.getItem("key")) return;
+
     // 1. Compile a list of entries with their hashes
     const entries: ClientSyncBody = {};
 

@@ -22,7 +22,8 @@ export function uploadKey() {
             successToast("Key imported successfully!");
             document.getElementById("keyless-bar")?.classList.add("hidden");
             document.querySelector(".stats")?.classList.remove("hidden");
-            document.querySelector(".controls")?.classList.remove("hidden");
+            // immediately download all entries
+            syncDatabase();
         };
         reader.readAsArrayBuffer(file);
     };
