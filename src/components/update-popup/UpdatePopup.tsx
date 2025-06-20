@@ -56,9 +56,9 @@ export default function UpdatePopup() {
             <div className="up-body">
                 <h1>New update!</h1>
                 <div className="version">
-                    <span className="monospace">{oldVersion}</span>
+                    <span className="monospace">v{oldVersion}</span>
                     -&gt;
-                    <span className="monospace">{newVersion}</span>
+                    <span className="monospace">v{newVersion}</span>
                 </div>
                 <span className="changelog">Changelog:</span>
                 <div className="changelog-wrap">
