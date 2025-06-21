@@ -31,10 +31,11 @@ export default function Editor(props: {
     content: string;
     setContent: (newContent: string) => void;
     saveLocally: () => Promise<void>;
+    setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
     date: string;
 }) {
     const editorRef: MutableRefObject<BalloonEditor | null> = useRef(null);
-    const autosaveLoaded: MutableRefObject<boolean> = useRef(false);
+    const autosaveLoaded = useRef(false);
     const { query, index } = entryRoute.useSearch();
 
     useEffect(() => {
@@ -149,10 +150,8 @@ export default function Editor(props: {
             requestAnimationFrame(() => highlightNthOccurrence(editorEl, query, index));
         }
 
-        // show line now that content has loaded
-        document.querySelector(".line")?.classList.add("visible");
-        // and hide loading text
-        document.getElementById("loadingEntry")?.classList.add("hidden");
+        // let parent know editor has loaded
+        props.setLoaded(true);
     }
 
     return (

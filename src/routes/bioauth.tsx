@@ -82,7 +82,7 @@ function BioAuth() {
         }
 
         if (!authenticating.current) verify();
-    }, []);
+    }, [navigate]);
 
     return (
         <main className="bioauth">

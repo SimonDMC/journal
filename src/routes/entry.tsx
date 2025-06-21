@@ -14,7 +14,7 @@ import type { SelectInstance } from "react-select";
 import { moods } from "../util/parameters.ts";
 import { formatDate } from "../util/time.ts";
 import { calculateWords } from "../util/words.ts";
-import { eventTarget } from "../util/events.ts";
+import { eventTarget, QuoteImageOpenEvent } from "../util/events.ts";
 
 export type EntrySearchParams = {
     date: string;
@@ -45,8 +45,9 @@ export function Entry() {
     const [initialContent, setInitialContent] = useState("");
     const [isSafari, setIsSafari] = useState(false);
     const [quoteImageOpen, setQuoteImageOpen] = useState(false);
-    const mood: MutableRefObject<number | null> = useRef(null);
-    const location: MutableRefObject<number | null> = useRef(null);
+    const [editorLoaded, setEditorLoaded] = useState(false);
+    const [mood, setMood] = useState<number | null>(null);
+    const [location, setLocation] = useState<number | null>(null);
 
     useEffect(() => {
         enforceAuth(navigate, RouteType.Authed);
@@ -57,17 +58,15 @@ export function Entry() {
         db.entries.get(date).then(async (data) => {
             if (!data) return;
 
-            if (data.mood) {
-                mood.current = data.mood;
-            }
-            if (data.location) {
-                location.current = data.location;
-            }
+            if (data.mood) setMood(data.mood);
+            if (data.location) setLocation(data.location);
 
             contentRef.current = data.content;
             setInitialContent(data.content);
         });
+    }, [date, navigate]);
 
+    useEffect(() => {
         const keyDown = async (event: KeyboardEvent) => {
             if (event.key === "Escape") {
                 event.preventDefault();
@@ -95,7 +94,7 @@ export function Entry() {
                 document.activeElement?.id == "react-select-mood-input"
             ) {
                 moodSelectRef.current.setValue([moods[parseInt(event.key) - 1]], "select-option");
-                mood.current = parseInt(event.key);
+                setMood(parseInt(event.key));
                 moodSelectRef.current.blur();
             }
 
@@ -117,30 +116,19 @@ export function Entry() {
         document.addEventListener("keydown", keyDown);
 
         // open quote image on toolbar button press
-        const quoteImageHandler = () => setQuoteImageOpen(true);
-        eventTarget.addEventListener("quote-image-open", quoteImageHandler);
+        const quoteImageOpenHandler = () => setQuoteImageOpen(true);
+        eventTarget.addEventListener(QuoteImageOpenEvent.eventId, quoteImageOpenHandler);
 
         // remove listeners on unmount
         return () => {
             document.removeEventListener("keydown", keyDown);
-            eventTarget.removeEventListener("quote-image-open", quoteImageHandler);
+            eventTarget.removeEventListener(QuoteImageOpenEvent.eventId, quoteImageOpenHandler);
         };
-    }, [quoteImageOpen]);
+    }, [quoteImageOpen, mood, location]);
 
     async function handleContentChange(newContent: string) {
         contentRef.current = newContent;
         setWordCount(calculateWords(newContent));
-    }
-
-    async function saveRemotely() {
-        await saveLocally();
-        const saveButton = document.getElementById("save-button") as HTMLButtonElement;
-        saveButton.innerText = "Saved!";
-        setTimeout(() => {
-            saveButton.innerText = "Save";
-        }, 1000);
-
-        syncEntry(date);
     }
 
     async function saveLocally() {
@@ -149,8 +137,8 @@ export function Entry() {
         const toHashObject: { content: string; mood?: number; location?: number } = {
             content: text,
         };
-        if (mood.current) toHashObject.mood = mood.current;
-        if (location.current) toHashObject.location = location.current;
+        if (mood) toHashObject.mood = mood;
+        if (location) toHashObject.location = location;
         const toHashString = JSON.stringify(toHashObject);
 
         const encoder = new TextEncoder();
@@ -162,8 +150,8 @@ export function Entry() {
 
         const entryJson = {
             content: text,
-            mood: mood.current,
-            location: location.current,
+            mood: mood,
+            location: location,
             word_count: calculateWords(text),
             hash: hashed,
             last_modified: new Date().toISOString(),
@@ -178,13 +166,29 @@ export function Entry() {
         }
     }
 
+    async function saveRemotely() {
+        await saveLocally();
+        const saveButton = document.getElementById("save-button") as HTMLButtonElement;
+        saveButton.innerText = "Saved!";
+        setTimeout(() => {
+            saveButton.innerText = "Save";
+        }, 1000);
+
+        syncEntry(date);
+    }
+
     return (
         <main className={`entry ${isSafari ? "safari" : ""}`}>
-            <div className="sidebar invis"></div>
-            <div id="loadingEntry">Loading...</div>
-            <div className={`content ${date?.substring(0, 4) === "2024" ? "short" : ""}`}>
-                <div className="line"></div>
-                <Editor content={initialContent} setContent={handleContentChange} saveLocally={saveLocally} date={date} />
+            {editorLoaded || <div id="loadingEntry">Loading...</div>}
+            <div className={`content ${date?.substring(0, 4) === "2024" && "short"}`}>
+                {editorLoaded && <div className="line"></div>}
+                <Editor
+                    content={initialContent}
+                    setContent={handleContentChange}
+                    saveLocally={saveLocally}
+                    setLoaded={setEditorLoaded}
+                    date={date}
+                />
                 <div className="line-clip"></div>
             </div>
             <div className="date">{formatDate(date)}</div>
@@ -195,8 +199,10 @@ export function Entry() {
                 saveEntry={saveRemotely}
                 saveLocally={saveLocally}
                 mood={mood}
+                setMood={setMood}
                 location={location}
-                year={date?.substring(0, 4)}
+                setLocation={setLocation}
+                date={date}
                 ref={moodSelectRef}
                 wordCount={wordCount}
             />

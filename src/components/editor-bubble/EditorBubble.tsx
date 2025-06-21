@@ -1,7 +1,8 @@
 import "./EditorBubble.css";
 import Select, { type SelectInstance } from "react-select";
-import { type MutableRefObject, useState } from "react";
+import { useEffect, useState, type MutableRefObject } from "react";
 import { moods, locations } from "../../util/parameters";
+import { today } from "../../util/time";
 
 interface Option {
     readonly value: number;
@@ -10,14 +11,14 @@ interface Option {
 export default function EditorBubble(props: {
     saveEntry: () => Promise<void>;
     saveLocally: () => Promise<void>;
-    mood: MutableRefObject<number | null>;
-    location: MutableRefObject<number | null>;
-    year: string;
+    mood: number | null;
+    setMood: React.Dispatch<React.SetStateAction<number | null>>;
+    location: number | null;
+    setLocation: React.Dispatch<React.SetStateAction<number | null>>;
+    date: string;
     ref: MutableRefObject<SelectInstance | null>;
     wordCount: number;
 }) {
-    const [, setForceRender] = useState(false);
-
     const selectStyles = {
         container: () => "select-container",
         control: () => "select-control",
@@ -29,6 +30,17 @@ export default function EditorBubble(props: {
         option: ({ isSelected }: { isSelected: boolean }) => (isSelected ? "select-option selected" : "select-option"),
     };
 
+    const [shouldSave, setShouldSave] = useState(false);
+    const { saveLocally } = props;
+
+    // autosave whenever mood or location is updated (if it's today)
+    useEffect(() => {
+        if (shouldSave) {
+            saveLocally();
+            setShouldSave(false);
+        }
+    }, [props.mood, props.location, shouldSave, saveLocally]);
+
     return (
         <div className="bubble">
             <p id="word-count">Word Count: {props.wordCount}</p>
@@ -37,14 +49,12 @@ export default function EditorBubble(props: {
                     instanceId="mood"
                     options={moods}
                     placeholder="Mood"
-                    value={moods.find((mood) => mood.value === props.mood.current)}
+                    value={moods.find((mood) => mood.value === props.mood)}
                     menuPlacement="top"
                     isSearchable={false}
-                    onChange={(option: unknown) => {
-                        if (option) props.mood.current = (option as Option).value;
-                        props.saveLocally();
-                        // this is ugly but i have to use useRef because useState didn't pass it to parent properly
-                        setForceRender((prev) => !prev);
+                    onChange={(option) => {
+                        if (option) props.setMood((option as Option).value);
+                        if (props.date == today) setShouldSave(true);
                     }}
                     classNames={selectStyles}
                     ref={props.ref}
@@ -52,18 +62,17 @@ export default function EditorBubble(props: {
                 />
                 {
                     /* only show location if in 2024 */
-                    props.year === "2024" && (
+                    props.date.substring(0, 4) === "2024" && (
                         <Select
                             instanceId="location"
                             options={locations}
                             placeholder="Location"
-                            value={locations.find((location) => location.value === props.location.current)}
+                            value={locations.find((location) => location.value === props.location)}
                             menuPlacement="top"
                             isSearchable={false}
                             onChange={(option) => {
-                                if (option) props.location.current = option.value;
-                                props.saveLocally();
-                                setForceRender((prev) => !prev);
+                                if (option) props.setLocation(option.value);
+                                if (props.date == today) setShouldSave(true);
                             }}
                             classNames={selectStyles}
                         />

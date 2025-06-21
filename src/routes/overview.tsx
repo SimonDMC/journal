@@ -11,8 +11,8 @@ import { db } from "../database/db";
 import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { dayAdjustedTime, today } from "../util/time";
-import { updatePopupOpen } from "../components/update-popup/UpdatePopup";
 import { runMigrations } from "../util/migrations";
+import { eventTarget, KeyCreateEvent, OfflineModeEvent } from "../util/events";
 
 export const Route = createFileRoute("/overview")({
     component: Overview,
@@ -21,9 +21,13 @@ export const Route = createFileRoute("/overview")({
 function Overview() {
     const navigate = useNavigate();
     const [oneYearAgo, setOneYearAgo] = useState("");
+    const [keyExists, setKeyExists] = useState(true);
+    const [offline, setOffline] = useState(false);
+    // js date supports stuff like (2023, -7, 20) or (2023, 54, 20) so no need to worry about going out of bounds
+    const [month, setMonth] = useState(dayAdjustedTime.getMonth() + 1);
 
     const entriesFull = useLiveQuery(() => db.entries.toArray()) ?? [];
-    const entries = entriesFull.map((entry) => entry.date);
+    const entryDates = entriesFull.map((entry) => entry.date);
     const wordCount = entriesFull.reduce((acc, cur) => (acc += cur.word_count), 0);
 
     useEffect(() => {
@@ -33,19 +37,14 @@ function Overview() {
         syncDatabase().then(() => runMigrations());
 
         // check key status
-        if (!localStorage.getItem("key")) {
-            document.getElementById("keyless-bar")?.classList.remove("hidden");
-            document.querySelector(".stats")?.classList.add("hidden");
-        }
+        if (!localStorage.getItem("key")) setKeyExists(false);
 
+        // restore previously viewed month
         const month = sessionStorage.getItem("month");
         if (month) setMonth(parseInt(month));
 
         // keybinds
         const keydown = (e: KeyboardEvent) => {
-            // don't let user navigate if the update popup is open
-            if (updatePopupOpen) return;
-
             // calendar navigation
             if (e.key === "ArrowLeft") {
                 const previous = document.querySelector(".top-bar button:first-child") as HTMLButtonElement;
@@ -77,27 +76,30 @@ function Overview() {
         };
         document.addEventListener("keydown", keydown);
 
-        // remove listener on unmount
+        // remove "missing key" warning when it's uploaded/generated
+        const keyCreateHandler = () => setKeyExists(true);
+        eventTarget.addEventListener(KeyCreateEvent.eventId, keyCreateHandler);
+
+        // show offline mode badge on network request fail
+        const offlineModeHandler = () => setOffline(true);
+        eventTarget.addEventListener(OfflineModeEvent.eventId, offlineModeHandler);
+
+        // remove listeners on unmount
         return () => {
             document.removeEventListener("keydown", keydown);
+            eventTarget.removeEventListener(KeyCreateEvent.eventId, keyCreateHandler);
+            eventTarget.removeEventListener(OfflineModeEvent.eventId, offlineModeHandler);
         };
-    }, []);
+    }, [navigate]);
 
     useEffect(() => {
-        if (entries.length > 0) {
+        if (entryDates.length > 0) {
             const lastYear = new Date(dayAdjustedTime);
             lastYear.setFullYear(lastYear.getFullYear() - 1);
             const lastYearString = lastYear.toISOString().substring(0, 10);
-            setOneYearAgo(lastYearString);
-            const lastYearLink = document.getElementById("lastYear") as HTMLAnchorElement;
-            if (!entries.find((entry) => entry === lastYearString)) {
-                lastYearLink.classList.add("inactive");
-            }
+            if (entryDates.find((entry) => entry === lastYearString)) setOneYearAgo(lastYearString);
         }
-    }, [entries]);
-
-    // js date supports stuff like (2023, -7, 20) or (2023, 54, 20) so no need to worry about going out of bounds
-    const [month, setMonth] = useState(dayAdjustedTime.getMonth() + 1);
+    }, [entryDates]);
 
     function previousMonth() {
         setMonth(month - 1);
@@ -114,29 +116,27 @@ function Overview() {
 
     return (
         <main>
-            <div id="keyless-bar" className="hidden">
-                Warning: Missing Key
-            </div>
-            <div id="offline" className="invis">
-                Offline Mode
-            </div>
+            {keyExists || <div id="keyless-bar">Warning: Missing Key</div>}
+            {offline && <div id="offline">Offline Mode</div>}
             <Calendar
                 month={new Date(new Date(dayAdjustedTime).getFullYear(), month, 1).toISOString().substring(0, 10)}
                 previousMonth={previousMonth}
                 nextMonth={nextMonth}
-                entries={entries}
+                entries={entryDates}
             />
             <Link to="/entry" search={{ date: today }} id="today" className="nav-link">
                 Today
             </Link>
-            <Link to="/entry" search={{ date: oneYearAgo }} id="lastYear" className="nav-link">
+            <Link to="/entry" search={{ date: oneYearAgo }} id="lastYear" className={`nav-link ${oneYearAgo || "inactive"}`}>
                 One Year Ago
             </Link>
             <ProfileIcon />
-            <div className="stats">
-                <p className="entryCount">Entry Count: {commaFormat(entries.length)}</p>
-                <p className="wordCount">Total Words: {commaFormat(wordCount)}</p>
-            </div>
+            {keyExists && (
+                <div className="stats">
+                    <p className="entryCount">Entry Count: {commaFormat(entryDates.length)}</p>
+                    <p className="wordCount">Total Words: {commaFormat(wordCount)}</p>
+                </div>
+            )}
             <div className="bottom-right">
                 <Link to="/search" id="search">
                     <FontAwesomeIcon icon={faMagnifyingGlass} />

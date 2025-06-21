@@ -4,6 +4,7 @@ import { db } from "../database/db";
 import { syncDatabase } from "../database/sync";
 import { errorToast, successToast } from "./toast";
 import { today } from "./time";
+import { eventTarget, KeyCreateEvent } from "./events";
 
 export function uploadKey() {
     const input = document.createElement("input");
@@ -18,10 +19,11 @@ export function uploadKey() {
         const reader = new FileReader();
         reader.onload = async () => {
             const imported = new Uint8Array(reader.result as ArrayBuffer);
+            // save key into storage
             localStorage.setItem("key", JSON.stringify(Array.from(imported)));
             successToast("Key imported successfully!");
-            document.getElementById("keyless-bar")?.classList.add("hidden");
-            document.querySelector(".stats")?.classList.remove("hidden");
+            // let overview know key has been imported to hide warning and show stats
+            eventTarget.dispatchEvent(new KeyCreateEvent());
             // immediately download all entries
             syncDatabase();
         };

@@ -2,6 +2,7 @@ import { db } from "./db";
 import { API_URL } from "../util/config";
 import { decryptEntry, encryptEntry } from "../util/encryption";
 import { warningToast } from "../util/toast";
+import { eventTarget, OfflineModeEvent } from "../util/events";
 
 type ClientSyncBody = {
     [key: string]: string;
@@ -34,8 +35,8 @@ export async function syncDatabase() {
             throw new Error();
         }
     } catch {
-        // show offline mode
-        document.getElementById("offline")?.classList.remove("invis");
+        // show offline mode badge
+        eventTarget.dispatchEvent(new OfflineModeEvent());
         return;
     }
 

@@ -17,20 +17,7 @@ export function Login() {
     useEffect(() => {
         enforceAuth(navigate, RouteType.Unauthed);
         checkForUpdate();
-
-        // add event listener to login on enter
-        const keydown = (e: KeyboardEvent) => {
-            if (e.key === "Enter") {
-                login();
-            }
-        };
-        document.addEventListener("keydown", keydown);
-
-        // remove listener on unmount
-        return () => {
-            document.removeEventListener("keydown", keydown);
-        };
-    }, []);
+    }, [navigate]);
 
     async function login() {
         const username = (document.getElementById("username") as HTMLInputElement).value;
@@ -92,7 +79,16 @@ export function Login() {
                 </div>
                 <div className="input">
                     <label htmlFor="password">Password: </label>
-                    <input type="password" name="password" id="password" />
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                login();
+                            }
+                        }}
+                    />
                 </div>
             </div>
             <button onClick={login} id="login-button">

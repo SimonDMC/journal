@@ -2,8 +2,6 @@ import { eventTarget, UpdateReadyEvent } from "../../util/events";
 import "./UpdatePopup.css";
 import { useEffect, useState } from "react";
 
-export let updatePopupOpen = false;
-
 export default function UpdatePopup() {
     const [open, setOpen] = useState(false);
     const [oldVersion, setOldVersion] = useState("");
@@ -11,30 +9,29 @@ export default function UpdatePopup() {
     const [changelog, setChangelog] = useState([""]);
 
     useEffect(() => {
-        // expose open state, so that Enter keypress gets disabled elsewhere
-        updatePopupOpen = open;
-
         // initialize popup data and open whenever update is available
-        const handler = (e: Event) => {
+        const updateReadyHandler = (e: Event) => {
             const { version, changelogs } = (e as UpdateReadyEvent).detail;
             setOpen(true);
             setOldVersion(localStorage.getItem("journal-version") ?? "0.0.0");
             setNewVersion(version);
             setChangelog(changelogs);
         };
-        eventTarget.addEventListener("update-ready", handler);
+        eventTarget.addEventListener(UpdateReadyEvent.eventId, updateReadyHandler);
 
         const keydown = async (event: KeyboardEvent) => {
+            event.stopImmediatePropagation();
             // apply update using enter
             if (event.key === "Enter" && open) {
                 applyUpdate();
             }
         };
-        document.addEventListener("keydown", keydown);
+
+        if (open) document.addEventListener("keydown", keydown, true);
 
         // remove listeners on unmount
         return () => {
-            eventTarget.removeEventListener("update-ready", handler);
+            eventTarget.removeEventListener(UpdateReadyEvent.eventId, updateReadyHandler);
             document.removeEventListener("keydown", keydown);
         };
     }, [open]);

@@ -106,7 +106,7 @@ function SearchPlot() {
         return () => {
             document.removeEventListener("keydown", keydown);
         };
-    }, []);
+    }, [navigate, query, router.history]);
 
     const options: ChartOptions<"bar"> = {
         scales: {

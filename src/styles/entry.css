@@ -30,12 +30,6 @@ main.entry .date {
     background-color: #333;
     margin-left: 2em;
     z-index: 1;
-    /* hide until editor loads */
-    display: none;
-}
-
-.line.visible {
-    display: block;
 }
 
 #loadingEntry {
@@ -46,10 +40,6 @@ main.entry .date {
     font-size: min(2em, 6vw);
     width: min(30em, 95vw);
     text-align: center;
-}
-
-#loadingEntry.hidden {
-    display: none;
 }
 
 @media (max-width: 1350px) {

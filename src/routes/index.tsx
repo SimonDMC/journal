@@ -16,7 +16,7 @@ export function Home() {
         }
 
         enforceAuth(navigate, RouteType.Unauthed);
-    }, []);
+    }, [navigate]);
 
     return <main></main>;
 }

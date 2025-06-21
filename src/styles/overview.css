@@ -14,8 +14,8 @@ main {
 }
 
 #lastYear.inactive {
-    color: #333;
-    text-decoration: none;
+    opacity: .25;
+    pointer-events: none;
 }
 
 .stats {
@@ -65,10 +65,6 @@ main {
     background: linear-gradient(90deg, #000 0%, #300 20%, #300 80%, #000 100%);
 }
 
-.hidden {
-    display: none;
-}
-
 #offline {
     position: absolute;
     width: 100%;
@@ -79,11 +75,19 @@ main {
     font-weight: 600;
     color: #888;
     pointer-events: none;
-    transition: color .3s;
+    animation: offlineFadeIn .3s;
 }
 
-#offline.invis {
-    color: transparent;
+@keyframes offlineFadeIn {
+    from {
+        translate: 0 -.2em;
+        opacity: 0;
+    }
+
+    to {
+        translate: 0 0;
+        opacity: 1;
+    }
 }
 
 /* only show hover effects if mouse exists */

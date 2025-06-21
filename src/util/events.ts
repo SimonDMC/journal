@@ -7,8 +7,9 @@ type UpdateReadyDetail = {
 };
 
 export class UpdateReadyEvent extends CustomEvent<UpdateReadyDetail> {
+    static eventId = "update-ready";
     constructor(detail: UpdateReadyDetail) {
-        super("update-ready", { detail });
+        super(UpdateReadyEvent.eventId, { detail });
     }
 }
 
@@ -17,7 +18,22 @@ type QuoteImageOpenDetail = {
 };
 
 export class QuoteImageOpenEvent extends CustomEvent<QuoteImageOpenDetail> {
+    static eventId = "quote-image-open";
     constructor(detail: QuoteImageOpenDetail) {
-        super("quote-image-open", { detail });
+        super(QuoteImageOpenEvent.eventId, { detail });
+    }
+}
+
+export class KeyCreateEvent extends Event {
+    static eventId = "key-create";
+    constructor() {
+        super(KeyCreateEvent.eventId);
+    }
+}
+
+export class OfflineModeEvent extends Event {
+    static eventId = "offline-mode";
+    constructor() {
+        super(OfflineModeEvent.eventId);
     }
 }

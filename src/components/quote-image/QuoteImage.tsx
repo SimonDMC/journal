@@ -1,5 +1,5 @@
 import "./QuoteImage.css";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import html2canvas from "html2canvas";
 import parse from "html-react-parser";
 import { DownloadIcon } from "../icons/DownloadIcon";
@@ -27,7 +27,7 @@ export default function QuoteImage(params: { open: boolean; setOpen: (open: bool
     const { date } = entryRoute.useSearch();
 
     useEffect(() => {
-        const handler = (e: Event) => {
+        const quoteImageOpenHandler = (e: Event) => {
             const { content } = (e as QuoteImageOpenEvent).detail;
 
             const year = parseInt(date!.substring(0, 4));
@@ -40,17 +40,17 @@ export default function QuoteImage(params: { open: boolean; setOpen: (open: bool
                 date: `${MONTH_NAMES[month - 1]} ${day}, ${year}`,
             });
         };
-        eventTarget.addEventListener("quote-image-open", handler);
+        eventTarget.addEventListener(QuoteImageOpenEvent.eventId, quoteImageOpenHandler);
 
         // remove listener on unmount
         return () => {
-            eventTarget.removeEventListener("quote-image-open", handler);
+            eventTarget.removeEventListener(QuoteImageOpenEvent.eventId, quoteImageOpenHandler);
         };
     }, []);
 
-    function closeImage(e: React.MouseEvent) {
-        const target = e.target as HTMLElement;
-        if (target.id == "quoteImageBg") params.setOpen(false);
+    function closeImage(event: React.MouseEvent) {
+        if (event.target !== event.currentTarget) return;
+        params.setOpen(false);
     }
 
     const html2canvasOptions = {
@@ -86,9 +86,9 @@ export default function QuoteImage(params: { open: boolean; setOpen: (open: bool
         <AnimatePresence>
             {params.open && (
                 <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 5 }}
                     transition={{ duration: 0.2 }}
                     id="quoteImageBg"
                     onClick={(e) => closeImage(e)}

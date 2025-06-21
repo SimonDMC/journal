@@ -15,7 +15,7 @@ function Codeword() {
 
     useEffect(() => {
         enforceAuth(navigate, RouteType.Auth2FA);
-    }, []);
+    }, [navigate]);
 
     function selectInput() {
         const input = document.getElementById("codeword") as HTMLInputElement;
