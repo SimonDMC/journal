@@ -75,7 +75,7 @@ export function Login() {
             <div className="container">
                 <div className="input">
                     <label htmlFor="username">Username: </label>
-                    <input type="text" name="username" id="username" />
+                    <input type="text" name="username" id="username" autoFocus />
                 </div>
                 <div className="input">
                     <label htmlFor="password">Password: </label>

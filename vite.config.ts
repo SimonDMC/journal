@@ -1,8 +1,9 @@
 import { defineConfig, type ResolvedConfig } from "vite";
 import react from "@vitejs/plugin-react-oxc";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import { cloudflare } from "@cloudflare/vite-plugin";
 import { viteStaticCopy } from "vite-plugin-static-copy";
-import { dirSize } from "./src/util/filesystem";
+import { dirSize } from "./client/src/util/filesystem";
 import type { OutputBundle, OutputOptions } from "rolldown";
 import fs from "fs";
 import path from "path";
@@ -24,7 +25,9 @@ function generateBuildMeta() {
             // compile asset list
             const assets = [...STATIC_ASSETS, ...Object.keys(bundle)];
 
-            const assetListPath = path.join(__dirname, config.build.outDir, "asset-list.json");
+            const assetListDir = path.join(__dirname, config.build.outDir);
+            fs.mkdirSync(assetListDir, { recursive: true });
+            const assetListPath = path.join(assetListDir, "asset-list.json");
             fs.writeFileSync(assetListPath, JSON.stringify({ assets }, null, 2));
             console.log(`\n📝 Asset list written to ${assetListPath}`);
         },
@@ -46,13 +49,16 @@ export default defineConfig({
         tanstackRouter({
             target: "react",
             autoCodeSplitting: true,
+            routesDirectory: "./client/src/routes",
+            generatedRouteTree: "./client/src/routeTree.gen.ts",
         }),
         react(),
+        cloudflare(),
         generateBuildMeta(),
         viteStaticCopy({
             targets: [
                 { src: "versions.json", dest: "" },
-                { src: "src/sw.js", dest: "" },
+                { src: "client/src/sw.js", dest: "" },
             ],
         }),
     ],
@@ -79,4 +85,5 @@ export default defineConfig({
         }, */
         chunkSizeWarningLimit: 2000,
     },
+    publicDir: "client/public",
 });
