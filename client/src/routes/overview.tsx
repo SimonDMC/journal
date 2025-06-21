@@ -62,7 +62,7 @@ function Overview() {
             }
 
             // one year ago
-            if (e.key === "y" && oneYearAgo) {
+            if (e.key === "y" && oneYearAgoExists) {
                 const lastYear = document.getElementById("lastYear") as HTMLAnchorElement;
                 lastYear.click();
             }
@@ -91,7 +91,7 @@ function Overview() {
             eventTarget.removeEventListener(KeyCreateEvent.eventId, keyCreateHandler);
             eventTarget.removeEventListener(OfflineModeEvent.eventId, offlineModeHandler);
         };
-    }, [navigate]);
+    }, [navigate, oneYearAgoExists]);
 
     useEffect(() => {
         if (entryDates.length > 0) {
