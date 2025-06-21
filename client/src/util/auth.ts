@@ -2,6 +2,7 @@ import { getOptions } from "./profile";
 import { API_URL } from "./config";
 import type { UseNavigateResult } from "@tanstack/router-core";
 import { errorToast } from "./toast";
+import { router } from "../main";
 
 export enum RouteType {
     Unauthed,
@@ -34,7 +35,7 @@ export function enforceAuth(navigate: UseNavigateResult<string>, route: RouteTyp
     }
 }
 
-export async function logout(navigate: UseNavigateResult<string>) {
+async function logoutWithoutNav() {
     try {
         await fetch(`${API_URL}/logout`, {
             method: "POST",
@@ -46,5 +47,14 @@ export async function logout(navigate: UseNavigateResult<string>) {
     }
     localStorage.removeItem("logged-in");
     sessionStorage.removeItem("codeword");
+}
+
+export async function logout(navigate: UseNavigateResult<string>) {
+    await logoutWithoutNav();
     navigate({ to: "/login" });
+}
+
+export async function logoutImperatively() {
+    await logoutWithoutNav();
+    router.navigate({ to: "/login" });
 }

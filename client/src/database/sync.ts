@@ -3,6 +3,7 @@ import { API_URL } from "../util/config";
 import { decryptEntry, encryptEntry } from "../util/encryption";
 import { warningToast } from "../util/toast";
 import { eventTarget, OfflineModeEvent } from "../util/events";
+import { logoutImperatively } from "../util/auth";
 
 type ClientSyncBody = {
     [key: string]: string;
@@ -31,7 +32,10 @@ export async function syncDatabase() {
             body: JSON.stringify(entries),
         });
 
-        if (!clientSyncResponse.ok) {
+        if (clientSyncResponse.status == 401) {
+            // unauthorized! log out
+            logoutImperatively();
+        } else if (!clientSyncResponse.ok) {
             throw new Error();
         }
     } catch {

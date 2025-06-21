@@ -9,8 +9,8 @@
         "start": "vite preview"
     },
     "bin": {
-        "version": "./src/scripts/createVersion.js",
-        "ver": "./src/scripts/createVersion.js"
+        "version": "./client/scripts/createVersion.js",
+        "ver": "./client/scripts/createVersion.js"
     },
     "dependencies": {
         "@ckeditor/ckeditor5-react": "^9.5.0",
@@ -34,13 +34,17 @@
         "react-toastify": "^10.0.6"
     },
     "devDependencies": {
+        "@cloudflare/vite-plugin": "^1.7.4",
+        "@cloudflare/workers-types": "^4.20250620.0",
         "@eslint/js": "^9.26.0",
         "@tanstack/router-plugin": "^1.121.22",
         "@types/bun": "^1.2.16",
+        "@types/cookie": "^0.6.0",
         "@types/node": "20.4.2",
         "@types/react": "18.2.15",
         "@types/react-dom": "18.2.7",
         "@vitejs/plugin-react-oxc": "^0.2.3",
+        "bcryptjs": "^3.0.2",
         "chalk": "^5.4.1",
         "encoding": "^0.1.13",
         "eslint": "^9.25.1",
@@ -50,6 +54,7 @@
         "typescript": "5.7.3",
         "typescript-eslint": "^8.32.0",
         "vite": "npm:rolldown-vite@latest",
-        "vite-plugin-static-copy": "^3.0.0"
+        "vite-plugin-static-copy": "^3.0.0",
+        "wrangler": "^4.20.5"
     }
 }

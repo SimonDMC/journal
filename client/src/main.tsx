@@ -11,7 +11,7 @@ import BottomMargin from "./components/bottom-margin/BottomMargin";
 import UpdatePopup from "./components/update-popup/UpdatePopup";
 
 // Create a new router instance
-const router = createRouter({ routeTree, defaultPreload: "intent" /* defaultViewTransition: true */ });
+export const router = createRouter({ routeTree, defaultPreload: "intent" /* defaultViewTransition: true */ });
 
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {

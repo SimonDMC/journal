@@ -21,6 +21,7 @@ export const Route = createFileRoute("/overview")({
 function Overview() {
     const navigate = useNavigate();
     const [oneYearAgo, setOneYearAgo] = useState("");
+    const [oneYearAgoExists, setOneYearAgoExists] = useState(false);
     const [keyExists, setKeyExists] = useState(true);
     const [offline, setOffline] = useState(false);
     // js date supports stuff like (2023, -7, 20) or (2023, 54, 20) so no need to worry about going out of bounds
@@ -61,7 +62,7 @@ function Overview() {
             }
 
             // one year ago
-            if (e.key === "y") {
+            if (e.key === "y" && oneYearAgo) {
                 const lastYear = document.getElementById("lastYear") as HTMLAnchorElement;
                 lastYear.click();
             }
@@ -97,7 +98,8 @@ function Overview() {
             const lastYear = new Date(dayAdjustedTime);
             lastYear.setFullYear(lastYear.getFullYear() - 1);
             const lastYearString = lastYear.toISOString().substring(0, 10);
-            if (entryDates.find((entry) => entry === lastYearString)) setOneYearAgo(lastYearString);
+            if (entryDates.find((entry) => entry === lastYearString)) setOneYearAgoExists(true);
+            setOneYearAgo(lastYearString);
         }
     }, [entryDates]);
 
@@ -127,7 +129,7 @@ function Overview() {
             <Link to="/entry" search={{ date: today }} id="today" className="nav-link">
                 Today
             </Link>
-            <Link to="/entry" search={{ date: oneYearAgo }} id="lastYear" className={`nav-link ${oneYearAgo || "inactive"}`}>
+            <Link to="/entry" search={{ date: oneYearAgo }} id="lastYear" className={`nav-link ${oneYearAgoExists || "inactive"}`}>
                 One Year Ago
             </Link>
             <ProfileIcon />

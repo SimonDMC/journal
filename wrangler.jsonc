@@ -1,0 +1,16 @@
+{
+    "name": "journal",
+    "compatibility_date": "2025-06-21",
+    "compatibility_flags": ["nodejs_compat"],
+    "assets": {
+        "not_found_handling": "single-page-application",
+    },
+    "main": "./server/src/index.ts",
+    "d1_databases": [
+        {
+            "binding": "DB",
+            "database_name": "JOURNAL",
+            "database_id": "26ebb31f-ca9d-447e-9ca0-251b5e876790",
+        },
+    ],
+}
