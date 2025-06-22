@@ -24,6 +24,7 @@ import { type Options, setCodeword, setupBioAuth, switch2fa } from "../../util/o
 import { showKeyHash } from "../../util/encryption";
 import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "framer-motion";
+import { syncDatabase } from "../../database/sync";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -95,6 +96,7 @@ export default function ProfileIcon() {
                         <DropdownSeparator />
                         <DropdownHeading label="Debug" />
                         <DropdownItem label="Force Reload" description="Delete local page cache and reload" onClick={forceReload} />
+                        <DropdownItem label="Invoke Sync" description="Forcefully invoke database sync" onClick={syncDatabase} />
                         <DropdownItem
                             label="Show Key Hash"
                             description="Show a hash of your encryption key for debug purposes"

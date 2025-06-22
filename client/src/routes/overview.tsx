@@ -4,14 +4,12 @@ import Calendar from "../components/calendar/Calendar";
 import ProfileIcon from "../components/profile-icon/ProfileIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { syncDatabase } from "../database/sync";
 import { checkForUpdate } from "../util/update";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../database/db";
 import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { dayAdjustedTime, today } from "../util/time";
-import { runMigrations } from "../util/migrations";
 import { eventTarget, KeyCreateEvent, OfflineModeEvent } from "../util/events";
 
 export const Route = createFileRoute("/overview")({
@@ -34,8 +32,6 @@ function Overview() {
     useEffect(() => {
         enforceAuth(navigate, RouteType.Authed);
         checkForUpdate();
-        // run potential migrations only after fully syncing database
-        syncDatabase().then(() => runMigrations());
 
         // check key status
         if (!localStorage.getItem("key")) setKeyExists(false);

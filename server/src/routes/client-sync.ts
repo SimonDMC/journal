@@ -6,6 +6,7 @@ type RequestContent = {
     [key: string]: string;
 };
 
+// TODO: add rate limiting since it's a pretty expensive operation
 export const clientSyncHandle = async (request: Request, env: Env): Promise<Response> => {
     // auth
     const user_id = await auth(request, env);

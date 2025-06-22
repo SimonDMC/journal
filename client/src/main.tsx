@@ -9,6 +9,8 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import BottomMargin from "./components/bottom-margin/BottomMargin";
 import UpdatePopup from "./components/update-popup/UpdatePopup";
+import { syncDatabase } from "./database/sync";
+import { runMigrations } from "./util/migrations";
 
 // Create a new router instance
 export const router = createRouter({ routeTree, defaultPreload: "intent" /* defaultViewTransition: true */ });
@@ -22,6 +24,13 @@ declare module "@tanstack/react-router" {
 
 // Figure out if we need a bottom mobile PWA margin
 const bottomMarginVisible = window.matchMedia("(display-mode: standalone)").matches ? true : false;
+
+// Sync on page load (once per session)
+if (!sessionStorage.getItem("journal-synced")) {
+    // then run potential migrations
+    syncDatabase().then(() => runMigrations());
+    sessionStorage.setItem("journal-synced", "true");
+}
 
 // Render the app
 const rootElement = document.getElementById("root")!;
