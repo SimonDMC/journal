@@ -14,7 +14,7 @@ type EmojiIn = {
     unicodeVersion: string;
 };
 
-const file = Bun.file("public/emoji-in.json");
+const file = Bun.file("../public/emoji-in.json");
 const emojisIn = await file.json();
 
 const emojisOut = emojisIn.emojis
@@ -29,4 +29,5 @@ const emojisOut = emojisIn.emojis
         };
     });
 
-Bun.write("public/emoji.json", JSON.stringify(emojisOut));
+Bun.write("../public/emoji.json", JSON.stringify(emojisOut));
+export {};

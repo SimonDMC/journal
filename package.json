@@ -9,8 +9,8 @@
         "start": "vite preview"
     },
     "bin": {
-        "version": "./client/scripts/createVersion.js",
-        "ver": "./client/scripts/createVersion.js"
+        "version": "./scripts/createVersion.js",
+        "ver": "./scripts/createVersion.js"
     },
     "dependencies": {
         "@ckeditor/ckeditor5-react": "^9.5.0",

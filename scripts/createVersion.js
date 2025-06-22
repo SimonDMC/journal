@@ -28,7 +28,7 @@ import chalk from "chalk";
 import fs from "fs";
 import path from "path";
 
-const versionsPath = path.join(import.meta.dirname, "../../versions.json");
+const versionsPath = path.join(import.meta.dirname, "../versions.json");
 
 if (!fs.existsSync(versionsPath)) {
     log(chalk.gray("Creating versions.json"));

@@ -21,11 +21,6 @@
     font-family: monospace;
 }
 
-#codeword-display.smiley {
-    font-family: inherit;
-    font-variant-emoji: text;
-}
-
 .codeword .logout-icon svg {
     position: absolute;
     top: 0.5em;

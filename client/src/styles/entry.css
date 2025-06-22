@@ -73,7 +73,7 @@ main.entry .date {
         font-size: 1.1em;
     }
 
-    .line.visible {
+    .line {
         display: none;
     }
 
