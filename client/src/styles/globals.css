@@ -50,10 +50,17 @@ svg {
     src: url('/InterVariable.woff2') format('woff2');
 }
 
+@font-face {
+    font-family: InterVariable;
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('/InterVariable-Italic.woff2') format('woff2');
+}
+
 :root {
     font-family: InterVariable, sans-serif;
     font-feature-settings: "liga"1, "calt"1, "ss03" !important;
-    /* fix for Chrome */
 }
 
 @supports (font-variation-settings: normal) {
