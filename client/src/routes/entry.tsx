@@ -71,19 +71,20 @@ export function Entry() {
             if (event.key === "Escape") {
                 event.preventDefault();
 
-                // unfocus text or close popup on esc
+                // exit or close popup on esc
                 if (quoteImageOpen) {
                     setQuoteImageOpen(false);
-                } else if (document.activeElement?.tagName != "BODY") {
+                } else if (document.activeElement?.tagName != "BODY" && event.shiftKey) {
+                    // or deselect element if shift+esc
                     (document.activeElement as HTMLElement).blur();
-                } else {
+                } else if (!event.shiftKey) {
                     // or exit if text is unfocused
                     router.history.back();
                 }
             }
 
             // select mood
-            if (event.key == "m" && !document.activeElement?.classList.contains("ck-content") && moodSelectRef.current) {
+            if (event.key == "m" && event.ctrlKey && moodSelectRef.current) {
                 moodSelectRef.current.focus();
             }
 
