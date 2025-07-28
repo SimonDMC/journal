@@ -1,10 +1,15 @@
 {
   "current": {
-    "version": "0.0.11",
-    "desc": "Tweaked keybinds",
-    "released": 1750594778125
+    "version": "0.0.12",
+    "desc": "Fixed subscript pushing everything down",
+    "released": 1753735393711
   },
   "history": [
+    {
+      "version": "0.0.12",
+      "desc": "Fixed subscript pushing everything down",
+      "released": 1753735393711
+    },
     {
       "version": "0.0.11",
       "desc": "Tweaked keybinds",
