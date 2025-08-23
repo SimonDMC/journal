@@ -1,10 +1,15 @@
 {
   "current": {
-    "version": "0.0.12",
-    "desc": "Fixed subscript pushing everything down",
-    "released": 1753735393711
+    "version": "0.0.13",
+    "desc": "Fixed mood sometimes not saving",
+    "released": 1755975177396
   },
   "history": [
+    {
+      "version": "0.0.13",
+      "desc": "Fixed mood sometimes not saving",
+      "released": 1755975177396
+    },
     {
       "version": "0.0.12",
       "desc": "Fixed subscript pushing everything down",

@@ -3,11 +3,10 @@ import { db } from "../database/db";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart, LinearScale, CategoryScale, PointElement, BarElement, Tooltip, type ChartOptions, defaults } from "chart.js";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { enforceAuth, RouteType } from "../util/auth";
-import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { MONTH_NAMES } from "../util/time";
+import BackArrow from "../components/back-arrow/BackArrow";
 
 Chart.register(LinearScale, CategoryScale, PointElement, BarElement, Tooltip);
 
@@ -150,9 +149,7 @@ function SearchPlot() {
                     <Bar options={options} data={data} />
                 </div>
             </div>
-            <Link to="/overview" className="back-arrow">
-                <FontAwesomeIcon icon={faArrowLeft} />
-            </Link>
+            <BackArrow />
         </main>
     );
 }

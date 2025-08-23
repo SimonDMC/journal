@@ -1,20 +1,19 @@
 import "../styles/entry.css";
 import { type MutableRefObject, useEffect, useRef, useState } from "react";
 import EditorBubble from "../components/editor-bubble/EditorBubble.tsx";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { db } from "../database/db.ts";
 import { syncEntry } from "../database/sync.ts";
 import { moveCursorToEnd } from "../util/selection.ts";
 import { enforceAuth, RouteType } from "../util/auth.ts";
 import QuoteImage from "../components/quote-image/QuoteImage.tsx";
 import Editor from "../components/editor/Editor.tsx";
-import { createFileRoute, Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import type { SelectInstance } from "react-select";
 import { moods } from "../util/parameters.ts";
 import { formatDate } from "../util/time.ts";
 import { calculateWords } from "../util/words.ts";
 import { eventTarget, QuoteImageOpenEvent } from "../util/events.ts";
+import BackArrow from "../components/back-arrow/BackArrow.tsx";
 
 export type EntrySearchParams = {
     date: string;
@@ -195,9 +194,7 @@ export function Entry() {
                 <div className="line-clip"></div>
             </div>
             <div className="date">{formatDate(date)}</div>
-            <Link to="/overview" className="back-arrow">
-                <FontAwesomeIcon icon={faArrowLeft} />
-            </Link>
+            <BackArrow />
             <EditorBubble
                 saveEntry={saveRemotely}
                 saveLocally={saveLocally}
