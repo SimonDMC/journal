@@ -59,8 +59,6 @@ export function Entry() {
             if (!data) return;
 
             if (data.mood) {
-                console.log("setting mood to", data.mood);
-
                 setMood(data.mood);
             }
             if (data.location) setLocation(data.location);
@@ -137,8 +135,6 @@ export function Entry() {
     }
 
     async function saveLocally() {
-        console.log("but here, mood is", mood);
-
         const text = contentRef.current;
         // compute hash -- docs/hash.md
         const toHashObject: { content: string; mood?: number; location?: number } = {

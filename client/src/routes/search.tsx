@@ -206,7 +206,6 @@ function Search() {
 
         // save in sessionstorage for back navigation
         sessionStorage.setItem("journal-search-cache", JSON.stringify(results));
-        console.log(sessionStorage.getItem("journal-search-cache"));
     }
 
     return (
