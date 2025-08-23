@@ -16,8 +16,19 @@ export type JournalEntry = {
     word_count: number;
 };
 
+// kind of a stupid name but whatever
+type SearchSearchParams = {
+    query?: string;
+};
+
 export const Route = createFileRoute("/search")({
     component: Search,
+    validateSearch: (search: Record<string, unknown>): SearchSearchParams => {
+        // validate and parse the search params into a typed state
+        return {
+            query: search.query as string,
+        };
+    },
 });
 
 function Search() {
@@ -25,6 +36,7 @@ function Search() {
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const navigate = useNavigate();
+    const initialParams = Route.useSearch();
 
     const entries = useLiveQuery(() => db.entries.toArray())?.map((entry) => {
         // strip html
@@ -38,6 +50,13 @@ function Search() {
 
     useEffect(() => {
         enforceAuth(navigate, RouteType.Authed);
+
+        // load search state from query params, if navigated back from a previous search
+        if (initialParams.query) {
+            setSearchQuery(initialParams.query);
+            const cache = sessionStorage.getItem("journal-search-cache");
+            if (cache) setResults(JSON.parse(cache));
+        }
 
         const keydown = async (event: KeyboardEvent) => {
             // exit on esc
@@ -101,16 +120,24 @@ function Search() {
         }
     }
 
-    async function search() {
-        const searchField = document.getElementById("search-field") as HTMLInputElement;
-        const searchQuery = searchField.value;
-        setSearchQuery(searchQuery);
-        const resultCount = document.getElementById("result-count") as HTMLParagraphElement;
+    function onInput(event: React.FormEvent<HTMLInputElement>) {
+        search((event.target as HTMLInputElement).value);
+    }
 
-        for (const queryFragment of searchQuery.split(" OR ")) {
+    async function search(query: string) {
+        setSearchQuery(query);
+        // save in query params for back navigation
+        navigate({
+            to: "/search",
+            search: {
+                query,
+            },
+            replace: true,
+        });
+
+        for (const queryFragment of query.split(" OR ")) {
             if (queryFragment.length < 3) {
                 setResults([]);
-                resultCount.textContent = "";
                 return;
             }
         }
@@ -124,7 +151,7 @@ function Search() {
         const results: SearchResultType[] = [];
         for (const entry of entries ?? []) {
             const matches: RegExpExecArray[] = [];
-            for (const queryFragment of searchQuery.split(" OR ")) {
+            for (const queryFragment of query.split(" OR ")) {
                 matches.push(...entry.content.matchAll(new RegExp(queryFragment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi")));
             }
 
@@ -170,24 +197,33 @@ function Search() {
         // sort results by date
         results.sort((a, b) => (a.date < b.date ? 1 : -1));
 
-        resultCount.textContent = `${results.length} result${results.length === 1 ? "" : "s"}`;
-
         // only keep first 40 and last 10 results if there are more
         if (results.length > 50) {
             results.splice(40, results.length - 50);
         }
 
         setResults(results);
+
+        // save in sessionstorage for back navigation
+        sessionStorage.setItem("journal-search-cache", JSON.stringify(results));
+        console.log(sessionStorage.getItem("journal-search-cache"));
     }
 
     return (
         <main className="search margin-bypass">
             <div className="search-wrap">
-                <input id="search-field" placeholder="Search..." onInput={search} autoFocus onKeyDown={searchNavigate} />
+                <input
+                    id="search-field"
+                    placeholder="Search..."
+                    onInput={onInput}
+                    autoFocus
+                    onKeyDown={searchNavigate}
+                    value={searchQuery}
+                />
                 <Link to="/search-plot" search={{ query: searchQuery }} id="plot-button">
                     <FontAwesomeIcon icon={faChartLine} />
                 </Link>
-                <p id="result-count"></p>
+                <p id="result-count">{results.length < 3 ? "" : `${results.length} result${results.length === 1 ? "" : "s"}`}</p>
                 <div className="results">
                     {results.map((result, index) => (
                         <SearchResult
