@@ -36,6 +36,8 @@ export default function EditorBubble(props: {
     // autosave whenever mood or location is updated (if it's today)
     useEffect(() => {
         if (shouldSave) {
+            console.log("SAVING");
+
             saveLocally();
             setShouldSave(false);
         }

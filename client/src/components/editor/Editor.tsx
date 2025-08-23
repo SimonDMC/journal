@@ -38,6 +38,12 @@ export default function Editor(props: {
     const autosaveLoaded = useRef(false);
     const { query, index } = entryRoute.useSearch();
 
+    // ensure we always have an up-to-date saveLocally instance
+    const saveLocallyRef = useRef(props.saveLocally);
+    useEffect(() => {
+        saveLocallyRef.current = props.saveLocally;
+    }, [props.saveLocally]);
+
     useEffect(() => {
         if (editorRef.current && props.content) {
             focusContent();
@@ -74,7 +80,7 @@ export default function Editor(props: {
                 if (today === props.date) {
                     if (autosaveLoaded.current) {
                         console.log("Autosaving locally!");
-                        await props.saveLocally();
+                        await saveLocallyRef.current();
                     } else {
                         autosaveLoaded.current = true;
                     }

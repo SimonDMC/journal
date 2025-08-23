@@ -51,7 +51,7 @@ function Search() {
     useEffect(() => {
         enforceAuth(navigate, RouteType.Authed);
 
-        // load search state from query params, if navigated back from a previous search
+        // load search state from query params + cache, if navigated back from a previous search
         if (initialParams.query) {
             setSearchQuery(initialParams.query);
             const cache = sessionStorage.getItem("journal-search-cache");
