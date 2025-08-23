@@ -12,6 +12,7 @@ const migrationMap = new Map<string, () => Promise<MigrationResponse>>([
 type MigrationResponse = {
     success: boolean;
     message?: string;
+    reload?: boolean;
 };
 
 // Run all available migrations
@@ -19,6 +20,7 @@ export async function runMigrations() {
     const completeMigrations = JSON.parse(localStorage.getItem("journal-migrations") ?? "[]") as string[];
 
     let migrationsDone = 0;
+    let shouldReload = false;
     for (const [version, callback] of migrationMap) {
         // only run if it hasn't been done previously
         if (!completeMigrations.includes(version)) {
@@ -31,6 +33,7 @@ export async function runMigrations() {
                 migrationsDone++;
                 completeMigrations.push(version);
                 if (response.message) successToast(response.message);
+                if (response.reload) shouldReload = true;
             } else {
                 if (response.message) warningToast(response.message);
             }
@@ -39,6 +42,8 @@ export async function runMigrations() {
 
     // update done migrations if any were ran
     if (migrationsDone) localStorage.setItem("journal-migrations", JSON.stringify(completeMigrations));
+    // reload page if any migration requested it
+    if (shouldReload) window.location.reload();
 }
 
 // === MIGRATIONS ===
@@ -129,5 +134,5 @@ async function v0_0_13_fixLocalStorageKeys(): Promise<MigrationResponse> {
         sessionStorage.setItem("journal-month", month);
     }
 
-    return { success: true };
+    return { success: true, reload: true };
 }

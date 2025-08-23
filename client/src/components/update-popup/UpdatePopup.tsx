@@ -37,6 +37,8 @@ export default function UpdatePopup() {
     }, [open]);
 
     async function applyUpdate() {
+        // mark as unsynced, so that migrations immediately trigger
+        sessionStorage.removeItem("journal-synced");
         localStorage.setItem("journal-version", newVersion);
         // wipe old cache
         const caches = await window.caches.keys();
