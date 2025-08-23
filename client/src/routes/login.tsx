@@ -44,15 +44,15 @@ export function Login() {
         if (res.ok) {
             console.log("Logged in.");
 
-            localStorage.setItem("logged-in", "true");
+            localStorage.setItem("journal-logged-in", "true");
 
             // TODO: Review this
             // wipe local database on login with a different account to prevent syncing entries with
             // another account
-            if (localStorage.getItem("username") && localStorage.getItem("username") != username) {
+            if (localStorage.getItem("journal-username") && localStorage.getItem("journal-username") != username) {
                 await db.entries.clear();
             }
-            localStorage.setItem("username", username);
+            localStorage.setItem("journal-username", username);
             navigate({ to: "/overview" });
         } else {
             errorToast("Incorrect username or password.");

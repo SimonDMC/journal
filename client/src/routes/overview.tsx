@@ -34,10 +34,10 @@ function Overview() {
         checkForUpdate();
 
         // check key status
-        if (!localStorage.getItem("key")) setKeyExists(false);
+        if (!localStorage.getItem("journal-key")) setKeyExists(false);
 
         // restore previously viewed month
-        const month = sessionStorage.getItem("month");
+        const month = sessionStorage.getItem("journal-month");
         if (month) setMonth(parseInt(month));
 
         // keybinds
@@ -101,12 +101,12 @@ function Overview() {
 
     function previousMonth() {
         setMonth(month - 1);
-        sessionStorage.setItem("month", (month - 1).toString());
+        sessionStorage.setItem("journal-month", (month - 1).toString());
     }
 
     function nextMonth() {
         setMonth(month + 1);
-        sessionStorage.setItem("month", (month + 1).toString());
+        sessionStorage.setItem("journal-month", (month + 1).toString());
     }
 
     // https://stackoverflow.com/a/2901298

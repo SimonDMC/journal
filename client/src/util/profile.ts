@@ -20,7 +20,7 @@ export function uploadKey() {
         reader.onload = async () => {
             const imported = new Uint8Array(reader.result as ArrayBuffer);
             // save key into storage
-            localStorage.setItem("key", JSON.stringify(Array.from(imported)));
+            localStorage.setItem("journal-key", JSON.stringify(Array.from(imported)));
             successToast("Key imported successfully!");
             // let overview know key has been imported to hide warning and show stats
             eventTarget.dispatchEvent(new KeyCreateEvent());
@@ -33,7 +33,7 @@ export function uploadKey() {
 }
 
 export function downloadKey() {
-    const key = localStorage.getItem("key");
+    const key = localStorage.getItem("journal-key");
     if (!key) {
         errorToast("No key has been imported.");
         return;
@@ -137,7 +137,7 @@ export async function changePassword() {
 }
 
 export async function generateKey() {
-    if (localStorage.getItem("key")) {
+    if (localStorage.getItem("journal-key")) {
         if (!confirm("You already have a key saved. Are you sure you want to generate a new one?")) return;
     }
 
@@ -145,15 +145,15 @@ export async function generateKey() {
     const exported = await window.crypto.subtle.exportKey("raw", key);
     const buffer = new Uint8Array(exported);
     const json = JSON.stringify([...buffer]);
-    localStorage.setItem("key", json);
+    localStorage.setItem("journal-key", json);
 
     successToast("Key generated!");
 }
 
 export function getUserName() {
-    return localStorage.getItem("username") ?? "User";
+    return localStorage.getItem("journal-username") ?? "User";
 }
 
 export function getOptions() {
-    return JSON.parse(localStorage.getItem(`options-${getUserName()}`) ?? "{}");
+    return JSON.parse(localStorage.getItem(`journal-options-${getUserName()}`) ?? "{}");
 }

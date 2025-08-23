@@ -42,7 +42,7 @@ function Codeword() {
             const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
             if (hashHex == getOptions().codeword) {
-                sessionStorage.setItem("2fa-authed", "true");
+                sessionStorage.setItem("journal-2fa-authed", "true");
                 navigate({ to: "/overview" });
             } else {
                 display.innerText = "x";

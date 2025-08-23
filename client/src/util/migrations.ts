@@ -4,7 +4,10 @@ import { encryptEntry } from "./encryption";
 import { successToast, warningToast } from "./toast";
 import { calculateWords } from "./words";
 
-const migrationMap = new Map<string, () => Promise<MigrationResponse>>([["0.0.8", v0_0_8_fixWordCount]]);
+const migrationMap = new Map<string, () => Promise<MigrationResponse>>([
+    ["0.0.8", v0_0_8_fixWordCount],
+    ["0.0.13", v0_0_13_fixLocalStorageKeys],
+]);
 
 type MigrationResponse = {
     success: boolean;
@@ -80,4 +83,51 @@ async function v0_0_8_fixWordCount(): Promise<MigrationResponse> {
     } else {
         return { success: true };
     }
+}
+
+// rename all localStorage and sessionStorage keys to include journal- prefix
+async function v0_0_13_fixLocalStorageKeys(): Promise<MigrationResponse> {
+    const key = localStorage.getItem("key");
+    if (key) {
+        localStorage.removeItem("key");
+        localStorage.setItem("journal-key", key);
+    }
+
+    const username = localStorage.getItem("username");
+    if (username) {
+        localStorage.removeItem("username");
+        localStorage.setItem("journal-username", username);
+    }
+
+    const loggedIn = localStorage.getItem("logged-in");
+    if (loggedIn) {
+        localStorage.removeItem("logged-in");
+        localStorage.setItem("journal-logged-in", loggedIn);
+    }
+
+    const options = localStorage.getItem(`options-${username}`);
+    if (options) {
+        localStorage.removeItem(`options-${username}`);
+        localStorage.setItem(`journal-options-${username}`, options);
+    }
+
+    const twofaAuthed = sessionStorage.getItem("2fa-authed");
+    if (twofaAuthed) {
+        sessionStorage.removeItem("2fa-authed");
+        sessionStorage.setItem("journal-2fa-authed", twofaAuthed);
+    }
+
+    const codeword = sessionStorage.getItem("codeword");
+    if (codeword) {
+        sessionStorage.removeItem("codeword");
+        sessionStorage.setItem("journal-codeword", codeword);
+    }
+
+    const month = sessionStorage.getItem("month");
+    if (month) {
+        sessionStorage.removeItem("month");
+        sessionStorage.setItem("journal-month", month);
+    }
+
+    return { success: true };
 }

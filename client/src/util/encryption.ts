@@ -4,7 +4,7 @@ let cryptoKey: CryptoKey | undefined;
 async function getKey(): Promise<CryptoKey | null> {
     if (cryptoKey) return cryptoKey;
 
-    const storedKey = localStorage.getItem("key");
+    const storedKey = localStorage.getItem("journal-key");
     if (!storedKey) return null;
 
     const keyBuffer = new Uint8Array(JSON.parse(storedKey));
@@ -13,7 +13,7 @@ async function getKey(): Promise<CryptoKey | null> {
 }
 
 export async function showKeyHash() {
-    const storedKey = localStorage.getItem("key");
+    const storedKey = localStorage.getItem("journal-key");
     if (!storedKey) {
         alert("No key saved.");
         return;

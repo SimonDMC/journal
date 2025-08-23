@@ -12,7 +12,7 @@ export enum RouteType {
 
 export function is2faAuthed() {
     const options = getOptions();
-    if (sessionStorage.getItem("2fa-authed")) return true;
+    if (sessionStorage.getItem("journal-2fa-authed")) return true;
 
     // 2fa method is selected but not initialized
     if (options["2fa_method"] == 1 && !options["codeword"]) return true;
@@ -24,11 +24,11 @@ export function is2faAuthed() {
 
 export function enforceAuth(navigate: UseNavigateResult<string>, route: RouteType) {
     const options = getOptions();
-    if (localStorage.getItem("logged-in") && is2faAuthed()) {
+    if (localStorage.getItem("journal-logged-in") && is2faAuthed()) {
         if (route != RouteType.Authed) navigate({ to: "/overview" });
-    } else if (localStorage.getItem("logged-in") && options["2fa_method"] == 1 && !is2faAuthed()) {
+    } else if (localStorage.getItem("journal-logged-in") && options["2fa_method"] == 1 && !is2faAuthed()) {
         navigate({ to: "/codeword" });
-    } else if (localStorage.getItem("logged-in") && options["2fa_method"] == 2 && !is2faAuthed()) {
+    } else if (localStorage.getItem("journal-logged-in") && options["2fa_method"] == 2 && !is2faAuthed()) {
         navigate({ to: "/bioauth" });
     } else {
         navigate({ to: "/login" });
@@ -45,8 +45,8 @@ async function logoutWithoutNav() {
         errorToast("Couldn't reach server.");
         return;
     }
-    localStorage.removeItem("logged-in");
-    sessionStorage.removeItem("codeword");
+    localStorage.removeItem("journal-logged-in");
+    sessionStorage.removeItem("journal-codeword");
 }
 
 export async function logout(navigate: UseNavigateResult<string>) {

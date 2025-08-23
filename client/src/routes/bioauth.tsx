@@ -77,7 +77,7 @@ function BioAuth() {
             while (!(await tryPasskey())) {
                 await new Promise<void>((resolve) => setTimeout(() => resolve(), 1000));
             }
-            sessionStorage.setItem("2fa-authed", "true");
+            sessionStorage.setItem("journal-2fa-authed", "true");
             navigate({ to: "/overview" });
         }
 

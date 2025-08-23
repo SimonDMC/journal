@@ -26,7 +26,7 @@ export type Passkey = {
 };
 
 function saveOptions(options: Options) {
-    localStorage.setItem(`options-${getUserName()}`, JSON.stringify(options));
+    localStorage.setItem(`journal-options-${getUserName()}`, JSON.stringify(options));
 }
 
 export function switch2fa(options: Options, setOptions: Dispatch<SetStateAction<Options>>) {
@@ -34,7 +34,7 @@ export function switch2fa(options: Options, setOptions: Dispatch<SetStateAction<
     newOptions["2fa_method"] = ((newOptions["2fa_method"] ?? 0) + 1) % 3;
     setOptions(newOptions);
     saveOptions(newOptions);
-    sessionStorage.setItem("2fa-authed", "true");
+    sessionStorage.setItem("journal-2fa-authed", "true");
 }
 
 export async function setCodeword(options: Options, setOptions: Dispatch<SetStateAction<Options>>) {
@@ -58,7 +58,7 @@ export async function setCodeword(options: Options, setOptions: Dispatch<SetStat
     newOptions.codeword = hashHex;
     setOptions(newOptions);
     saveOptions(newOptions);
-    sessionStorage.setItem("2fa-authed", "true");
+    sessionStorage.setItem("journal-2fa-authed", "true");
 }
 
 // https://simplewebauthn.dev/docs/packages/browser
@@ -103,5 +103,5 @@ export async function setupBioAuth(options: Options, setOptions: Dispatch<SetSta
     newOptions.passkey = newPasskey;
     setOptions(newOptions);
     saveOptions(newOptions);
-    sessionStorage.setItem("2fa-authed", "true");
+    sessionStorage.setItem("journal-2fa-authed", "true");
 }
