@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { db, type Entry } from "./db";
 import { API_URL } from "../util/config";
 import { decryptEntry, encryptEntry } from "../util/encryption";
 import { warningToast } from "../util/toast";
@@ -49,27 +49,30 @@ export async function syncDatabase() {
 
     // 3. Save all missing entries locally
     for (const entry of json.missing) {
-        const decrypted = await decryptEntry(entry.content);
-        if (decrypted === null) {
+        entry.decrypted = await decryptEntry(entry.content);
+        if (entry.decrypted === null) {
             warningToast("Sync failed (decryption)");
             return;
         }
-
-        try {
-            await db.entries.add({
-                date: entry.date,
-                content: decrypted,
-                hash: entry.hash,
-                mood: entry.mood,
-                location: entry.location,
-                word_count: entry.word_count,
-                last_modified: entry.last_modified,
-            });
-        } catch (e) {
-            console.error(e);
-            warningToast("Sync failed (adding)");
-            return;
-        }
+    }
+    try {
+        await db.entries.bulkAdd(
+            json.missing.map((entry: Entry & { decrypted: string }) => {
+                return {
+                    date: entry.date,
+                    content: entry.decrypted,
+                    hash: entry.hash,
+                    mood: entry.mood,
+                    location: entry.location,
+                    word_count: entry.word_count,
+                    last_modified: entry.last_modified,
+                };
+            })
+        );
+    } catch (e) {
+        console.error(e);
+        warningToast("Sync failed (adding)");
+        return;
     }
 
     // 4. Decide based off last modification date which version of differing entries to use
