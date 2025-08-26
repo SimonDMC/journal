@@ -27,7 +27,7 @@ self.addEventListener("fetch", (event) => {
     }
 
     // Don't cache local requests while developing
-    if (url.host == "localhost:5173") {
+    if (url.host == "localhost:5173" || url.pathname == "/__scheduled" || url.pathname == "/cdn-cgi/handler/scheduled") {
         event.respondWith(fetch(event.request));
         return;
     }

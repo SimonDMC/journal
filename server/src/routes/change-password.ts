@@ -1,4 +1,3 @@
-import type { Env } from "..";
 import bcrypt from "bcryptjs";
 import { auth } from "../auth";
 

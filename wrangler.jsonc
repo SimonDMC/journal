@@ -13,4 +13,13 @@
             "database_id": "26ebb31f-ca9d-447e-9ca0-251b5e876790",
         },
     ],
+    "r2_buckets": [
+        {
+            "binding": "BUCKET",
+            "bucket_name": "journal",
+        },
+    ],
+    "triggers": {
+        "crons": ["0 0 * * *"],
+    },
 }

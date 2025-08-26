@@ -1,4 +1,3 @@
-import type { Env } from "..";
 import { auth } from "../auth";
 import type { EntryWithTimestamp } from "../types";
 

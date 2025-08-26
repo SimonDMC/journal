@@ -1,5 +1,5 @@
 import { parse } from "cookie";
-import type { Env } from ".";
+
 export async function auth(request: Request, env: Env): Promise<number | undefined> {
     const cookie = request.headers.get("Cookie");
     if (!cookie) {

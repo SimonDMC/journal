@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import type { Env } from "..";
 
 type RequestContent = {
     username: string;

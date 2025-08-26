@@ -1,4 +1,3 @@
-import type { Env } from "..";
 import { auth } from "../auth";
 
 export const getEntryHandle = async (request: Request, env: Env): Promise<Response> => {

@@ -1,4 +1,3 @@
-import type { Env } from "..";
 import { auth } from "../auth";
 
 // LEGACY API ENDPOINT. CURRENTLY UNUSED IN FRONTEND

@@ -10,12 +10,7 @@ import { uploadHandle } from "./routes/upload";
 import { clientSyncHandle } from "./routes/client-sync";
 import { serverSyncHandle } from "./routes/server-sync";
 import { createAccountHandle } from "./routes/create-account";
-
-export interface Env {
-    DB: D1Database;
-
-    ADMIN_TOKEN: string;
-}
+import { downloadDB } from "./cron";
 
 type Route = [method: string, path: RegExp, handler: (request: Request, env: Env) => Promise<Response>];
 
@@ -57,5 +52,14 @@ export default {
         }
 
         return response;
+    },
+
+    async scheduled(controller: ScheduledController, env: Env) {
+        switch (controller.cron) {
+            case "0 0 * * *":
+                await downloadDB(env);
+                break;
+        }
+        console.log("Processed cron trigger!");
     },
 };
