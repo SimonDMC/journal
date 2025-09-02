@@ -44,18 +44,18 @@ main.login button {
 
 .info {
     position: absolute;
-    top: 0.3em;
-    right: 0.3em;
-    border: 3px solid #888;
-    border-radius: 50%;
+    top: .4em;
+    right: .4em;
+    font-weight: 900;
+    border: 4px solid #888;
+    color: #888;
     width: 1.3em;
     height: 1.3em;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 50%;
     cursor: pointer;
-    transition: border 0.2s;
-    font-weight: 600;
 }
 
 dialog {
@@ -66,7 +66,21 @@ dialog {
     border: 2px solid #222;
     border-radius: 0.7em;
     padding: 1em;
-    /* transition: display 0.25s allow-discrete; */
+    margin: auto;
+    display: block;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .3s, box-shadow .3s;
+}
+
+dialog[open] {
+    opacity: 1;
+    pointer-events: all;
+    box-shadow: 0 0 0 100vw #00000088;
+}
+
+dialog::backdrop {
+    background-color: transparent;
 }
 
 dialog button {
@@ -82,10 +96,6 @@ form {
 @media (hover: hover) and (pointer: fine) {
     main.login button:hover {
         background-color: #0f0f0f;
-    }
-
-    .info:hover {
-        border: 3px solid #ccc;
     }
 }
 

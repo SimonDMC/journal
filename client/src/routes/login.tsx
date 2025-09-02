@@ -99,9 +99,8 @@ export function Login() {
             </div>
             <dialog onClick={closeInfo}>
                 <p>
-                    This is an app I use for keeping a daily personal journal. There is no way to create an account because I&apos;m the
-                    only one who uses this. I might open this up for public use once I think it&apos;s ready, but for now it&apos;s just for
-                    me :)
+                    This is an app I use for keeping a daily personal journal. There is no way to create an account yet, I want to work on
+                    it a bit more before I make it public. But it will be, some day. Shoot me a message if you want an account.
                 </p>
                 <form method="dialog">
                     <button>Close</button>
