@@ -223,7 +223,7 @@ function Search() {
                 <Link to="/search-plot" search={{ query: searchQuery }} id="plot-button">
                     <FontAwesomeIcon icon={faChartLine} />
                 </Link>
-                <p id="result-count">{results.length < 3 ? "" : `${results.length} result${results.length === 1 ? "" : "s"}`}</p>
+                <p id="result-count">{searchQuery.length < 3 ? "" : `${results.length} result${results.length === 1 ? "" : "s"}`}</p>
                 <div className="results">
                     {results.map((result, index) => (
                         <SearchResult
