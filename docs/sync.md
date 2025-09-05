@@ -1,6 +1,6 @@
-# Client-Server sync protocol
+# Client-Server Sync Protocol
 
-### Purpose
+### Motivation
 
 Entries are primarily stored locally, but need to be synced with the server to make sure all devices
 have the same data.

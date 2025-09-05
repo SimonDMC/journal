@@ -1,6 +1,6 @@
 # Entry Hash Parameter
 
-### Purpose
+### Motivation
 
 The client and the server need a reliable and dense way of communicating whether or not the stored
 entries are identical.
