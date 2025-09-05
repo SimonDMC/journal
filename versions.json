@@ -1,10 +1,15 @@
 {
   "current": {
-    "version": "0.0.13",
-    "desc": "Fixed mood sometimes not saving",
-    "released": 1755975177396
+    "version": "0.0.14",
+    "desc": "Added entry deleting",
+    "released": 1757072612778
   },
   "history": [
+    {
+      "version": "0.0.14",
+      "desc": "Added entry deleting",
+      "released": 1757072612778
+    },
     {
       "version": "0.0.13",
       "desc": "Fixed mood sometimes not saving",

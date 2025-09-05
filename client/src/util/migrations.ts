@@ -56,8 +56,12 @@ async function v0_0_8_fixWordCount(): Promise<MigrationResponse> {
     for (const entry of await db.entries.toArray()) {
         const correctWordCount = calculateWords(entry.content);
         if (entry.word_count != correctWordCount) {
-            const encryptedContent = await encryptEntry(entry.content);
-            if (!encryptedContent) return { success: false, message: "Word count fix failed (encryption)" };
+            let encryptedContent;
+            try {
+                encryptedContent = await encryptEntry(entry.content);
+            } catch {
+                return { success: false, message: "Word count fix failed (encryption)" };
+            }
 
             entry.content = encryptedContent;
             entry.word_count = correctWordCount;

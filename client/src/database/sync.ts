@@ -6,7 +6,7 @@ import { eventTarget, OfflineModeEvent } from "../util/events";
 import { logoutImperatively } from "../util/auth";
 
 type ClientSyncBody = {
-    [key: string]: string;
+    [key: string]: string | null;
 };
 
 export async function syncDatabase() {
@@ -49,8 +49,10 @@ export async function syncDatabase() {
 
     // 3. Save all missing entries locally
     for (const entry of json.missing) {
-        entry.decrypted = await decryptEntry(entry.content);
-        if (entry.decrypted === null) {
+        try {
+            entry.decrypted = await decryptEntry(entry.content);
+        } catch (error) {
+            console.log(error);
             warningToast("Sync failed (decryption)");
             return;
         }
@@ -97,8 +99,11 @@ export async function syncDatabase() {
             // remote wins
             await db.entries.delete(entry.date);
 
-            const decrypted = await decryptEntry(entry.content);
-            if (decrypted === null) {
+            let decrypted;
+            try {
+                decrypted = await decryptEntry(entry.content);
+            } catch (error) {
+                console.log(error);
                 warningToast("Sync failed (decryption)");
                 return;
             }
@@ -128,8 +133,11 @@ export async function syncDatabase() {
 
     // 6. Encrypt entries and send over to server
     for (const entry of serverSyncEntries) {
-        const encryptedContent = await encryptEntry(entry.content);
-        if (!encryptedContent) {
+        let encryptedContent;
+        try {
+            encryptedContent = await encryptEntry(entry.content);
+        } catch (error) {
+            console.log(error);
             warningToast("Sync failed (encryption)");
             return;
         }
@@ -150,33 +158,37 @@ export async function syncDatabase() {
     }
 }
 
-export async function syncEntry(date: string) {
+export async function syncEntry(date: string): Promise<boolean> {
     const entry = await db.entries.get(date);
     if (!entry) return false;
 
-    const encryptedContent = await encryptEntry(entry.content);
-    if (!encryptedContent) return false;
+    let encryptedContent;
+    try {
+        encryptedContent = await encryptEntry(entry.content);
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
 
-    fetch(`${API_URL}/entry/${date}`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            content: encryptedContent,
-            mood: entry.mood,
-            location: entry.location,
-            // word count has to be sent because you can't recalculate it once encrypted
-            word_count: entry.word_count,
-            hash: entry.hash,
-        }),
-    })
-        .then((res) => {
-            return res.ok;
-        })
-        .catch(() => {
-            // silently ignore not being able to sync
-            // (is this a good idea? possibly revisit later)
-            return false;
+    try {
+        const res = await fetch(`${API_URL}/entry/${date}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                content: encryptedContent,
+                mood: entry.mood,
+                location: entry.location,
+                // word count has to be sent because you can't recalculate it once encrypted
+                word_count: entry.word_count,
+                hash: entry.hash,
+            }),
         });
+
+        return res.ok;
+    } catch (error) {
+        console.log(error);
+        return false;
+    }
 }

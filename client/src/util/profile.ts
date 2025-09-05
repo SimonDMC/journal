@@ -75,21 +75,25 @@ Are you sure you want to continue?`)
         reader.onload = async () => {
             // encrypt all entries
             const json = JSON.parse(reader.result as string);
-            let error = false;
+            let hasError = false;
 
             // legacy exports have entries in {results: [...]}
             // new exports have entries in [...]
             for (const entry of json.results ?? json) {
-                const encrypted = await encryptEntry(entry.content);
-                if (!encrypted) {
-                    error = true;
+                let encrypted;
+                try {
+                    encrypted = await encryptEntry(entry.content);
+                } catch (error) {
+                    hasError = true;
+                    console.log(error);
                     console.log("Failed encrypting:", entry.content, entry.date);
-                } else {
-                    entry.content = encrypted;
+                    continue;
                 }
+
+                entry.content = encrypted;
             }
 
-            if (error) {
+            if (hasError) {
                 errorToast("Failed to encrypt some entries.");
                 return;
             }

@@ -26,7 +26,7 @@ function Overview() {
     const [month, setMonth] = useState(dayAdjustedTime.getMonth() + 1);
 
     const entriesFull = useLiveQuery(() => db.entries.toArray()) ?? [];
-    const entryDates = entriesFull.map((entry) => entry.date);
+    const entryDates = entriesFull.filter((entry) => entry.content !== null).map((entry) => entry.date);
     const wordCount = entriesFull.reduce((acc, cur) => (acc += cur.word_count), 0);
 
     useEffect(() => {

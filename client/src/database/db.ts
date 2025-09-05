@@ -2,8 +2,8 @@ import Dexie, { type EntityTable } from "dexie";
 
 interface Entry {
     date: string;
-    content: string;
-    hash: string;
+    content: string | null;
+    hash: string | null;
     mood: number | null;
     location: number | null;
     word_count: number;

@@ -2,7 +2,7 @@ import { auth } from "../auth";
 import type { EntryWithTimestamp } from "../types";
 
 type RequestContent = {
-    [key: string]: string;
+    [key: string]: string | null;
 };
 
 // TODO: add rate limiting since it's a pretty expensive operation
@@ -38,10 +38,10 @@ export const clientSyncHandle = async (request: Request, env: Env): Promise<Resp
 
         const matchingLocalEntryHash = localEntries[entry.date];
 
-        if (!matchingLocalEntryHash) {
+        if (matchingLocalEntryHash === undefined) {
             // found in database but not in local
             missingEntries.push(entry);
-        } else if (entry.hash != matchingLocalEntryHash) {
+        } else if (entry.hash !== matchingLocalEntryHash) {
             // found both in database and local, but with differing hashes
             differingEntries.push(entry);
         }

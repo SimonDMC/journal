@@ -55,7 +55,7 @@ export function Entry() {
 
         // load entry
         db.entries.get(date).then(async (data) => {
-            if (!data) return;
+            if (!data || data.content === null) return;
 
             if (data.mood) {
                 setMood(data.mood);
@@ -135,6 +135,30 @@ export function Entry() {
 
     async function saveLocally() {
         const text = contentRef.current;
+        const existingEntry = await db.entries.get(date);
+
+        // deleting entry -- mark as null content and remove all other properties
+        if (text === "") {
+            const entryJson = {
+                content: null,
+                mood: null,
+                location: null,
+                word_count: 0,
+                hash: null,
+                last_modified: new Date().toISOString(),
+            };
+
+            if (existingEntry) {
+                // update existing entry
+                await db.entries.update(date, entryJson);
+            } else {
+                // create new entry
+                await db.entries.add({ date: date, ...entryJson });
+            }
+
+            return;
+        }
+
         // compute hash -- docs/hash.md
         const toHashObject: { content: string; mood?: number; location?: number } = {
             content: text,
@@ -147,8 +171,6 @@ export function Entry() {
         const data = encoder.encode(toHashString);
         const hashBuffer = await window.crypto.subtle.digest("SHA-1", data);
         const hashed = btoa(String.fromCharCode(...new Uint8Array(hashBuffer))).slice(0, -1);
-
-        const existingEntry = await db.entries.get(date);
 
         const entryJson = {
             content: text,
@@ -176,6 +198,8 @@ export function Entry() {
             saveButton.innerText = "Save";
         }, 1000);
 
+        // this returns a boolean but we do nothing with it (?) might be better to show
+        // it was only saved locally
         syncEntry(date);
     }
 
