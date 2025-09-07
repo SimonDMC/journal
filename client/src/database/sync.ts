@@ -94,9 +94,15 @@ export async function syncDatabase() {
         // keeps alternating between the two
         if (localTime > remoteTime) {
             // local wins
+            console.log(
+                `Sync conflict at day ${localEntry.date} -- choosing local @ ${localEntry.last_modified} over remote @ ${entry.last_modified}`
+            );
             serverSyncEntries.push(localEntry);
         } else {
             // remote wins
+            console.log(
+                `Sync conflict at day ${localEntry.date} -- choosing remote @ ${entry.last_modified} over local @ ${localEntry.last_modified}`
+            );
             await db.entries.delete(entry.date);
 
             let decrypted;

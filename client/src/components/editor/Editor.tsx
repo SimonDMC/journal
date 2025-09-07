@@ -74,16 +74,14 @@ export default function Editor(props: {
             Underline,
         ],
         autosave: {
-            // only save max every second
-            waitingTime: 1000,
+            // only save max every 500ms
+            waitingTime: 500,
             async save() {
-                if (today === props.date) {
-                    if (autosaveLoaded.current) {
-                        console.log("Autosaving locally!");
-                        await saveLocallyRef.current();
-                    } else {
-                        autosaveLoaded.current = true;
-                    }
+                if (autosaveLoaded.current) {
+                    console.log("Autosaving locally!");
+                    await saveLocallyRef.current();
+                } else {
+                    autosaveLoaded.current = true;
                 }
             },
         },

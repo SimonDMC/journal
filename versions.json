@@ -1,10 +1,15 @@
 {
   "current": {
-    "version": "0.0.14",
-    "desc": "Added entry deleting",
-    "released": 1757072612778
+    "version": "0.0.15",
+    "desc": "Enabled autosaving on all days",
+    "released": 1757270401311
   },
   "history": [
+    {
+      "version": "0.0.15",
+      "desc": "Enabled autosaving on all days",
+      "released": 1757270401311
+    },
     {
       "version": "0.0.14",
       "desc": "Added entry deleting",
