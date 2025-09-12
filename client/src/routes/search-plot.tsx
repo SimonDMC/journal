@@ -61,7 +61,7 @@ function SearchPlot() {
                 // we can just assume it's 31 and ignore invalid (missing) days
                 for (let day = 0; day <= 31; day++) {
                     const entry = await db.entries.get(`${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`);
-                    if (!entry) continue;
+                    if (!entry || entry.content == null) continue;
 
                     let found = false;
                     for (const queryFragment of query.split(" OR ")) {

@@ -40,12 +40,12 @@ function Search() {
     const initialParams = Route.useSearch();
 
     const entries = useLiveQuery(() => db.entries.toArray())?.map((entry) => {
+        if (entry.content == null) return entry;
         // strip html
         const div = document.createElement("div");
         div.innerHTML = entry.content;
-        entry.content = div.innerText;
-        // replace "s
-        entry.content = entry.content.replaceAll("“", '"').replaceAll("”", '"');
+        // normalize special characters
+        entry.content = normalizeText(div.innerText);
         return entry;
     });
 
@@ -79,6 +79,24 @@ function Search() {
             document.removeEventListener("keydown", keydown);
         };
     }, []);
+
+    // normalizes special characters while both parsing and inputting for looser search
+    function normalizeText(text: string) {
+        return (
+            text
+                // accented characters
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                // "s and 's
+                .replaceAll("“", '"')
+                .replaceAll("”", '"')
+                .replaceAll("‘", "'")
+                .replaceAll("’", "'")
+                // dashes
+                .replaceAll("–", "-")
+                .replaceAll("—", "-")
+        );
+    }
 
     function scrollActiveResultIntoView() {
         const result = document.querySelector(".result.active")!;
@@ -136,6 +154,9 @@ function Search() {
             replace: true,
         });
 
+        // normalize query
+        query = normalizeText(query);
+
         for (const queryFragment of query.split(" OR ")) {
             if (queryFragment.length < 3) {
                 setResults([]);
@@ -151,6 +172,8 @@ function Search() {
 
         const results: SearchResultType[] = [];
         for (const entry of entries ?? []) {
+            if (entry.content === null) continue;
+
             const matches: RegExpExecArray[] = [];
             for (const queryFragment of query.split(" OR ")) {
                 matches.push(...entry.content.matchAll(new RegExp(queryFragment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi")));

@@ -1,10 +1,15 @@
 {
   "current": {
-    "version": "0.0.15",
-    "desc": "Enabled autosaving on all days",
-    "released": 1757270401311
+    "version": "0.0.16",
+    "desc": "Improved search with special characters",
+    "released": 1757702680468
   },
   "history": [
+    {
+      "version": "0.0.16",
+      "desc": "Improved search with special characters",
+      "released": 1757702680468
+    },
     {
       "version": "0.0.15",
       "desc": "Enabled autosaving on all days",
