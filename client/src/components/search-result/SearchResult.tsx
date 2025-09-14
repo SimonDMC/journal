@@ -2,6 +2,12 @@ import { Link } from "@tanstack/react-router";
 import "./SearchResult.css";
 import parse from "html-react-parser";
 
+export type SearchResults = {
+    results: SearchResultType[];
+    // since results are capped, the real length has to be stored separately
+    length: number;
+};
+
 export type SearchResultType = {
     date: string;
     matches: SearchMatch[];

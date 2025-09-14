@@ -1,6 +1,6 @@
 import "../styles/search.css";
 import { useEffect, useState } from "react";
-import SearchResult, { type SearchResultType } from "../components/search-result/SearchResult";
+import SearchResult, { type SearchResults, type SearchResultType } from "../components/search-result/SearchResult";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine } from "@fortawesome/free-solid-svg-icons";
 import { db } from "../database/db";
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/search")({
 });
 
 function Search() {
-    const [results, setResults] = useState<SearchResultType[]>([]);
+    const [results, setResults] = useState<SearchResults>({ results: [], length: 0 });
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const navigate = useNavigate();
@@ -159,7 +159,7 @@ function Search() {
 
         for (const queryFragment of query.split(" OR ")) {
             if (queryFragment.length < 3) {
-                setResults([]);
+                setResults({ results: [], length: 0 });
                 return;
             }
         }
@@ -222,14 +222,15 @@ function Search() {
         results.sort((a, b) => (a.date < b.date ? 1 : -1));
 
         // only keep first 40 and last 10 results if there are more
-        if (results.length > 50) {
-            results.splice(40, results.length - 50);
+        const length = results.length;
+        if (length > 50) {
+            results.splice(40, length - 50);
         }
 
-        setResults(results);
+        setResults({ results, length });
 
         // save in sessionstorage for back navigation
-        sessionStorage.setItem("journal-search-cache", JSON.stringify(results));
+        sessionStorage.setItem("journal-search-cache", JSON.stringify({ results, length }));
     }
 
     return (
@@ -248,7 +249,7 @@ function Search() {
                 </Link>
                 <p id="result-count">{searchQuery.length < 3 ? "" : `${results.length} result${results.length === 1 ? "" : "s"}`}</p>
                 <div className="results">
-                    {results.map((result, index) => (
+                    {results.results.map((result, index) => (
                         <SearchResult
                             key={result.date}
                             date={result.date}
