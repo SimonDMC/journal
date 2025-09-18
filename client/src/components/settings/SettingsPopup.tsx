@@ -4,6 +4,11 @@ import SettingsTab from "./SettingsTab";
 import SettingsToggle from "./SettingsToggle";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSettings } from "../../state/settings";
+import { generateKey } from "../../util/profile";
+import SettingsButton from "./SettingsButton";
+import { changePassword, changePasswordMismatched } from "../../settings/password";
+import { download } from "../../settings/entries";
+import SettingsPassword from "./SettingsPassword";
 
 export default function SettingsPopup() {
     const [selected, setSelected] = useState("general");
@@ -52,7 +57,26 @@ export default function SettingsPopup() {
                         )}
                         {selected == "security" && (
                             <div className="settings-content">
-                                <div>Yo!</div>
+                                <SettingsButton
+                                    label="Export Data"
+                                    desc="Download a copy of all your entries"
+                                    actionLabel="Export"
+                                    action={download}
+                                />
+                                <SettingsPassword
+                                    label="Change Password"
+                                    mainPlaceholder="New Password"
+                                    confirmPlaceholder="Confirm Password"
+                                    actionLabel="Change"
+                                    action={changePassword}
+                                    actionFail={changePasswordMismatched}
+                                />
+                                <SettingsButton
+                                    label="Generate Key"
+                                    desc="Generate a new key used to encrypt and decrypt entries when talking to the server"
+                                    actionLabel="Generate"
+                                    action={generateKey}
+                                />
                             </div>
                         )}
                         {selected == "debug" && (

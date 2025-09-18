@@ -25,7 +25,7 @@
     height: 100%;
     width: min-content;
     padding: 1em;
-    width: 10em;
+    width: 8em;
     display: flex;
     flex-direction: column;
     border-right: 2px solid #222;
@@ -112,6 +112,12 @@
     width: .7em;
 }
 
+.settings-row .right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
 .settings-desc {
     position: absolute;
     font-size: .8em;
@@ -133,4 +139,29 @@
 .settings-row .info-wrap:hover .settings-desc {
     opacity: 1;
     translate: -50% -.1em;
+}
+
+.settings-button {
+    width: fit-content;
+    color: #ccc;
+    border: 2px solid #333;
+    font-size: .9em;
+    padding: 0.05em 0.4em;
+    border-radius: 0.3em;
+    transition: background-color 0.2s;
+}
+
+.settings-button:hover {
+    background-color: #111;
+}
+
+.settings-password {
+    font-size: .9em;
+    width: 10em;
+}
+
+.settings-password-row {
+    align-items: flex-start;
+    margin-top: .5em;
+    margin-bottom: .5em;
 }

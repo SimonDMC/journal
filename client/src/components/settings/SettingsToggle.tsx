@@ -2,16 +2,18 @@ import { useSettings } from "../../state/settings";
 import { InfoIcon } from "../icons/InfoIcon";
 import "./Settings.css";
 
-export default function SettingsToggle(props: { label: string; settingKey: string; desc: string }) {
+export default function SettingsToggle(props: { label: string; settingKey: string; desc?: string }) {
     const value = useSettings((s) => s.getBoolean(props.settingKey));
 
     return (
         <label className="settings-row">
             <div className="left">
                 {props.label}
-                <InfoIcon className="info-icon">
-                    <div className="settings-desc">{props.desc}</div>
-                </InfoIcon>
+                {props.desc && (
+                    <InfoIcon className="info-icon">
+                        <div className="settings-desc">{props.desc}</div>
+                    </InfoIcon>
+                )}
             </div>
             <div className="right">
                 <div className="toggle-wrap">

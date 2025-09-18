@@ -1,5 +1,5 @@
 import "./ProfileIcon.css";
-import { uploadKey, downloadKey, download, upload, wipeLocalDatabase, getUserName, changePassword, generateKey } from "../../util/profile";
+import { wipeLocalDatabase, getUserName, generateKey } from "../../util/profile";
 import { forceReload } from "../../util/update";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -16,6 +16,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "framer-motion";
 import { syncDatabase } from "../../database/sync";
 import { useSettings } from "../../state/settings";
+import { upload } from "../../settings/entries";
+import { downloadKey, uploadKey } from "../../settings/key";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -68,13 +70,11 @@ export default function ProfileIcon() {
                             description="Export the locally saved key into a KEY file"
                             onClick={downloadKey}
                         />
-                        <DropdownItem label="Export" description="Export all entries saved locally into a JSON file" onClick={download} />
                         <DropdownItem
                             label="Import"
                             description="Import entries from a JSON file - DELETES ALL CURRENTLY SAVED ENTRIES FROM THE DATABASE!"
                             onClick={upload}
                         />
-                        <DropdownItem label="Change Password" onClick={changePassword} />
                         <DropdownSeparator />
                         <DropdownHeading label="2FA" />
                         <DropdownItem
