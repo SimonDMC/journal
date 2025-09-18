@@ -15,7 +15,7 @@ import { showKeyHash } from "../../util/encryption";
 import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "framer-motion";
 import { syncDatabase } from "../../database/sync";
-import { eventTarget, SettingsOpenEvent } from "../../util/events";
+import { useSettings } from "../../state/settings";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -52,7 +52,7 @@ export default function ProfileIcon() {
                         <DropdownItem
                             label="Settings"
                             onClick={() => {
-                                eventTarget.dispatchEvent(new SettingsOpenEvent());
+                                useSettings.getState().openSettings();
                                 setProfileDropdownOpen(false);
                             }}
                         />

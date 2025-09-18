@@ -73,6 +73,11 @@ main.entry .date {
         font-size: 1.1em;
     }
 
+    /* no mood */
+    .entry:not(:has(#react-select-mood-input)) .content {
+        margin-bottom: 11rem;
+    }
+
     .line {
         display: none;
     }

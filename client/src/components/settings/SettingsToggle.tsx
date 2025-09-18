@@ -1,16 +1,17 @@
-import { useState } from "react";
-import { getSetting, setSetting } from "../../settings/system";
+import { useSettings } from "../../state/settings";
 import { InfoIcon } from "../icons/InfoIcon";
 import "./Settings.css";
 
-export default function SettingsToggle(props: { label: string; settingKey: string; default: boolean; desc: string }) {
-    const [value, setValue] = useState(getSetting(props.settingKey) ?? props.default);
+export default function SettingsToggle(props: { label: string; settingKey: string; desc: string }) {
+    const value = useSettings((s) => s.getBoolean(props.settingKey));
 
     return (
         <label className="settings-row">
             <div className="left">
                 {props.label}
-                <InfoIcon className="info-icon" />
+                <InfoIcon className="info-icon">
+                    <div className="settings-desc">{props.desc}</div>
+                </InfoIcon>
             </div>
             <div className="right">
                 <div className="toggle-wrap">
@@ -18,8 +19,7 @@ export default function SettingsToggle(props: { label: string; settingKey: strin
                         type="checkbox"
                         checked={value}
                         onChange={(e) => {
-                            setValue(e.target.checked);
-                            setSetting(props.settingKey, e.target.checked);
+                            useSettings.getState().setSetting(props.settingKey, e.target.checked);
                         }}
                     />
                     <div className="circle"></div>

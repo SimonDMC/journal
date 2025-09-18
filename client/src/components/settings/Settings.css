@@ -28,14 +28,17 @@
     width: 10em;
     display: flex;
     flex-direction: column;
-    border-right: 2px solid #111;
+    border-right: 2px solid #222;
     gap: .1em;
+    color: #ccc;
 }
 
 .settings-tab {
     cursor: pointer;
     padding: .05em .3em;
     border-radius: 5px;
+    background-color: transparent;
+    transition: background-color .2s;
 }
 
 .settings-tab:hover, .settings-tab.selected {
@@ -97,10 +100,37 @@
 .settings-row .left {
     display: flex;
     align-items: flex-end;
-    gap: .2em;
+}
+
+.settings-row .info-wrap {
+    position: relative;
+    padding: 0 .2em;
 }
 
 .settings-row .info-icon {
     color: #555;
     width: .7em;
+}
+
+.settings-desc {
+    position: absolute;
+    font-size: .8em;
+    max-width: 25em;
+    width: max-content;
+    line-height: 1.1em;
+    background-color: #222;
+    padding: .4em .6em;
+    border-radius: .3em;
+    z-index: 1;
+    bottom: 1.7em;
+    translate: -50% 0;
+    box-shadow: 0 0 .5em #00000088;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, translate .2s;
+}
+
+.settings-row .info-wrap:hover .settings-desc {
+    opacity: 1;
+    translate: -50% -.1em;
 }

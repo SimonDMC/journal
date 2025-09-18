@@ -1,34 +1,22 @@
-import { eventTarget, SettingsOpenEvent } from "../../util/events";
 import "./Settings.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SettingsTab from "./SettingsTab";
 import SettingsToggle from "./SettingsToggle";
 import { AnimatePresence, motion } from "framer-motion";
+import { useSettings } from "../../state/settings";
 
 export default function SettingsPopup() {
-    const [open, setOpen] = useState(false);
     const [selected, setSelected] = useState("general");
-
-    useEffect(() => {
-        const settingsOpenHandler = () => {
-            setOpen(true);
-        };
-        eventTarget.addEventListener(SettingsOpenEvent.eventId, settingsOpenHandler);
-
-        // remove listeners on unmount
-        return () => {
-            eventTarget.removeEventListener(SettingsOpenEvent.eventId, settingsOpenHandler);
-        };
-    }, [open]);
+    const settingsOpen = useSettings((s) => s.settingsOpen);
 
     function closePopup(event: React.MouseEvent) {
         if (event.target !== event.currentTarget) return;
-        setOpen(false);
+        useSettings.getState().closeSettings();
     }
 
     return (
         <AnimatePresence>
-            {open && (
+            {settingsOpen && (
                 <motion.div
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -48,19 +36,16 @@ export default function SettingsPopup() {
                                 <SettingsToggle
                                     label="Show Mood"
                                     settingKey="general.show_mood"
-                                    default={true}
-                                    desc="Show the mood dropdown while writing entries"
+                                    desc="Show mood selection while writing entries"
                                 />
                                 <SettingsToggle
                                     label="Show Stats"
                                     settingKey="general.show_stats"
-                                    default={true}
-                                    desc="Show the entry count and total word count stats on the overview page"
+                                    desc="Show entry count and total word count stats on the overview page"
                                 />
                                 <SettingsToggle
                                     label="Show One Year Ago"
                                     settingKey="general.show_one_year_ago"
-                                    default={true}
                                     desc="Show the One Year Ago button below the calendar"
                                 />
                             </div>
