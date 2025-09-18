@@ -9,7 +9,7 @@ import {
 } from "@simplewebauthn/server";
 import { startRegistration } from "@simplewebauthn/browser";
 
-export type Options = {
+export type Settings = {
     "2fa_method"?: number;
     codeword?: string;
     passkey?: Passkey;
@@ -25,19 +25,19 @@ export type Passkey = {
     backedUp?: boolean;
 };
 
-function saveOptions(options: Options) {
-    localStorage.setItem(`journal-options-${getUserName()}`, JSON.stringify(options));
+function saveSettings(settings: Settings) {
+    localStorage.setItem(`journal-options-${getUserName()}`, JSON.stringify(settings));
 }
 
-export function switch2fa(options: Options, setOptions: Dispatch<SetStateAction<Options>>) {
-    const newOptions = { ...options };
+export function switch2fa(settings: Settings, setSettings: Dispatch<SetStateAction<Settings>>) {
+    const newOptions = { ...settings };
     newOptions["2fa_method"] = ((newOptions["2fa_method"] ?? 0) + 1) % 3;
-    setOptions(newOptions);
-    saveOptions(newOptions);
+    setSettings(newOptions);
+    saveSettings(newOptions);
     sessionStorage.setItem("journal-2fa-authed", "true");
 }
 
-export async function setCodeword(options: Options, setOptions: Dispatch<SetStateAction<Options>>) {
+export async function setCodeword(settings: Settings, setSettings: Dispatch<SetStateAction<Settings>>) {
     if (!confirm("You won't be able to access Journal if you forget the codeword you set. \nAre you sure you want to continue?")) return;
 
     const codeword = prompt("Set a new codeword:");
@@ -54,10 +54,10 @@ export async function setCodeword(options: Options, setOptions: Dispatch<SetStat
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
-    const newOptions = { ...options };
-    newOptions.codeword = hashHex;
-    setOptions(newOptions);
-    saveOptions(newOptions);
+    const newSettings = { ...settings };
+    newSettings.codeword = hashHex;
+    setSettings(newSettings);
+    saveSettings(newSettings);
     sessionStorage.setItem("journal-2fa-authed", "true");
 }
 
@@ -67,7 +67,7 @@ export async function setCodeword(options: Options, setOptions: Dispatch<SetStat
 // Being both the browser and the server obviously defeats the point of passkeys,
 // but the point is to make it slightly harder to steal data with physical access
 // to a logged-in device
-export async function setupBioAuth(options: Options, setOptions: Dispatch<SetStateAction<Options>>) {
+export async function setupBioAuth(settings: Settings, setSettings: Dispatch<SetStateAction<Settings>>) {
     const optionsJSON = await generateRegistrationOptions({
         rpName: "Journal",
         rpID: window.location.hostname,
@@ -99,9 +99,9 @@ export async function setupBioAuth(options: Options, setOptions: Dispatch<SetSta
         backedUp: verification.registrationInfo?.credentialBackedUp,
     };
 
-    const newOptions = { ...options };
-    newOptions.passkey = newPasskey;
-    setOptions(newOptions);
-    saveOptions(newOptions);
+    const newSettings = { ...settings };
+    newSettings.passkey = newPasskey;
+    setSettings(newSettings);
+    saveSettings(newSettings);
     sessionStorage.setItem("journal-2fa-authed", "true");
 }

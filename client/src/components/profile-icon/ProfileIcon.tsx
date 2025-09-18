@@ -1,15 +1,5 @@
 import "./ProfileIcon.css";
-import {
-    uploadKey,
-    downloadKey,
-    download,
-    upload,
-    wipeLocalDatabase,
-    getOptions,
-    getUserName,
-    changePassword,
-    generateKey,
-} from "../../util/profile";
+import { uploadKey, downloadKey, download, upload, wipeLocalDatabase, getUserName, changePassword, generateKey } from "../../util/profile";
 import { forceReload } from "../../util/update";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,15 +10,16 @@ import DropdownText from "../dropdown/DropdownText";
 import { useEffect, useRef, useState } from "react";
 import DropdownHeading from "../dropdown/DropdownHeading";
 import { logout } from "../../util/auth";
-import { type Options, setCodeword, setupBioAuth, switch2fa } from "../../util/options";
+import { type Settings, setCodeword, setupBioAuth, switch2fa } from "../../util/settings";
 import { showKeyHash } from "../../util/encryption";
 import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "framer-motion";
 import { syncDatabase } from "../../database/sync";
+import { eventTarget, SettingsOpenEvent } from "../../util/events";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-    const [options, setOptions] = useState({} as Options);
+    const [settings, setSettings] = useState({} as Settings);
     const navigate = useNavigate();
     const username = useRef("User");
 
@@ -42,8 +33,6 @@ export default function ProfileIcon() {
             }
         };
         document.addEventListener("click", clickOutside);
-
-        setOptions(getOptions());
 
         return () => {
             document.removeEventListener("click", clickOutside);
@@ -60,6 +49,13 @@ export default function ProfileIcon() {
                     <Dropdown>
                         <DropdownText label={username.current} />
                         <DropdownSeparator />
+                        <DropdownItem
+                            label="Settings"
+                            onClick={() => {
+                                eventTarget.dispatchEvent(new SettingsOpenEvent());
+                                setProfileDropdownOpen(false);
+                            }}
+                        />
                         <DropdownHeading label="Actions" />
                         <DropdownItem
                             label="Generate Key"
@@ -84,14 +80,14 @@ export default function ProfileIcon() {
                         <DropdownItem
                             label="Switch 2FA"
                             description="Switch between no 2fa, codeword and biometric auth"
-                            onClick={() => switch2fa(options, setOptions)}
+                            onClick={() => switch2fa(settings, setSettings)}
                         />
                         {/* only render "set codeword" or "setup bioauth" if the corresponding settings are selected */}
-                        {options["2fa_method"] == 1 && (
-                            <DropdownItem label="Set Codeword" onClick={() => setCodeword(options, setOptions)} />
+                        {settings["2fa_method"] == 1 && (
+                            <DropdownItem label="Set Codeword" onClick={() => setCodeword(settings, setSettings)} />
                         )}
-                        {options["2fa_method"] == 2 && (
-                            <DropdownItem label="Setup Biometry" onClick={() => setupBioAuth(options, setOptions)} />
+                        {settings["2fa_method"] == 2 && (
+                            <DropdownItem label="Setup Biometry" onClick={() => setupBioAuth(settings, setSettings)} />
                         )}
                         <DropdownSeparator />
                         <DropdownHeading label="Debug" />
@@ -107,17 +103,6 @@ export default function ProfileIcon() {
                             description="Delete all locally saved entries (resyncs with the database on page reload)"
                             onClick={wipeLocalDatabase}
                         />
-                        {/* <DropdownItem
-                            label="Invoke Update Popup"
-                            onClick={() => {
-                                eventTarget.dispatchEvent(
-                                    new UpdateReadyEvent({
-                                        version: "0.0.0",
-                                        changelogs: ["Example update log"],
-                                    })
-                                );
-                            }}
-                        /> */}
                         <DropdownSeparator />
                         <DropdownItem label="Log Out" onClick={() => logout(navigate)} />
                     </Dropdown>

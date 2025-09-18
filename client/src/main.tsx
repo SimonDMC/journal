@@ -11,6 +11,7 @@ import BottomMargin from "./components/bottom-margin/BottomMargin";
 import UpdatePopup from "./components/update-popup/UpdatePopup";
 import { syncDatabase } from "./database/sync";
 import { runMigrations } from "./util/migrations";
+import SettingsPopup from "./components/settings/SettingsPopup";
 
 // Create a new router instance
 export const router = createRouter({ routeTree, defaultPreload: "intent" /* defaultViewTransition: true */ });
@@ -42,6 +43,7 @@ if (!rootElement.innerHTML) {
             <RouterProvider router={router} />
             <ToastContainer transition={Slide} />
             <UpdatePopup />
+            <SettingsPopup />
         </StrictMode>
     );
 }

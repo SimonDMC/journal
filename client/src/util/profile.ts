@@ -158,6 +158,6 @@ export function getUserName() {
     return localStorage.getItem("journal-username") ?? "User";
 }
 
-export function getOptions() {
+export function getSettings() {
     return JSON.parse(localStorage.getItem(`journal-options-${getUserName()}`) ?? "{}");
 }

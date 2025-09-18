@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { enforceAuth, logout, RouteType } from "../util/auth";
-import { getOptions } from "../util/profile";
+import { getSettings } from "../util/profile";
 import { generateAuthenticationOptions, verifyAuthenticationResponse } from "@simplewebauthn/server";
 import { startAuthentication } from "@simplewebauthn/browser";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
@@ -21,7 +21,7 @@ function BioAuth() {
 
         async function tryPasskey() {
             try {
-                const options = getOptions();
+                const options = getSettings();
 
                 const optionsJSON = await generateAuthenticationOptions({
                     rpID: window.location.hostname,

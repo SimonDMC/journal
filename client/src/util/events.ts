@@ -37,3 +37,10 @@ export class OfflineModeEvent extends Event {
         super(OfflineModeEvent.eventId);
     }
 }
+
+export class SettingsOpenEvent extends Event {
+    static eventId = "settings-open";
+    constructor() {
+        super(SettingsOpenEvent.eventId);
+    }
+}

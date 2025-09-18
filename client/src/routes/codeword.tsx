@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { enforceAuth, logout, RouteType } from "../util/auth";
-import { getOptions } from "../util/profile";
+import { getSettings } from "../util/profile";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/codeword")({
@@ -41,7 +41,7 @@ function Codeword() {
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
-            if (hashHex == getOptions().codeword) {
+            if (hashHex == getSettings().codeword) {
                 sessionStorage.setItem("journal-2fa-authed", "true");
                 navigate({ to: "/overview" });
             } else {

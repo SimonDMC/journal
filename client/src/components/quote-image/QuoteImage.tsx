@@ -91,7 +91,7 @@ export default function QuoteImage(params: { open: boolean; setOpen: (open: bool
                     exit={{ opacity: 0, y: 5 }}
                     transition={{ duration: 0.2 }}
                     id="quoteImageBg"
-                    onClick={(e) => closeImage(e)}
+                    onClick={closeImage}
                 >
                     <div className="quoteImageFrame">
                         <div className="quoteButtons">

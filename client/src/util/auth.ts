@@ -1,4 +1,4 @@
-import { getOptions } from "./profile";
+import { getSettings } from "./profile";
 import { API_URL } from "./config";
 import type { UseNavigateResult } from "@tanstack/router-core";
 import { errorToast } from "./toast";
@@ -11,7 +11,7 @@ export enum RouteType {
 }
 
 export function is2faAuthed() {
-    const options = getOptions();
+    const options = getSettings();
     if (sessionStorage.getItem("journal-2fa-authed")) return true;
 
     // 2fa method is selected but not initialized
@@ -23,7 +23,7 @@ export function is2faAuthed() {
 }
 
 export function enforceAuth(navigate: UseNavigateResult<string>, route: RouteType) {
-    const options = getOptions();
+    const options = getSettings();
     if (localStorage.getItem("journal-logged-in") && is2faAuthed()) {
         if (route != RouteType.Authed) navigate({ to: "/overview" });
     } else if (localStorage.getItem("journal-logged-in") && options["2fa_method"] == 1 && !is2faAuthed()) {

@@ -7,6 +7,7 @@ import { calculateWords } from "./words";
 const migrationMap = new Map<string, () => Promise<MigrationResponse>>([
     ["0.0.8", v0_0_8_fixWordCount],
     ["0.0.13", v0_0_13_fixLocalStorageKeys],
+    ["0.0.17", v0_0_17_renameOptionsToSettings],
 ]);
 
 type MigrationResponse = {
@@ -137,6 +138,21 @@ async function v0_0_13_fixLocalStorageKeys(): Promise<MigrationResponse> {
         sessionStorage.removeItem("month");
         sessionStorage.setItem("journal-month", month);
     }
+
+    return { success: true, reload: true };
+}
+
+// rename the journal-options-[username] key to journal-settings-[username]
+// also migrates 2fa to the new settings system
+async function v0_0_17_renameOptionsToSettings(): Promise<MigrationResponse> {
+    const username = localStorage.getItem("journal-username");
+    const settings = localStorage.getItem(`journal-options-${username}`);
+    if (username && settings) {
+        localStorage.removeItem(`journal-options-${username}`);
+        localStorage.setItem(`journal-settings-${username}`, settings);
+    }
+
+    // TODO: MIGRATE 2FA
 
     return { success: true, reload: true };
 }
