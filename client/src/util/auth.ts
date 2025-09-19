@@ -1,35 +1,45 @@
-import { getSettings } from "./profile";
 import { API_URL } from "./config";
 import type { UseNavigateResult } from "@tanstack/router-core";
 import { errorToast } from "./toast";
 import { router } from "../main";
+import { useSettings } from "../state/settings";
 
 export enum RouteType {
     Unauthed,
-    Auth2FA,
+    SecondaryAuth,
     Authed,
 }
 
-export function is2faAuthed() {
-    const options = getSettings();
-    if (sessionStorage.getItem("journal-2fa-authed")) return true;
+export function isSecondaryAuthed() {
+    const settings = useSettings.getState();
+    if (sessionStorage.getItem("journal-secondary-authed")) return true;
 
-    // 2fa method is selected but not initialized
-    if (options["2fa_method"] == 1 && !options["codeword"]) return true;
-    if (options["2fa_method"] == 2 && !options["passkey"]) return true;
+    // secondary auth is enabled but not initialized
+    if (settings.getString("security.secondary_auth") == "codeword" && settings.getString("data.codeword_hash") == undefined) return true;
+    if (settings.getString("security.secondary_auth") == "passkey" && settings.getSetting("data.passkey") == undefined) return true;
 
-    if (!options["2fa_method"]) return true;
+    if (settings.getString("security.secondary_auth") == "none") return true;
     return false;
 }
 
 export function enforceAuth(navigate: UseNavigateResult<string>, route: RouteType) {
-    const options = getSettings();
-    if (localStorage.getItem("journal-logged-in") && is2faAuthed()) {
-        if (route != RouteType.Authed) navigate({ to: "/overview" });
-    } else if (localStorage.getItem("journal-logged-in") && options["2fa_method"] == 1 && !is2faAuthed()) {
+    const settings = useSettings.getState();
+    if (localStorage.getItem("journal-logged-in") && isSecondaryAuthed()) {
+        if (route != RouteType.Authed) {
+            navigate({ to: "/overview" });
+        }
+    } else if (
+        localStorage.getItem("journal-logged-in") &&
+        settings.getString("security.secondary_auth") == "codeword" &&
+        !isSecondaryAuthed()
+    ) {
         navigate({ to: "/codeword" });
-    } else if (localStorage.getItem("journal-logged-in") && options["2fa_method"] == 2 && !is2faAuthed()) {
-        navigate({ to: "/bioauth" });
+    } else if (
+        localStorage.getItem("journal-logged-in") &&
+        settings.getString("security.secondary_auth") == "passkey" &&
+        !isSecondaryAuthed()
+    ) {
+        navigate({ to: "/passkey" });
     } else {
         navigate({ to: "/login" });
     }

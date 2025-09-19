@@ -19,18 +19,19 @@
     width: min(30em, 95vw);
     height: min(20em, 95vh);
     display: flex;
+    overflow-y: scroll;
+    scrollbar-width: none;
 }
 
 .settings-tabs {
     height: 100%;
-    width: min-content;
     padding: 1em;
     width: 8em;
     display: flex;
     flex-direction: column;
-    border-right: 2px solid #222;
     gap: .1em;
     color: #ccc;
+    position: absolute;
 }
 
 .settings-tab {
@@ -46,11 +47,15 @@
 }
 
 .settings-content {
+    margin-left: 8em;
     padding: 1em 1.5em;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     gap: .3em;
+    height: fit-content;
+    min-height: 100%;
+    border-left: 2px solid #222;
 }
 
 .settings-row {
@@ -147,7 +152,7 @@
     border: 2px solid #333;
     font-size: .9em;
     padding: 0.05em 0.4em;
-    border-radius: 0.3em;
+    border-radius: .3em;
     transition: background-color 0.2s;
 }
 
@@ -158,10 +163,31 @@
 .settings-password {
     font-size: .9em;
     width: 10em;
+    padding-left: .3em;
+    border-radius: .3em;
 }
 
 .settings-password-row {
     align-items: flex-start;
-    margin-top: .5em;
-    margin-bottom: .5em;
+}
+
+.settings-separator {
+    height: 2px;
+    min-height: 2px;
+    width: 100%;
+    margin: .5em 0;
+    background-color: #222;
+}
+
+.settings-select {
+    font-family: inherit;
+    font-size: .9em;
+    color: #ccc;
+    border: 2px solid #333;
+    border-radius: .3em;
+    padding: 0.15em 0.2em;
+}
+
+.settings-select option {
+    background-color: #000;
 }

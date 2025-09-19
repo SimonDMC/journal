@@ -39,6 +39,9 @@ export default function SettingsPassword(props: {
                     className="settings-password"
                     value={mainInput}
                     onChange={(e) => setMainInput(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key == "Enter") ((e.target as HTMLElement).nextSibling as HTMLElement).focus();
+                    }}
                 />
                 <input
                     type="password"

@@ -14,8 +14,14 @@ type VersionsFile = {
 };
 
 export async function checkForUpdate() {
-    const res = await fetch("/versions.json");
-    const json = (await res.json()) as VersionsFile;
+    let json;
+    try {
+        const res = await fetch("/versions.json");
+        json = (await res.json()) as VersionsFile;
+    } catch {
+        console.log("Couldn't fetch version data.");
+        return;
+    }
     const version = json.current.version;
 
     // install update if newer
@@ -57,8 +63,14 @@ export function compareVersions(versionA: string, versionB: string) {
 export async function installApp(version: string) {
     console.log(`Installing version ${version}!`);
 
-    const res = await fetch("asset-list.json");
-    const json = await res.json();
+    let json;
+    try {
+        const res = await fetch("/asset-list.json");
+        json = await res.json();
+    } catch {
+        console.log("Couldn't fetch asset list.");
+        return;
+    }
     // also download root html page
     json.assets.push(`/?v=${version}`);
 

@@ -3,32 +3,32 @@ import { useEffect, useRef } from "react";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { enforceAuth, logout, RouteType } from "../util/auth";
-import { getSettings } from "../util/profile";
 import { generateAuthenticationOptions, verifyAuthenticationResponse } from "@simplewebauthn/server";
 import { startAuthentication } from "@simplewebauthn/browser";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useSettings } from "../state/settings";
+import type { Passkey } from "../settings/auth";
 
-export const Route = createFileRoute("/bioauth")({
-    component: BioAuth,
+export const Route = createFileRoute("/passkey")({
+    component: Passkey,
 });
 
-function BioAuth() {
+function Passkey() {
     const authenticating = useRef(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        enforceAuth(navigate, RouteType.Auth2FA);
+        enforceAuth(navigate, RouteType.SecondaryAuth);
 
         async function tryPasskey() {
             try {
-                const options = getSettings();
-
+                const passkey = useSettings.getState().getSetting("data.passkey") as Passkey;
                 const optionsJSON = await generateAuthenticationOptions({
                     rpID: window.location.hostname,
                     allowCredentials: [
                         {
-                            id: options.passkey.id,
-                            transports: options.passkey.transports,
+                            id: passkey.id!,
+                            transports: passkey.transports,
                         },
                     ],
                 });
@@ -42,10 +42,10 @@ function BioAuth() {
                     expectedOrigin: origin,
                     expectedRPID: window.location.hostname,
                     credential: {
-                        id: options.passkey.id,
-                        publicKey: options.passkey.publicKey,
-                        counter: options.passkey.counter,
-                        transports: options.passkey.transports,
+                        id: passkey.id,
+                        publicKey: passkey.publicKey,
+                        counter: passkey.counter,
+                        transports: passkey.transports,
                     },
                 });
 
@@ -55,12 +55,12 @@ function BioAuth() {
                     expectedOrigin: origin,
                     expectedRPID: window.location.hostname,
                     credential: {
-                        id: options.passkey.id,
+                        id: passkey.id!,
                         // a Uint8Array gets serialized into object format for some reason so
                         // we need to convert it back
-                        publicKey: new Uint8Array(Object.values(options.passkey.publicKey)),
-                        counter: options.passkey.counter,
-                        transports: options.passkey.transports,
+                        publicKey: new Uint8Array(Object.values(passkey.publicKey!)),
+                        counter: passkey.counter!,
+                        transports: passkey.transports,
                     },
                 });
 
@@ -77,7 +77,7 @@ function BioAuth() {
             while (!(await tryPasskey())) {
                 await new Promise<void>((resolve) => setTimeout(() => resolve(), 1000));
             }
-            sessionStorage.setItem("journal-2fa-authed", "true");
+            sessionStorage.setItem("journal-secondary-authed", "true");
             navigate({ to: "/overview" });
         }
 

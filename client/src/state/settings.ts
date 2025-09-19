@@ -1,17 +1,18 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { getUserName } from "../util/profile";
 
 const DEFAULTS: Record<string, unknown> = {
     "general.show_mood": true,
     "general.show_stats": true,
     "general.show_one_year_ago": true,
+    "security.secondary_auth": "none",
 };
 
 type SettingsState = {
     settings: Record<string, unknown>;
     getSetting: (key: string) => unknown;
-    getBoolean: (key: string) => boolean;
+    getBoolean: (key: string) => boolean | undefined;
+    getString: (key: string) => string | undefined;
     setSetting: (key: string, value: unknown) => void;
     settingsOpen: boolean;
     openSettings: () => void;
@@ -30,7 +31,11 @@ export const useSettings = create<SettingsState>()(
             },
 
             getBoolean: (key) => {
-                return get().getSetting(key) as boolean;
+                return get().getSetting(key) as boolean | undefined;
+            },
+
+            getString: (key) => {
+                return get().getSetting(key) as string | undefined;
             },
 
             setSetting: (key, value) => {
@@ -49,3 +54,7 @@ export const useSettings = create<SettingsState>()(
         }
     )
 );
+
+export function getUserName() {
+    return localStorage.getItem("journal-username") ?? "User";
+}

@@ -4,24 +4,31 @@ import SettingsTab from "./SettingsTab";
 import SettingsToggle from "./SettingsToggle";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSettings } from "../../state/settings";
-import { generateKey } from "../../util/profile";
 import SettingsButton from "./SettingsButton";
 import { changePassword, changePasswordMismatched } from "../../settings/password";
 import { download } from "../../settings/entries";
 import SettingsPassword from "./SettingsPassword";
+import SettingsSeparator from "./SettingsSeparator";
+import { downloadKey, generateKey } from "../../settings/key";
+import SettingsSelect from "./SettingsSelect";
+import { setCodeword, setCodewordMismatched, setupPasskey } from "../../settings/auth";
 
 export default function SettingsPopup() {
     const [selected, setSelected] = useState("general");
-    const settingsOpen = useSettings((s) => s.settingsOpen);
+    const settingsState = useSettings();
 
     function closePopup(event: React.MouseEvent) {
         if (event.target !== event.currentTarget) return;
         useSettings.getState().closeSettings();
     }
 
+    function importKey(): void {
+        throw new Error("Function not implemented.");
+    }
+
     return (
         <AnimatePresence>
-            {settingsOpen && (
+            {settingsState.settingsOpen && (
                 <motion.div
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -53,16 +60,17 @@ export default function SettingsPopup() {
                                     settingKey="general.show_one_year_ago"
                                     desc="Show the One Year Ago button below the calendar"
                                 />
-                            </div>
-                        )}
-                        {selected == "security" && (
-                            <div className="settings-content">
+                                <SettingsSeparator />
                                 <SettingsButton
                                     label="Export Data"
                                     desc="Download a copy of all your entries"
                                     actionLabel="Export"
                                     action={download}
                                 />
+                            </div>
+                        )}
+                        {selected == "security" && (
+                            <div className="settings-content">
                                 <SettingsPassword
                                     label="Change Password"
                                     mainPlaceholder="New Password"
@@ -71,12 +79,46 @@ export default function SettingsPopup() {
                                     action={changePassword}
                                     actionFail={changePasswordMismatched}
                                 />
+                                <SettingsSeparator />
                                 <SettingsButton
                                     label="Generate Key"
                                     desc="Generate a new key used to encrypt and decrypt entries when talking to the server"
                                     actionLabel="Generate"
                                     action={generateKey}
                                 />
+                                <SettingsButton
+                                    label="Import Key"
+                                    desc="Import a key, used to encrypt and decrypt entries when talking to the server, from a .KEY file"
+                                    actionLabel="Import"
+                                    action={importKey}
+                                />
+                                <SettingsButton label="Download Key" actionLabel="Download" action={downloadKey} />
+                                <SettingsSeparator />
+                                <SettingsSelect
+                                    label="Secondary Auth"
+                                    settingKey="security.secondary_auth"
+                                    desc="Add a second layer of authentication to Journal"
+                                    options={{ none: "None", codeword: "Codeword", passkey: "Passkey" }}
+                                />
+                                {settingsState.getString("security.secondary_auth") == "codeword" && (
+                                    <SettingsPassword
+                                        label="Set Codeword"
+                                        desc="Set a codeword that you'll have to type every time you open Journal"
+                                        mainPlaceholder="Codeword"
+                                        confirmPlaceholder="Confirm Codeword"
+                                        actionLabel="Set"
+                                        action={setCodeword}
+                                        actionFail={setCodewordMismatched}
+                                    />
+                                )}
+                                {settingsState.getString("security.secondary_auth") == "passkey" && (
+                                    <SettingsButton
+                                        label="Setup Passkey"
+                                        desc="Setup a passkey, making you verify with a face or fingerprint scan every time you open Journal (based on what your device supports)"
+                                        actionLabel="Setup"
+                                        action={setupPasskey}
+                                    />
+                                )}
                             </div>
                         )}
                         {selected == "debug" && (

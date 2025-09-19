@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { enforceAuth, logout, RouteType } from "../util/auth";
-import { getSettings } from "../util/profile";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useSettings } from "../state/settings";
 
 export const Route = createFileRoute("/codeword")({
     component: Codeword,
@@ -14,7 +14,7 @@ function Codeword() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        enforceAuth(navigate, RouteType.Auth2FA);
+        enforceAuth(navigate, RouteType.SecondaryAuth);
     }, [navigate]);
 
     function selectInput() {
@@ -41,8 +41,9 @@ function Codeword() {
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 
-            if (hashHex == getSettings().codeword) {
-                sessionStorage.setItem("journal-2fa-authed", "true");
+            const codewordHash = useSettings.getState().getString("data.codeword_hash");
+            if (hashHex == codewordHash) {
+                sessionStorage.setItem("journal-secondary-authed", "true");
                 navigate({ to: "/overview" });
             } else {
                 display.innerText = "x";

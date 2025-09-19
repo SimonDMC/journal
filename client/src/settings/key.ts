@@ -1,6 +1,21 @@
 import { syncDatabase } from "../database/sync";
+import { KEY_GENERATOR } from "../util/config";
 import { eventTarget, KeyCreateEvent } from "../util/events";
 import { successToast, errorToast } from "../util/toast";
+
+export async function generateKey() {
+    if (localStorage.getItem("journal-key")) {
+        if (!confirm("You already have a key saved. Are you sure you want to generate a new one?")) return;
+    }
+
+    const key = await window.crypto.subtle.generateKey(KEY_GENERATOR, true, ["encrypt", "decrypt"]);
+    const exported = await window.crypto.subtle.exportKey("raw", key);
+    const buffer = new Uint8Array(exported);
+    const json = JSON.stringify([...buffer]);
+    localStorage.setItem("journal-key", json);
+
+    successToast("Key generated!");
+}
 
 export function uploadKey() {
     const input = document.createElement("input");

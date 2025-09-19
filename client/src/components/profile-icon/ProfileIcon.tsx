@@ -1,5 +1,5 @@
 import "./ProfileIcon.css";
-import { wipeLocalDatabase, getUserName, generateKey } from "../../util/profile";
+import { wipeLocalDatabase } from "../../util/profile";
 import { forceReload } from "../../util/update";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,18 +10,15 @@ import DropdownText from "../dropdown/DropdownText";
 import { useEffect, useRef, useState } from "react";
 import DropdownHeading from "../dropdown/DropdownHeading";
 import { logout } from "../../util/auth";
-import { type Settings, setCodeword, setupBioAuth, switch2fa } from "../../util/settings";
 import { showKeyHash } from "../../util/encryption";
 import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "framer-motion";
 import { syncDatabase } from "../../database/sync";
-import { useSettings } from "../../state/settings";
+import { getUserName, useSettings } from "../../state/settings";
 import { upload } from "../../settings/entries";
-import { downloadKey, uploadKey } from "../../settings/key";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-    const [settings, setSettings] = useState({} as Settings);
     const navigate = useNavigate();
     const username = useRef("User");
 
@@ -60,35 +57,10 @@ export default function ProfileIcon() {
                         />
                         <DropdownHeading label="Actions" />
                         <DropdownItem
-                            label="Generate Key"
-                            description="Generate a new key to encrypt and decrypt all of your entries with when communicating with the remote database"
-                            onClick={generateKey}
-                        />
-                        <DropdownItem label="Upload Key" description="Upload a key from a KEY file" onClick={uploadKey} />
-                        <DropdownItem
-                            label="Download Key"
-                            description="Export the locally saved key into a KEY file"
-                            onClick={downloadKey}
-                        />
-                        <DropdownItem
                             label="Import"
                             description="Import entries from a JSON file - DELETES ALL CURRENTLY SAVED ENTRIES FROM THE DATABASE!"
                             onClick={upload}
                         />
-                        <DropdownSeparator />
-                        <DropdownHeading label="2FA" />
-                        <DropdownItem
-                            label="Switch 2FA"
-                            description="Switch between no 2fa, codeword and biometric auth"
-                            onClick={() => switch2fa(settings, setSettings)}
-                        />
-                        {/* only render "set codeword" or "setup bioauth" if the corresponding settings are selected */}
-                        {settings["2fa_method"] == 1 && (
-                            <DropdownItem label="Set Codeword" onClick={() => setCodeword(settings, setSettings)} />
-                        )}
-                        {settings["2fa_method"] == 2 && (
-                            <DropdownItem label="Setup Biometry" onClick={() => setupBioAuth(settings, setSettings)} />
-                        )}
                         <DropdownSeparator />
                         <DropdownHeading label="Debug" />
                         <DropdownItem label="Force Reload" description="Delete local page cache and reload" onClick={forceReload} />
