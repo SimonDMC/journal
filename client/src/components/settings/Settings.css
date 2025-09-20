@@ -19,8 +19,6 @@
     width: min(30em, 95vw);
     height: min(20em, 95vh);
     display: flex;
-    overflow-y: scroll;
-    scrollbar-width: none;
 }
 
 .settings-tabs {
@@ -31,7 +29,6 @@
     flex-direction: column;
     gap: .1em;
     color: #ccc;
-    position: absolute;
 }
 
 .settings-tab {
@@ -47,15 +44,14 @@
 }
 
 .settings-content {
-    margin-left: 8em;
     padding: 1em 1.5em;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     gap: .3em;
-    height: fit-content;
-    min-height: 100%;
     border-left: 2px solid #222;
+    overflow-y: scroll;
+    scrollbar-width: none;
 }
 
 .settings-row {
@@ -123,8 +119,8 @@
     align-items: flex-end;
 }
 
-.settings-desc {
-    position: absolute;
+.settings-tooltip {
+    position: fixed;
     font-size: .8em;
     max-width: 25em;
     width: max-content;
@@ -133,17 +129,19 @@
     padding: .4em .6em;
     border-radius: .3em;
     z-index: 1;
-    bottom: 1.7em;
-    translate: -50% 0;
+    translate: -50% calc(-100% - 1.7em);
     box-shadow: 0 0 .5em #00000088;
     opacity: 0;
     pointer-events: none;
     transition: opacity .2s, translate .2s;
+    /* offset by parent scroll (not in translate to prevent interpolation) */
+    margin-top: calc(var(--scroll) * -1);
 }
 
-.settings-row .info-wrap:hover .settings-desc {
+.settings-row .info-wrap:hover .settings-tooltip {
     opacity: 1;
-    translate: -50% -.1em;
+    /* make it bottom-aligned instead of top-aligned */
+    translate: -50% calc(-100% - 1.8em);
 }
 
 .settings-button {

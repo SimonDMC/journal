@@ -1,7 +1,7 @@
 import { db } from "../database/db";
-import { successToast } from "./toast";
+import { successToast } from "../util/toast";
 
 export async function wipeLocalDatabase() {
     await db.entries.clear();
-    successToast("Database wiped successfully.");
+    successToast("Local database wiped successfully.");
 }

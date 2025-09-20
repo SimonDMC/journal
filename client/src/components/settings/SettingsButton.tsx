@@ -8,7 +8,7 @@ export default function SettingsButton(props: { label: string; desc?: string; ac
                 {props.label}
                 {props.desc && (
                     <InfoIcon className="info-icon">
-                        <div className="settings-desc">{props.desc}</div>
+                        <div className="settings-tooltip">{props.desc}</div>
                     </InfoIcon>
                 )}
             </div>

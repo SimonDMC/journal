@@ -11,7 +11,7 @@ export default function SettingsSelect(props: { label: string; settingKey: strin
                 {props.label}
                 {props.desc && (
                     <InfoIcon className="info-icon">
-                        <div className="settings-desc">{props.desc}</div>
+                        <div className="settings-tooltip">{props.desc}</div>
                     </InfoIcon>
                 )}
             </div>
@@ -24,7 +24,11 @@ export default function SettingsSelect(props: { label: string; settingKey: strin
                     }}
                 >
                     {Object.keys(props.options).map((selectValue) => {
-                        return <option value={selectValue}>{props.options[selectValue]}</option>;
+                        return (
+                            <option key={selectValue} value={selectValue}>
+                                {props.options[selectValue]}
+                            </option>
+                        );
                     })}
                 </select>
             </div>

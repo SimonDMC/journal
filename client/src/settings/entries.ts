@@ -5,7 +5,7 @@ import { encryptEntry } from "../util/encryption";
 import { today } from "../util/time";
 import { errorToast, successToast } from "../util/toast";
 
-export async function download() {
+export async function exportEntries() {
     const entries = await db.entries.toArray();
 
     const blob = new Blob([JSON.stringify(entries, null, 2)], { type: "application/json" });
@@ -16,11 +16,8 @@ export async function download() {
     a.click();
 }
 
-export async function upload() {
-    if (
-        !confirm(`This operation will wipe all your existing entries.
-Are you sure you want to continue?`)
-    )
+export async function uploadEntries() {
+    if (!confirm("This operation will wipe all your existing entries. Make sure you know what you're doing. Do you want to continue?"))
         return;
 
     const inputEl = document.createElement("input");

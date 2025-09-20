@@ -6,12 +6,17 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useSettings } from "../../state/settings";
 import SettingsButton from "./SettingsButton";
 import { changePassword, changePasswordMismatched } from "../../settings/password";
-import { download } from "../../settings/entries";
+import { exportEntries, uploadEntries } from "../../settings/entries";
 import SettingsPassword from "./SettingsPassword";
 import SettingsSeparator from "./SettingsSeparator";
-import { downloadKey, generateKey } from "../../settings/key";
+import { downloadKey, generateKey, uploadKey } from "../../settings/key";
 import SettingsSelect from "./SettingsSelect";
 import { setCodeword, setCodewordMismatched, setupPasskey } from "../../settings/auth";
+import { syncDatabase } from "../../database/sync";
+import SettingsContent from "./SettingsContent";
+import { forceReload } from "../../util/update";
+import { showKeyHash } from "../../util/encryption";
+import { wipeLocalDatabase } from "../../settings/debug";
 
 export default function SettingsPopup() {
     const [selected, setSelected] = useState("general");
@@ -20,10 +25,6 @@ export default function SettingsPopup() {
     function closePopup(event: React.MouseEvent) {
         if (event.target !== event.currentTarget) return;
         useSettings.getState().closeSettings();
-    }
-
-    function importKey(): void {
-        throw new Error("Function not implemented.");
     }
 
     return (
@@ -44,7 +45,7 @@ export default function SettingsPopup() {
                             <SettingsTab id="debug" label="Debug" setSelected={setSelected} selected={selected} />
                         </div>
                         {selected == "general" && (
-                            <div className="settings-content">
+                            <SettingsContent>
                                 <SettingsToggle
                                     label="Show Mood"
                                     settingKey="general.show_mood"
@@ -62,15 +63,15 @@ export default function SettingsPopup() {
                                 />
                                 <SettingsSeparator />
                                 <SettingsButton
-                                    label="Export Data"
+                                    label="Export Entries"
                                     desc="Download a copy of all your entries"
                                     actionLabel="Export"
-                                    action={download}
+                                    action={exportEntries}
                                 />
-                            </div>
+                            </SettingsContent>
                         )}
                         {selected == "security" && (
-                            <div className="settings-content">
+                            <SettingsContent>
                                 <SettingsPassword
                                     label="Change Password"
                                     mainPlaceholder="New Password"
@@ -89,8 +90,8 @@ export default function SettingsPopup() {
                                 <SettingsButton
                                     label="Import Key"
                                     desc="Import a key, used to encrypt and decrypt entries when talking to the server, from a .KEY file"
-                                    actionLabel="Import"
-                                    action={importKey}
+                                    actionLabel="Upload"
+                                    action={uploadKey}
                                 />
                                 <SettingsButton label="Download Key" actionLabel="Download" action={downloadKey} />
                                 <SettingsSeparator />
@@ -119,12 +120,41 @@ export default function SettingsPopup() {
                                         action={setupPasskey}
                                     />
                                 )}
-                            </div>
+                            </SettingsContent>
                         )}
                         {selected == "debug" && (
-                            <div className="settings-content">
-                                <div>Yo!!</div>
-                            </div>
+                            <SettingsContent>
+                                <SettingsButton
+                                    label="Invoke Sync"
+                                    desc="Force a server sync, uploading outstanding entries and downloading missing ones"
+                                    actionLabel="Sync"
+                                    action={syncDatabase}
+                                />
+                                <SettingsButton
+                                    label="Wipe Local Entries"
+                                    desc="Delete all your existing entries locally — remote entries stay in the database and get downloaded next sync"
+                                    actionLabel="Delete"
+                                    action={wipeLocalDatabase}
+                                />
+                                <SettingsButton
+                                    label="Import Entries"
+                                    desc="Delete all your existing entries and import them from an exported entries file. This is a dangerous operation!"
+                                    actionLabel="Upload"
+                                    action={uploadEntries}
+                                />
+                                <SettingsButton
+                                    label="Force Reload"
+                                    desc="Delete all app cache and redownload all assets"
+                                    actionLabel="Reload"
+                                    action={forceReload}
+                                />
+                                <SettingsButton
+                                    label="View Key Hash"
+                                    desc="Show a hash of your encryption key, useful for verifying it matches across clients"
+                                    actionLabel="View"
+                                    action={showKeyHash}
+                                />
+                            </SettingsContent>
                         )}
                     </div>
                 </motion.div>

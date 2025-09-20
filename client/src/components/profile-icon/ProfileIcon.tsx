@@ -1,6 +1,4 @@
 import "./ProfileIcon.css";
-import { wipeLocalDatabase } from "../../util/profile";
-import { forceReload } from "../../util/update";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Dropdown from "../dropdown/Dropdown";
@@ -8,14 +6,11 @@ import DropdownItem from "../dropdown/DropdownItem";
 import DropdownSeparator from "../dropdown/DropdownSeparator";
 import DropdownText from "../dropdown/DropdownText";
 import { useEffect, useRef, useState } from "react";
-import DropdownHeading from "../dropdown/DropdownHeading";
 import { logout } from "../../util/auth";
-import { showKeyHash } from "../../util/encryption";
 import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "framer-motion";
-import { syncDatabase } from "../../database/sync";
 import { getUserName, useSettings } from "../../state/settings";
-import { upload } from "../../settings/entries";
+import { exportEntries } from "../../settings/entries";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -55,27 +50,7 @@ export default function ProfileIcon() {
                                 setProfileDropdownOpen(false);
                             }}
                         />
-                        <DropdownHeading label="Actions" />
-                        <DropdownItem
-                            label="Import"
-                            description="Import entries from a JSON file - DELETES ALL CURRENTLY SAVED ENTRIES FROM THE DATABASE!"
-                            onClick={upload}
-                        />
-                        <DropdownSeparator />
-                        <DropdownHeading label="Debug" />
-                        <DropdownItem label="Force Reload" description="Delete local page cache and reload" onClick={forceReload} />
-                        <DropdownItem label="Invoke Sync" description="Forcefully invoke database sync" onClick={syncDatabase} />
-                        <DropdownItem
-                            label="Show Key Hash"
-                            description="Show a hash of your encryption key for debug purposes"
-                            onClick={showKeyHash}
-                        />
-                        <DropdownItem
-                            label="Wipe Local DB"
-                            description="Delete all locally saved entries (resyncs with the database on page reload)"
-                            onClick={wipeLocalDatabase}
-                        />
-                        <DropdownSeparator />
+                        <DropdownItem label="Export Entries" onClick={exportEntries} />
                         <DropdownItem label="Log Out" onClick={() => logout(navigate)} />
                     </Dropdown>
                 )}

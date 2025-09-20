@@ -11,7 +11,7 @@ export default function SettingsToggle(props: { label: string; settingKey: strin
                 {props.label}
                 {props.desc && (
                     <InfoIcon className="info-icon">
-                        <div className="settings-desc">{props.desc}</div>
+                        <div className="settings-tooltip">{props.desc}</div>
                     </InfoIcon>
                 )}
             </div>
