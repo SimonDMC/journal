@@ -8,6 +8,7 @@ import type { OutputBundle, OutputOptions } from "rolldown";
 import fs from "fs";
 import path from "path";
 import chalk from "chalk";
+import { execSync } from "child_process";
 
 const STATIC_ASSETS = ["emoji.json", "InterVariable.woff2", "InterVariable-Italic.woff2"];
 
@@ -43,6 +44,13 @@ function generateBuildMeta() {
     };
 }
 
+function getBuildInfo() {
+    const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
+    const buildTimestamp = Date.now();
+
+    return { commitHash, buildTimestamp };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [
@@ -67,6 +75,7 @@ export default defineConfig({
             host: "localhost",
             protocol: "ws",
         },
+        allowedHosts: true,
     },
     build: {
         // This splits code into separate js/css files for npm each package, but since the app is always
@@ -86,4 +95,7 @@ export default defineConfig({
         chunkSizeWarningLimit: 2000,
     },
     publicDir: "client/public",
+    define: {
+        __BUILD_INFO__: JSON.stringify(getBuildInfo()),
+    },
 });

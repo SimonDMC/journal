@@ -23,14 +23,22 @@ export const today = dayAdjustedTime.toISOString().substring(0, 10);
 export function formatDate(dateString: string) {
     const parts = dateString.split("-").map(Number);
     const date = new Date(parts[0], parts[1] - 1, parts[2]);
-
-    const options = {
-        weekday: "long" as "long" | undefined,
-        year: "numeric" as "numeric" | undefined,
-        month: "long" as "long" | undefined,
-        day: "numeric" as "numeric" | undefined,
-    };
-    const formattedDate = new Intl.DateTimeFormat("en-US", options).format(date);
+    const formattedDate = new Intl.DateTimeFormat("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    }).format(date);
 
     return formattedDate;
+}
+
+export function formatTimestampShort(timestamp: number) {
+    return new Date(timestamp).toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+    });
 }

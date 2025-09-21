@@ -6,7 +6,7 @@ export default function SettingsSelect(props: { label: string; settingKey: strin
     const value = useSettings((s) => s.getString(props.settingKey));
 
     return (
-        <label className="settings-row">
+        <div className="settings-row">
             <div className="left">
                 {props.label}
                 {props.desc && (
@@ -32,6 +32,6 @@ export default function SettingsSelect(props: { label: string; settingKey: strin
                     })}
                 </select>
             </div>
-        </label>
+        </div>
     );
 }

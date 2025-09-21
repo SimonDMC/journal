@@ -6,7 +6,7 @@ export default function SettingsToggle(props: { label: string; settingKey: strin
     const value = useSettings((s) => s.getBoolean(props.settingKey));
 
     return (
-        <label className="settings-row">
+        <div className="settings-row">
             <div className="left">
                 {props.label}
                 {props.desc && (
@@ -27,6 +27,6 @@ export default function SettingsToggle(props: { label: string; settingKey: strin
                     <div className="circle"></div>
                 </div>
             </div>
-        </label>
+        </div>
     );
 }

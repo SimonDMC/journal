@@ -23,7 +23,7 @@ export default function SettingsPassword(props: {
     }
 
     return (
-        <label className="settings-row settings-password-row">
+        <div className="settings-row settings-password-row">
             <div className="left">
                 {props.label}
                 {props.desc && (
@@ -57,6 +57,6 @@ export default function SettingsPassword(props: {
                     {props.actionLabel}
                 </button>
             </div>
-        </label>
+        </div>
     );
 }

@@ -3,7 +3,7 @@ import "./Settings.css";
 
 export default function SettingsButton(props: { label: string; desc?: string; actionLabel: string; action: () => void }) {
     return (
-        <label className="settings-row">
+        <div className="settings-row">
             <div className="left">
                 {props.label}
                 {props.desc && (
@@ -17,6 +17,6 @@ export default function SettingsButton(props: { label: string; desc?: string; ac
                     {props.actionLabel}
                 </button>
             </div>
-        </label>
+        </div>
     );
 }

@@ -14,9 +14,10 @@ import SettingsSelect from "./SettingsSelect";
 import { setCodeword, setCodewordMismatched, setupPasskey } from "../../settings/auth";
 import { syncDatabase } from "../../database/sync";
 import SettingsContent from "./SettingsContent";
-import { forceReload } from "../../util/update";
+import { forceReload, getCurrentVersion } from "../../util/update";
 import { showKeyHash } from "../../util/encryption";
 import { wipeLocalDatabase } from "../../settings/debug";
+import { formatTimestampShort } from "../../util/time";
 
 export default function SettingsPopup() {
     const [selected, setSelected] = useState("general");
@@ -154,6 +155,12 @@ export default function SettingsPopup() {
                                     actionLabel="View"
                                     action={showKeyHash}
                                 />
+                                <SettingsSeparator />
+                                <div className="build-info">
+                                    Build <code>{__BUILD_INFO__.commitHash}</code> — {formatTimestampShort(__BUILD_INFO__.buildTimestamp)}.
+                                    <br />
+                                    Version <strong>v{getCurrentVersion()}</strong>. © SimonDMC, 2025.
+                                </div>
                             </SettingsContent>
                         )}
                     </div>

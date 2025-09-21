@@ -13,6 +13,10 @@ type VersionsFile = {
     }[];
 };
 
+export function getCurrentVersion() {
+    return localStorage.getItem("journal-version");
+}
+
 export async function checkForUpdate() {
     let json;
     try {
@@ -25,7 +29,7 @@ export async function checkForUpdate() {
     const version = json.current.version;
 
     // install update if newer
-    const currentVersion = localStorage.getItem("journal-version");
+    const currentVersion = getCurrentVersion();
     if (!currentVersion) {
         forceReload();
         return;

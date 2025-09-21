@@ -1,4 +1,5 @@
 import { db } from "../database/db";
+import { useSettings } from "../state/settings";
 import { API_URL } from "./config";
 import { encryptEntry } from "./encryption";
 import { successToast, warningToast } from "./toast";
@@ -7,7 +8,7 @@ import { calculateWords } from "./words";
 const migrationMap = new Map<string, () => Promise<MigrationResponse>>([
     ["0.0.8", v0_0_8_fixWordCount],
     ["0.0.13", v0_0_13_fixLocalStorageKeys],
-    ["0.0.17", v0_0_17_renameOptionsToSettings],
+    ["0.0.17", v0_0_17_migrateSettings],
 ]);
 
 type MigrationResponse = {
@@ -142,17 +143,24 @@ async function v0_0_13_fixLocalStorageKeys(): Promise<MigrationResponse> {
     return { success: true, reload: true };
 }
 
-// rename the journal-options-[username] key to journal-settings-[username]
-// also migrates 2fa to the new settings system
-async function v0_0_17_renameOptionsToSettings(): Promise<MigrationResponse> {
+// migrate to new settings system
+async function v0_0_17_migrateSettings(): Promise<MigrationResponse> {
     const username = localStorage.getItem("journal-username");
     const settings = localStorage.getItem(`journal-options-${username}`);
-    if (username && settings) {
-        localStorage.removeItem(`journal-options-${username}`);
-        localStorage.setItem(`journal-settings-${username}`, settings);
-    }
 
-    // TODO: MIGRATE 2FA
+    if (username && settings) {
+        // delete old settings
+        localStorage.removeItem(`journal-options-${username}`);
+
+        const parsedSettings = JSON.parse(settings);
+
+        // copy over settings
+        const settingsState = useSettings.getState();
+        if (parsedSettings["2fa_method"] == 1) settingsState.setSetting("security.secondary_auth", "codeword");
+        if (parsedSettings["2fa_method"] == 2) settingsState.setSetting("security.secondary_auth", "passkey");
+        if (parsedSettings.codeword) settingsState.setSetting("data.codeword_hash", parsedSettings.codeword);
+        if (parsedSettings.passkey) settingsState.setSetting("data.passkey", parsedSettings.passkey);
+    }
 
     return { success: true, reload: true };
 }

@@ -29,6 +29,7 @@
     flex-direction: column;
     gap: .1em;
     color: #ccc;
+    border-right: 2px solid #222;
 }
 
 .settings-tab {
@@ -49,7 +50,6 @@
     display: flex;
     flex-direction: column;
     gap: .3em;
-    border-left: 2px solid #222;
     overflow-y: scroll;
     scrollbar-width: none;
 }
@@ -188,4 +188,40 @@
 
 .settings-select option {
     background-color: #000;
+}
+
+.build-info {
+    color: #ccc;
+}
+
+.build-info code {
+    font-size: 1.2em;
+    background-color: #222;
+    padding: .1em .3em;
+    border-radius: .2em;
+}
+
+@media (max-width: 600px) {
+    .settings-body {
+        flex-direction: column;
+        font-size: 1.2em;
+        height: 60vh;
+    }
+
+    .settings-tabs {
+        height: min-content;
+        width: 100%;
+        flex-direction: row;
+        border-right: none;
+        border-bottom: 2px solid #222;
+        justify-content: center;
+    }
+
+    .build-info {
+        font-size: .9em;
+    }
+
+    .settings-tooltip {
+        max-width: 15em;
+    }
 }

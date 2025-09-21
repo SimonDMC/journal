@@ -1,4 +1,5 @@
 import { eventTarget, UpdateReadyEvent } from "../../util/events";
+import { getCurrentVersion } from "../../util/update";
 import "./UpdatePopup.css";
 import { useEffect, useState } from "react";
 
@@ -13,7 +14,7 @@ export default function UpdatePopup() {
         const updateReadyHandler = (e: Event) => {
             const { version, changelogs } = (e as UpdateReadyEvent).detail;
             setOpen(true);
-            setOldVersion(localStorage.getItem("journal-version") ?? "0.0.0");
+            setOldVersion(getCurrentVersion() ?? "0.0.0");
             setNewVersion(version);
             setChangelog(changelogs);
         };
