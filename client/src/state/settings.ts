@@ -49,7 +49,7 @@ export const useSettings = create<SettingsState>()(
             closeSettings: () => set({ settingsOpen: false }),
         }),
         {
-            name: `journal-settings-${getUserName()}`, // storage key
+            name: `journal-settings`, // storage key
             partialize: (state) => ({ settings: state.settings }), // only persist settings
         }
     )
