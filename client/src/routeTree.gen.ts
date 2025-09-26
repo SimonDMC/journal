@@ -11,11 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SearchPlotRouteImport } from './routes/search-plot'
 import { Route as SearchRouteImport } from './routes/search'
+import { Route as PasskeyRouteImport } from './routes/passkey'
 import { Route as OverviewRouteImport } from './routes/overview'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EntryRouteImport } from './routes/entry'
 import { Route as CodewordRouteImport } from './routes/codeword'
-import { Route as BioauthRouteImport } from './routes/bioauth'
 import { Route as IndexRouteImport } from './routes/index'
 
 const SearchPlotRoute = SearchPlotRouteImport.update({
@@ -26,6 +26,11 @@ const SearchPlotRoute = SearchPlotRouteImport.update({
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PasskeyRoute = PasskeyRouteImport.update({
+  id: '/passkey',
+  path: '/passkey',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OverviewRoute = OverviewRouteImport.update({
@@ -48,11 +53,6 @@ const CodewordRoute = CodewordRouteImport.update({
   path: '/codeword',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BioauthRoute = BioauthRouteImport.update({
-  id: '/bioauth',
-  path: '/bioauth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -61,32 +61,32 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/bioauth': typeof BioauthRoute
   '/codeword': typeof CodewordRoute
   '/entry': typeof EntryRoute
   '/login': typeof LoginRoute
   '/overview': typeof OverviewRoute
+  '/passkey': typeof PasskeyRoute
   '/search': typeof SearchRoute
   '/search-plot': typeof SearchPlotRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/bioauth': typeof BioauthRoute
   '/codeword': typeof CodewordRoute
   '/entry': typeof EntryRoute
   '/login': typeof LoginRoute
   '/overview': typeof OverviewRoute
+  '/passkey': typeof PasskeyRoute
   '/search': typeof SearchRoute
   '/search-plot': typeof SearchPlotRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/bioauth': typeof BioauthRoute
   '/codeword': typeof CodewordRoute
   '/entry': typeof EntryRoute
   '/login': typeof LoginRoute
   '/overview': typeof OverviewRoute
+  '/passkey': typeof PasskeyRoute
   '/search': typeof SearchRoute
   '/search-plot': typeof SearchPlotRoute
 }
@@ -94,42 +94,42 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/bioauth'
     | '/codeword'
     | '/entry'
     | '/login'
     | '/overview'
+    | '/passkey'
     | '/search'
     | '/search-plot'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/bioauth'
     | '/codeword'
     | '/entry'
     | '/login'
     | '/overview'
+    | '/passkey'
     | '/search'
     | '/search-plot'
   id:
     | '__root__'
     | '/'
-    | '/bioauth'
     | '/codeword'
     | '/entry'
     | '/login'
     | '/overview'
+    | '/passkey'
     | '/search'
     | '/search-plot'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  BioauthRoute: typeof BioauthRoute
   CodewordRoute: typeof CodewordRoute
   EntryRoute: typeof EntryRoute
   LoginRoute: typeof LoginRoute
   OverviewRoute: typeof OverviewRoute
+  PasskeyRoute: typeof PasskeyRoute
   SearchRoute: typeof SearchRoute
   SearchPlotRoute: typeof SearchPlotRoute
 }
@@ -148,6 +148,13 @@ declare module '@tanstack/react-router' {
       path: '/search'
       fullPath: '/search'
       preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/passkey': {
+      id: '/passkey'
+      path: '/passkey'
+      fullPath: '/passkey'
+      preLoaderRoute: typeof PasskeyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/overview': {
@@ -178,13 +185,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CodewordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/bioauth': {
-      id: '/bioauth'
-      path: '/bioauth'
-      fullPath: '/bioauth'
-      preLoaderRoute: typeof BioauthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -197,11 +197,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  BioauthRoute: BioauthRoute,
   CodewordRoute: CodewordRoute,
   EntryRoute: EntryRoute,
   LoginRoute: LoginRoute,
   OverviewRoute: OverviewRoute,
+  PasskeyRoute: PasskeyRoute,
   SearchRoute: SearchRoute,
   SearchPlotRoute: SearchPlotRoute,
 }

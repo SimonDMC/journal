@@ -11,6 +11,7 @@ import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { dayAdjustedTime, today } from "../util/time";
 import { eventTarget, KeyCreateEvent, OfflineModeEvent } from "../util/events";
+import { useSettings } from "../state/settings";
 
 export const Route = createFileRoute("/overview")({
     component: Overview,
@@ -20,7 +21,9 @@ function Overview() {
     const navigate = useNavigate();
     const [oneYearAgo, setOneYearAgo] = useState("");
     const [oneYearAgoExists, setOneYearAgoExists] = useState(false);
+    const showOneYearAgoEnabled = useSettings((s) => s.getBoolean("general.show_one_year_ago"));
     const [keyExists, setKeyExists] = useState(true);
+    const showStatsEnabled = useSettings((s) => s.getBoolean("general.show_stats"));
     const [offline, setOffline] = useState(false);
     // js date supports stuff like (2023, -7, 20) or (2023, 54, 20) so no need to worry about going out of bounds
     const [month, setMonth] = useState(dayAdjustedTime.getMonth() + 1);
@@ -125,11 +128,13 @@ function Overview() {
             <Link to="/entry" search={{ date: today }} id="today" className="nav-link">
                 Today
             </Link>
-            <Link to="/entry" search={{ date: oneYearAgo }} id="lastYear" className={`nav-link ${oneYearAgoExists || "inactive"}`}>
-                One Year Ago
-            </Link>
+            {showOneYearAgoEnabled && (
+                <Link to="/entry" search={{ date: oneYearAgo }} id="lastYear" className={`nav-link ${oneYearAgoExists || "inactive"}`}>
+                    One Year Ago
+                </Link>
+            )}
             <ProfileIcon />
-            {keyExists && (
+            {keyExists && showStatsEnabled && (
                 <div className="stats">
                     <p className="entryCount">Entry Count: {commaFormat(entryDates.length)}</p>
                     <p className="wordCount">Total Words: {commaFormat(wordCount)}</p>

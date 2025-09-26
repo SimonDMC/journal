@@ -1,0 +1,227 @@
+.settings-bg {
+    width: 100vw;
+    height: 100svh;
+    background-color: #00000088;
+    backdrop-filter: blur(5px);
+    position: absolute;
+    top: 0;
+    z-index: 3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.settings-body {
+    background-color: black;
+    border: 2px solid #333;
+    font-size: 1.5em;
+    border-radius: .3em;
+    width: min(30em, 95vw);
+    height: min(20em, 95vh);
+    display: flex;
+}
+
+.settings-tabs {
+    height: 100%;
+    padding: 1em;
+    width: 8em;
+    display: flex;
+    flex-direction: column;
+    gap: .1em;
+    color: #ccc;
+    border-right: 2px solid #222;
+}
+
+.settings-tab {
+    cursor: pointer;
+    padding: .05em .3em;
+    border-radius: 5px;
+    background-color: transparent;
+    transition: background-color .2s;
+}
+
+.settings-tab:hover, .settings-tab.selected {
+    background-color: #222;
+}
+
+.settings-content {
+    padding: 1em 1.5em;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: .3em;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.settings-row .toggle-wrap {
+    width: 2.7em;
+    height: 1.6em;
+    background-color: #333;
+    border-radius: 3em;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: background-color .2s;
+    font-size: 0.7em;
+}
+
+.settings-row .toggle-wrap:has(input:checked) {
+    background-color: #777;
+}
+
+.settings-row .toggle-wrap input {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    position: absolute;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.settings-row .toggle-wrap .circle {
+    width: 1.3em;
+    height: 1.3em;
+    border-radius: 3em;
+    background-color: #fff;
+    margin-left: .1em;
+    transition: transform .2s;
+}
+
+.settings-row .toggle-wrap input:checked+.circle {
+    transform: translateX(1.2em);
+}
+
+.settings-row .left {
+    display: flex;
+    align-items: flex-end;
+}
+
+.settings-row .info-wrap {
+    position: relative;
+    padding: 0 .2em;
+}
+
+.settings-row .info-icon {
+    color: #555;
+    width: .7em;
+}
+
+.settings-row .right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.settings-tooltip {
+    position: fixed;
+    font-size: .8em;
+    max-width: 25em;
+    width: max-content;
+    line-height: 1.1em;
+    background-color: #222;
+    padding: .4em .6em;
+    border-radius: .3em;
+    z-index: 1;
+    translate: -50% calc(-100% - 1.7em);
+    box-shadow: 0 0 .5em #00000088;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, translate .2s;
+    /* offset by parent scroll (not in translate to prevent interpolation) */
+    margin-top: calc(var(--scroll) * -1);
+}
+
+.settings-row .info-wrap:hover .settings-tooltip {
+    opacity: 1;
+    /* make it bottom-aligned instead of top-aligned */
+    translate: -50% calc(-100% - 1.8em);
+}
+
+.settings-button {
+    width: fit-content;
+    color: #ccc;
+    border: 2px solid #333;
+    font-size: .9em;
+    padding: 0.05em 0.4em;
+    border-radius: .3em;
+    transition: background-color 0.2s;
+}
+
+.settings-button:hover {
+    background-color: #111;
+}
+
+.settings-password {
+    font-size: .9em;
+    width: 10em;
+    padding-left: .3em;
+    border-radius: .3em;
+}
+
+.settings-password-row {
+    align-items: flex-start;
+}
+
+.settings-separator {
+    height: 2px;
+    min-height: 2px;
+    width: 100%;
+    margin: .5em 0;
+    background-color: #222;
+}
+
+.settings-select {
+    font-family: inherit;
+    font-size: .9em;
+    color: #ccc;
+    border: 2px solid #333;
+    border-radius: .3em;
+    padding: 0.15em 0.2em;
+}
+
+.settings-select option {
+    background-color: #000;
+}
+
+.build-info {
+    color: #ccc;
+}
+
+.build-info code {
+    font-size: 1.2em;
+    background-color: #222;
+    padding: .1em .3em;
+    border-radius: .2em;
+}
+
+@media (max-width: 600px) {
+    .settings-body {
+        flex-direction: column;
+        font-size: 1.2em;
+        height: 60vh;
+    }
+
+    .settings-tabs {
+        height: min-content;
+        width: 100%;
+        flex-direction: row;
+        border-right: none;
+        border-bottom: 2px solid #222;
+        justify-content: center;
+    }
+
+    .build-info {
+        font-size: .9em;
+    }
+
+    .settings-tooltip {
+        max-width: 15em;
+    }
+}

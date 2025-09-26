@@ -9,9 +9,9 @@ import { QuoteStartIcon } from "../icons/QuoteStartIcon";
 import { QuoteEndIcon } from "../icons/QuoteEndIcon";
 import { eventTarget, QuoteImageOpenEvent } from "../../util/events";
 import { getRouteApi } from "@tanstack/react-router";
-import { getUserName } from "../../util/profile";
 import { MONTH_NAMES } from "../../util/time";
 import { AnimatePresence, motion } from "framer-motion";
+import { getUserName } from "../../state/settings";
 
 type QuoteImageParams = {
     content?: string;
@@ -91,7 +91,7 @@ export default function QuoteImage(params: { open: boolean; setOpen: (open: bool
                     exit={{ opacity: 0, y: 5 }}
                     transition={{ duration: 0.2 }}
                     id="quoteImageBg"
-                    onClick={(e) => closeImage(e)}
+                    onClick={closeImage}
                 >
                     <div className="quoteImageFrame">
                         <div className="quoteButtons">

@@ -1,4 +1,5 @@
 // you can bind whatever events and listeners to this guy!
+// EVENTUALLY MIGRATE TO USE ZUSTAND
 export const eventTarget = new EventTarget();
 
 type UpdateReadyDetail = {

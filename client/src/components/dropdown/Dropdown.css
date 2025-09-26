@@ -5,6 +5,7 @@
     overflow: hidden;
     background-color: black;
     z-index: 2;
+    min-width: 10em;
 }
 
 .dropdown-item,
