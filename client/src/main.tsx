@@ -1,5 +1,6 @@
 import "./styles/globals.css";
 import "react-toastify/dist/ReactToastify.css";
+
 import { createRoot } from "react-dom/client";
 import { Slide, ToastContainer } from "react-toastify";
 import { routeTree } from "./routeTree.gen";

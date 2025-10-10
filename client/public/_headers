@@ -1,0 +1,3 @@
+/*
+  # inline style bypass necessary for react-select https://github.com/JedWatson/react-select/issues/2030 
+  Content-Security-Policy: default-src 'self' style-src 'unsafe-inline';
