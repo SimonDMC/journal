@@ -229,6 +229,11 @@ function Search() {
 
         setResults({ results, length });
 
+        // snap back to first result if it's out of bounds
+        if (length <= activeIndex) {
+            setActiveIndex(0);
+        }
+
         // save in sessionstorage for back navigation
         sessionStorage.setItem("journal-search-cache", JSON.stringify({ results, length }));
     }
