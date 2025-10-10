@@ -192,6 +192,7 @@
 
 .build-info {
     color: #ccc;
+    user-select: text;
 }
 
 .build-info code {
