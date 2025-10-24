@@ -1,3 +1,4 @@
 /*
-  # inline style bypass necessary for react-select https://github.com/JedWatson/react-select/issues/2030 
-  Content-Security-Policy: default-src 'self' style-src 'unsafe-inline';
+  # inline style bypass necessary for react-select https://github.com/JedWatson/react-select/issues/2030
+  # image data: bypass necessary for html2canvas used for QuoteImage
+  Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:
