@@ -1,6 +1,6 @@
 import "./Editor.css";
 import { useEffect, useRef, type MutableRefObject } from "react";
-import { highlightNthOccurrence, moveCursorToEnd } from "../../util/selection";
+import { setCursorAfterNthOccurrence, moveCursorToEnd } from "../../util/selection";
 import { QuoteButton } from "../quote-button/QuoteButton";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 
@@ -142,8 +142,8 @@ export default function Editor(props: {
     function focusContent() {
         const editorEl = document.querySelector(".ck-content") as HTMLElement;
 
-        // focus it if it's today
-        if (today === props.date) {
+        // focus it if it's today (and we aren't trying to search something)
+        if (today === props.date && !query) {
             // idk it needs a delay
             requestAnimationFrame(() => moveCursorToEnd(editorEl));
         }
@@ -151,7 +151,7 @@ export default function Editor(props: {
         // select occurrence if linked from search
         if (query && index) {
             // this also needs a delay for whatever reason
-            requestAnimationFrame(() => highlightNthOccurrence(editorEl, query, index));
+            requestAnimationFrame(() => setCursorAfterNthOccurrence(editorEl, query, index));
         }
 
         // let parent know editor has loaded

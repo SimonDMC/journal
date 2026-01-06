@@ -1,5 +1,5 @@
 // chatgpt wrote this function
-export function highlightNthOccurrence(container: Node, searchText: string, n: number) {
+export function setCursorAfterNthOccurrence(container: Node, searchText: string, n: number) {
     if (window.getSelection()?.toString().toLowerCase() == searchText.toLowerCase()) return;
 
     let occurrences = 0;
@@ -16,7 +16,10 @@ export function highlightNthOccurrence(container: Node, searchText: string, n: n
                 if (occurrences === n) {
                     const range = document.createRange();
 
-                    range.setStart(node, index);
+                    // for selecting it
+                    // range.setStart(node, index);
+
+                    range.setStart(node, index + searchText.length);
                     range.setEnd(node, index + searchText.length);
 
                     const selection = window.getSelection();
@@ -91,8 +94,11 @@ function getCaretPixelTop(node: HTMLElement, offsetY: number = 0): number | null
     return null; // fallback if selection isn't available
 }
 export function moveCursorToEnd(contentEle: HTMLElement) {
+    if (!contentEle) return;
+
     const range = document.createRange();
     const selection = window.getSelection();
+
     range.setStart(contentEle, contentEle.childNodes.length);
     range.collapse(true);
     selection?.removeAllRanges();

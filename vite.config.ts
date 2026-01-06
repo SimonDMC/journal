@@ -99,7 +99,7 @@ export default defineConfig({
                 pluginTimings: false,
             },
         },
-        chunkSizeWarningLimit: 3000,
+        chunkSizeWarningLimit: 2500,
     },
     publicDir: "client/public",
     define: {
