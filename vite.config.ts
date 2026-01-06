@@ -92,7 +92,14 @@ export default defineConfig({
                 },
             },
         }, */
-        chunkSizeWarningLimit: 2000,
+        rolldownOptions: {
+            checks: {
+                // disable annoying "cloudflare took too long" warnings (can probably be removed
+                // once stable vite 8.0.0 releases)
+                pluginTimings: false,
+            },
+        },
+        chunkSizeWarningLimit: 3000,
     },
     publicDir: "client/public",
     define: {
