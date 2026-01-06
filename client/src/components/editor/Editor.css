@@ -42,6 +42,11 @@
     scrollbar-width: none;
 }
 
+.ck-content p {
+    /* when scrolling to the end of today, leave a 5em gap at the bottom */
+    scroll-margin-bottom: 5em;
+}
+
 /* i wish i knew why this is necessary, but it fixes line spacing */
 .safari .ck-content {
     background-size: 100% calc(1.8em - 0.7px);

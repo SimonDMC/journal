@@ -109,5 +109,5 @@ export function moveCursorToEnd(contentEle: HTMLElement) {
     const contentRect = contentEle.getBoundingClientRect();
 
     // scroll into view if too far down
-    if (lastLineRect.bottom > contentRect.bottom) lastChild!.scrollIntoView();
+    if (lastLineRect.bottom > contentRect.bottom) lastChild!.scrollIntoView(false);
 }
