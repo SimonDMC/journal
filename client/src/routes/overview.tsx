@@ -25,8 +25,6 @@ function Overview() {
     const [keyExists, setKeyExists] = useState(true);
     const showStatsEnabled = useSettings((s) => s.getBoolean("general.show_stats"));
     const [offline, setOffline] = useState(false);
-    // js date supports stuff like (2023, -7, 20) or (2023, 54, 20) so no need to worry about going out of bounds
-    const [month, setMonth] = useState(dayAdjustedTime.getMonth() + 1);
 
     const entriesFull = useLiveQuery(() => db.entries.toArray()) ?? [];
     const entryDates = entriesFull.filter((entry) => entry.content !== null).map((entry) => entry.date);
@@ -38,10 +36,6 @@ function Overview() {
 
         // check key status
         if (!localStorage.getItem("journal-key")) setKeyExists(false);
-
-        // restore previously viewed month
-        const month = sessionStorage.getItem("journal-month");
-        if (month) setMonth(parseInt(month));
 
         // keybinds
         const keydown = (e: KeyboardEvent) => {
@@ -102,16 +96,6 @@ function Overview() {
         }
     }, [entryDates]);
 
-    function previousMonth() {
-        setMonth(month - 1);
-        sessionStorage.setItem("journal-month", (month - 1).toString());
-    }
-
-    function nextMonth() {
-        setMonth(month + 1);
-        sessionStorage.setItem("journal-month", (month + 1).toString());
-    }
-
     // https://stackoverflow.com/a/2901298
     const commaFormat = (x: number) => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
@@ -119,12 +103,7 @@ function Overview() {
         <main>
             {keyExists || <div id="keyless-bar">Warning: Missing Key</div>}
             {offline && <div id="offline">Offline Mode</div>}
-            <Calendar
-                month={new Date(new Date(dayAdjustedTime).getFullYear(), month, 1).toISOString().substring(0, 10)}
-                previousMonth={previousMonth}
-                nextMonth={nextMonth}
-                entries={entryDates}
-            />
+            <Calendar entries={entryDates} />
             <Link to="/entry" search={{ date: today }} id="today" className="nav-link">
                 Today
             </Link>

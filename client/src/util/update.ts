@@ -46,7 +46,7 @@ export async function checkForUpdate() {
                 version,
                 // only show what's new
                 changelogs: json.history.filter((v) => compareVersions(currentVersion, v.version)).map((v) => v.desc),
-            })
+            }),
         );
     }
 }
@@ -93,16 +93,18 @@ export async function installApp(version: string) {
 }
 
 export async function forceReload() {
-    const caches = await window.caches.keys();
-    for (const cache of caches) {
-        await window.caches.delete(cache);
+    if (window.caches) {
+        const caches = await window.caches.keys();
+        for (const cache of caches) {
+            await window.caches.delete(cache);
+        }
+
+        const res = await fetch("/versions.json");
+        const json = await res.json();
+        const version = json.current.version;
+
+        await installApp(version);
+        localStorage.setItem("journal-version", version);
+        window.location.reload();
     }
-
-    const res = await fetch("/versions.json");
-    const json = await res.json();
-    const version = json.current.version;
-
-    await installApp(version);
-    localStorage.setItem("journal-version", version);
-    window.location.reload();
 }
