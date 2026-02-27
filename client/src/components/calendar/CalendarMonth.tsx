@@ -1,11 +1,9 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { dayAdjustedTime, today } from "../../util/time";
-import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "@tanstack/react-router";
 
 // monthIndex represents the month offset from today. e.g. if it's 2026-02, +3 would represent
 // 2026-05, -1 would represent 2026-01.
-export default function CalendarMonth(props: { monthIndex: number; entries: string[] }) {
+export default function CalendarMonth(props: { monthIndex: number; entries: string[]; selectedDay: string }) {
     const todayMonth = dayAdjustedTime.getMonth();
     const todayYear = dayAdjustedTime.getFullYear();
     const rawMonth = todayMonth + props.monthIndex;
@@ -46,6 +44,7 @@ export default function CalendarMonth(props: { monthIndex: number; entries: stri
 
                     const hasEntry = props.entries.includes(currentDay);
                     const isToday = today === currentDay;
+                    const isSelected = props.selectedDay === currentDay;
 
                     const classes: string[] = [];
                     if (hasEntry) {
@@ -53,6 +52,9 @@ export default function CalendarMonth(props: { monthIndex: number; entries: stri
                     }
                     if (isToday) {
                         classes.push("today");
+                    }
+                    if (isSelected) {
+                        classes.push("selected");
                     }
 
                     return (

@@ -39,17 +39,8 @@ function Overview() {
 
         // keybinds
         const keydown = (e: KeyboardEvent) => {
-            // calendar navigation
-            if (e.key === "ArrowLeft") {
-                const previous = document.querySelector(".top-bar button:first-child") as HTMLButtonElement;
-                previous.click();
-            } else if (e.key === "ArrowRight") {
-                const next = document.querySelector(".top-bar button:last-child") as HTMLButtonElement;
-                next.click();
-            }
-
             // today
-            if (e.key === "Enter" || e.key === "t" || e.key === " ") {
+            if (e.key === "t" || e.key === " ") {
                 const today = document.getElementById("today") as HTMLAnchorElement;
                 today.click();
             }

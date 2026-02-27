@@ -1,18 +1,22 @@
-import { useEffect, useState, type KeyboardEvent } from "react";
+import { useEffect, useState } from "react";
 import "./Calendar.css";
 import CalendarMonth from "./CalendarMonth";
 import { flushSync } from "react-dom";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { adjustTime, dayAdjustedTime, getDaysOfMonth, getMonthOffset, moveLeft, moveRight, today } from "../../util/time";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function Calendar(props: { entries: string[] }) {
     // Entirely copied from https://github.com/SimonDMC/bidirectional-scroll
-    const [middleNum, setMiddleNum] = useState(0);
+    const [monthOffset, setMonthOffset] = useState(0);
+    const [selectedDay, setSelectedDay] = useState(today);
+    const navigate = useNavigate();
 
     // keeping the entire logic in a useEffect is "unreactful" but since it's entirely
-    // implementation details that are irrelevant for any other component (apart from middleNum,
-    // which is exposed) it makes sense for the sake of simplicity and eliminating the
-    // performance overhead react hooks impose
+    // implementation details that are irrelevant for any other component (apart from monthOffset
+    // and selectedDay, which are exposed) it makes sense for the sake of simplicity and eliminating
+    // the performance overhead react hooks impose
     useEffect(() => {
         // how "hard" you have to swipe to glide to the next item
         const VELOCITY_THRESHOLD = 2.5;
@@ -35,9 +39,9 @@ export default function Calendar(props: { entries: string[] }) {
         // scroll offset already present before touching and moving the scroller, also used in
         // offset calculations
         let offset = 0;
-        // middleNum, but tracked as a standard variable, since useEffect doesn't receive state
-        // updates
-        let internalMiddleNum = 0;
+        // useState variables, which don't receive state updates because of useEffect
+        let internalMonthOffset = 0;
+        let internalSelectedDay = today;
         // velocity with which the last swipe was released
         let velocity = 0;
         // currently ongoing animation frame id, used to cancel when another swipe is initiated
@@ -64,11 +68,16 @@ export default function Calendar(props: { entries: string[] }) {
             deltaTime = 300 / frames;
         }, 300);
 
-        // show the month that we had selected before
-        const retrievedIndex = sessionStorage.getItem("journal-month");
-        if (retrievedIndex) {
-            setMiddleNum(parseInt(retrievedIndex));
-            internalMiddleNum = parseInt(retrievedIndex);
+        // select the month and day that we had selected before
+        const retrievedMonthIndex = sessionStorage.getItem("journal-month");
+        if (retrievedMonthIndex) {
+            setMonthOffset(parseInt(retrievedMonthIndex));
+            internalMonthOffset = parseInt(retrievedMonthIndex);
+        }
+        const retrievedSelectedDay = sessionStorage.getItem("journal-cursor");
+        if (retrievedSelectedDay) {
+            setSelectedDay(retrievedSelectedDay);
+            internalSelectedDay = retrievedSelectedDay;
         }
 
         function animateSwipe() {
@@ -98,16 +107,16 @@ export default function Calendar(props: { entries: string[] }) {
             // reset scroll position and shift over the elements
             if (lastOffset >= width) {
                 flushSync(() => {
-                    setMiddleNum(--internalMiddleNum);
-                    sessionStorage.setItem("journal-month", internalMiddleNum.toString());
+                    setMonthOffset(--internalMonthOffset);
+                    sessionStorage.setItem("journal-month", internalMonthOffset.toString());
                 });
                 offset -= width;
                 lastOffset -= width;
                 targetOffset -= width;
             } else if (lastOffset <= -width) {
                 flushSync(() => {
-                    setMiddleNum(++internalMiddleNum);
-                    sessionStorage.setItem("journal-month", internalMiddleNum.toString());
+                    setMonthOffset(++internalMonthOffset);
+                    sessionStorage.setItem("journal-month", internalMonthOffset.toString());
                 });
                 offset += width;
                 lastOffset += width;
@@ -205,9 +214,59 @@ export default function Calendar(props: { entries: string[] }) {
             container.scrollLeft = BASE_OFFSET;
         }
 
+        // keep track of which day we're *trying* to get to via big jumps; e.g. if navigating from
+        // march 31 to feb, we have to select 28/29 but remember that if we then jump to jan, we
+        // go to jan 31
+        let intendedDay = parseInt(internalSelectedDay.substring(8, 10));
         function keydown(e: KeyboardEvent) {
-            if (e.key == "ArrowLeft") scrollPrev();
-            if (e.key == "ArrowRight") scrollNext();
+            if (e.key == "Enter") {
+                navigate({ to: "/entry", search: { date: internalSelectedDay } });
+                return;
+            }
+
+            // navigate calendar
+            const year = parseInt(internalSelectedDay.substring(0, 4));
+            const month = parseInt(internalSelectedDay.substring(5, 7));
+
+            let newDate;
+            if (e.key == "ArrowLeft") {
+                if (e.ctrlKey) {
+                    newDate = adjustTime(new Date(year - 1, month - 1, Math.min(intendedDay, getDaysOfMonth(year - 1, month - 1))));
+                } else if (e.shiftKey) {
+                    newDate = adjustTime(new Date(year, month - 2, Math.min(intendedDay, getDaysOfMonth(year, month - 2))));
+                } else {
+                    newDate = moveLeft(internalSelectedDay);
+                    intendedDay = newDate.getUTCDate();
+                }
+            } else if (e.key == "ArrowRight") {
+                if (e.ctrlKey) {
+                    newDate = adjustTime(new Date(year + 1, month - 1, Math.min(intendedDay, getDaysOfMonth(year + 1, month - 1))));
+                } else if (e.shiftKey) {
+                    newDate = adjustTime(new Date(year, month, Math.min(intendedDay, getDaysOfMonth(year, month))));
+                } else {
+                    newDate = moveRight(internalSelectedDay);
+                    intendedDay = newDate.getUTCDate();
+                }
+            } else if (e.key == "ArrowUp") {
+                newDate = new Date(new Date(internalSelectedDay).getTime() - 7 * 24 * 60 * 60 * 1000);
+                intendedDay = newDate.getUTCDate();
+            } else if (e.key == "ArrowDown") {
+                newDate = new Date(new Date(internalSelectedDay).getTime() + 7 * 24 * 60 * 60 * 1000);
+                intendedDay = newDate.getUTCDate();
+            } else return;
+
+            internalSelectedDay = newDate.toISOString().substring(0, 10);
+            setSelectedDay(internalSelectedDay);
+            sessionStorage.setItem("journal-cursor", internalSelectedDay);
+
+            const newMonthIndex = newDate.getUTCFullYear() * 12 + newDate.getUTCMonth();
+            const shownMonthIndex = dayAdjustedTime.getUTCFullYear() * 12 + dayAdjustedTime.getUTCMonth() + internalMonthOffset;
+            const monthDelta = newMonthIndex - shownMonthIndex;
+
+            if (monthDelta != 0) {
+                targetOffset = width * -monthDelta;
+                animateSwipe();
+            }
         }
 
         // touch listeners specifically have to be added via addEventListener, otherwise they're
@@ -236,11 +295,11 @@ export default function Calendar(props: { entries: string[] }) {
             <div className="calendar-overlay">
                 <div className="top-bar">
                     <div className="inner">
-                        <button className="arrow">
-                            <FontAwesomeIcon icon={faArrowLeft} id="calendar-prev" />
+                        <button className="arrow" id="calendar-prev">
+                            <FontAwesomeIcon icon={faArrowLeft} />
                         </button>
-                        <button className="arrow">
-                            <FontAwesomeIcon icon={faArrowRight} id="calendar-next" />
+                        <button className="arrow" id="calendar-next">
+                            <FontAwesomeIcon icon={faArrowRight} />
                         </button>
                     </div>
                 </div>
@@ -257,11 +316,11 @@ export default function Calendar(props: { entries: string[] }) {
                 </div>
             </div>
             <div id="calendar-wrapper">
-                <CalendarMonth monthIndex={middleNum - 2} entries={props.entries} />
-                <CalendarMonth monthIndex={middleNum - 1} entries={props.entries} />
-                <CalendarMonth monthIndex={middleNum} entries={props.entries} />
-                <CalendarMonth monthIndex={middleNum + 1} entries={props.entries} />
-                <CalendarMonth monthIndex={middleNum + 2} entries={props.entries} />
+                <CalendarMonth monthIndex={monthOffset - 2} entries={props.entries} selectedDay={selectedDay} />
+                <CalendarMonth monthIndex={monthOffset - 1} entries={props.entries} selectedDay={selectedDay} />
+                <CalendarMonth monthIndex={monthOffset} entries={props.entries} selectedDay={selectedDay} />
+                <CalendarMonth monthIndex={monthOffset + 1} entries={props.entries} selectedDay={selectedDay} />
+                <CalendarMonth monthIndex={monthOffset + 2} entries={props.entries} selectedDay={selectedDay} />
             </div>
         </div>
     );
