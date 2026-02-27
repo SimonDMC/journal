@@ -1,17 +1,30 @@
 .calendar {
     font-size: min(4.2vw, 1.5rem);
+}
+
+#calendar-wrapper {
+    overflow-x: auto;
+    scrollbar-width: none;
+    display: flex;
     width: calc(21.6em + 12px);
     height: fit-content;
     outline: 2px solid #555;
-    margin-bottom: 1.5em;
-    display: flex;
-    flex-direction: column;
     border-radius: 0.3em;
+    margin-bottom: 1.5em;
+}
+
+.calendar-overlay {
+    min-width: calc(21.6em + 12px);
+    position: absolute;
     padding: 0.8em;
 }
 
-.calendar.loading {
-    opacity: 0.5;
+.calendar-month {
+    min-width: calc(21.6em + 12px);
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    padding: 0.8em;
 }
 
 .top-bar {
@@ -32,6 +45,13 @@
     justify-content: center;
 }
 
+.top-bar .month-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+}
+
 .top-bar .inner,
 .week-days .inner {
     display: flex;
@@ -41,7 +61,7 @@
 }
 
 .top-bar .inner {
-    width: 95%;
+    width: 100%;
     font-size: 1.1em;
 }
 
@@ -58,13 +78,15 @@
     outline: none;
     border: none;
     font-size: 1em;
-    margin: 0 .25em;
+    padding: .4em .8em;
+    filter: drop-shadow(0 0 .3em #000000) drop-shadow(0 0 .4em #000000);
 }
 
 .days {
     display: flex;
     flex-wrap: wrap;
     gap: 2px;
+    margin-top: 1.4em;
 }
 
 .day,
@@ -83,6 +105,10 @@
 }
 
 .day.today {
+    font-weight: 800;
+}
+
+.day.selected {
     outline: 2px solid #888;
     z-index: 1;
 }

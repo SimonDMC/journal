@@ -1,4 +1,4 @@
-import { defineConfig, type ResolvedConfig } from "vite";
+import { defineConfig, type Connect, type ResolvedConfig, type ViteDevServer } from "vite";
 import react from "@vitejs/plugin-react-oxc";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { cloudflare } from "@cloudflare/vite-plugin";
@@ -9,6 +9,7 @@ import fs from "fs";
 import path from "path";
 import chalk from "chalk";
 import { execSync } from "child_process";
+import type { ServerResponse } from "http";
 
 const STATIC_ASSETS = ["emoji.json", "InterVariable.woff2", "InterVariable-Italic.woff2"];
 
@@ -51,6 +52,22 @@ function getBuildInfo() {
     return { commitHash, buildTimestamp };
 }
 
+// bypass cloudflare plugin breaking SPA behavior on local network addresses
+function spaFallback() {
+    return {
+        name: "spa-fallback",
+        configureServer(server: ViteDevServer) {
+            server.middlewares.use((req: Connect.IncomingMessage, res: ServerResponse, next: Connect.NextFunction) => {
+                // rewrite request back to / if it's a static request
+                if (req.method === "GET" && req.url && !req.url.startsWith("/api/") && req.headers.accept?.includes("text/html")) {
+                    req.url = "/";
+                }
+                next();
+            });
+        },
+    };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [
@@ -61,6 +78,7 @@ export default defineConfig({
             generatedRouteTree: "./client/src/routeTree.gen.ts",
         }),
         react(),
+        spaFallback(),
         cloudflare(),
         generateBuildMeta(),
         viteStaticCopy({
@@ -71,10 +89,6 @@ export default defineConfig({
         }),
     ],
     server: {
-        hmr: {
-            host: "localhost",
-            protocol: "ws",
-        },
         allowedHosts: true,
     },
     build: {
@@ -92,13 +106,13 @@ export default defineConfig({
                 },
             },
         }, */
-        rolldownOptions: {
+        /* rolldownOptions: {
             checks: {
                 // disable annoying "cloudflare took too long" warnings (can probably be removed
                 // once stable vite 8.0.0 releases)
                 pluginTimings: false,
             },
-        },
+        }, */
         chunkSizeWarningLimit: 2500,
     },
     publicDir: "client/public",
