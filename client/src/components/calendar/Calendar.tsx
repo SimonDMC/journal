@@ -4,7 +4,7 @@ import CalendarMonth from "./CalendarMonth";
 import { flushSync } from "react-dom";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { adjustTime, dayAdjustedTime, getDaysOfMonth, getMonthOffset, moveLeft, moveRight, today } from "../../util/time";
+import { adjustTime, dayAdjustedTime, getDaysOfMonth, moveLeft, moveRight, today } from "../../util/time";
 import { useNavigate } from "@tanstack/react-router";
 
 export default function Calendar(props: { entries: string[] }) {
@@ -287,6 +287,7 @@ export default function Calendar(props: { entries: string[] }) {
             container.removeEventListener("touchend", touchend);
             container.removeEventListener("touchcancel", touchend);
             window.removeEventListener("resize", resize);
+            document.removeEventListener("keydown", keydown);
         };
     }, []);
 
