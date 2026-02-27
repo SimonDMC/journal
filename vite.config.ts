@@ -10,7 +10,6 @@ import path from "path";
 import chalk from "chalk";
 import { execSync } from "child_process";
 import type { ServerResponse } from "http";
-import basicSsl from "@vitejs/plugin-basic-ssl";
 
 const STATIC_ASSETS = ["emoji.json", "InterVariable.woff2", "InterVariable-Italic.woff2"];
 
@@ -81,7 +80,6 @@ export default defineConfig({
         react(),
         spaFallback(),
         cloudflare(),
-        basicSsl(),
         generateBuildMeta(),
         viteStaticCopy({
             targets: [
@@ -90,6 +88,9 @@ export default defineConfig({
             ],
         }),
     ],
+    server: {
+        allowedHosts: true,
+    },
     build: {
         // This splits code into separate js/css files for npm each package, but since the app is always
         // downloaded and installed at once, the only metric that matters is the total bundle size,
@@ -105,13 +106,13 @@ export default defineConfig({
                 },
             },
         }, */
-        rolldownOptions: {
+        /* rolldownOptions: {
             checks: {
                 // disable annoying "cloudflare took too long" warnings (can probably be removed
                 // once stable vite 8.0.0 releases)
                 pluginTimings: false,
             },
-        },
+        }, */
         chunkSizeWarningLimit: 2500,
     },
     publicDir: "client/public",

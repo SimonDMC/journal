@@ -28,27 +28,10 @@ export default function CalendarMonth(props: { monthIndex: number; entries: stri
     return (
         <div className="calendar-month">
             <div className="top-bar">
-                <div className="inner">
-                    <button className="arrow">
-                        <FontAwesomeIcon icon={faArrowLeft} />
-                    </button>
+                <div className="month-wrapper">
                     <span className="month">
                         {monthName} {actualYear}
                     </span>
-                    <button className="arrow">
-                        <FontAwesomeIcon icon={faArrowRight} />
-                    </button>
-                </div>
-            </div>
-            <div className="week-days">
-                <div className="inner">
-                    <span>M</span>
-                    <span>T</span>
-                    <span>W</span>
-                    <span>T</span>
-                    <span>F</span>
-                    <span>S</span>
-                    <span>S</span>
                 </div>
             </div>
             <div className="days">
