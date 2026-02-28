@@ -1,10 +1,15 @@
 {
   "current": {
-    "version": "0.0.21",
-    "desc": "Overhauled calendar",
-    "released": 1772215915912
+    "version": "0.0.22",
+    "desc": "Fixed arrow keys sometimes not switching months",
+    "released": 1772303001486
   },
   "history": [
+    {
+      "version": "0.0.22",
+      "desc": "Fixed arrow keys sometimes not switching months",
+      "released": 1772303001486
+    },
     {
       "version": "0.0.21",
       "desc": "Overhauled calendar",

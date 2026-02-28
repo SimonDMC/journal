@@ -24,6 +24,8 @@ function generateBuildMeta() {
         },
 
         generateBundle(_: OutputOptions, bundle: OutputBundle) {
+            if (!config.build.outDir.endsWith("client")) return;
+
             // compile asset list
             const assets = [...STATIC_ASSETS, ...Object.keys(bundle)];
 
@@ -35,6 +37,8 @@ function generateBuildMeta() {
         },
 
         closeBundle() {
+            if (!config.build.outDir.endsWith("client")) return;
+
             // log bundle size
             dirSize(path.join(__dirname, config.build.outDir)).then((size) => {
                 const sizeInMb = size / 1024 / 1024;
@@ -86,6 +90,7 @@ export default defineConfig({
                 { src: "versions.json", dest: "" },
                 { src: "client/src/sw.js", dest: "" },
             ],
+            silent: true,
         }),
     ],
     server: {
@@ -95,9 +100,7 @@ export default defineConfig({
         // This splits code into separate js/css files for npm each package, but since the app is always
         // downloaded and installed at once, the only metric that matters is the total bundle size,
         // which remains unchanged. Though it's still useful for auditing bundle size of each package.
-        //
-        // No longer works after switching to rolldown since its chunking system is different
-        /* rollupOptions: {
+        /* rolldownOptions: {
             output: {
                 manualChunks(id) {
                     if (id.includes("node_modules")) {
