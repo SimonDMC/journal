@@ -62,7 +62,6 @@ function getWeekIndex(date: Date) {
     if (dayOfWeekOfFirstOfMonth == -1) dayOfWeekOfFirstOfMonth = 6;
     const daysSinceMondayWeekOne = dayOfWeekOfFirstOfMonth + (date.getUTCDate() - 1);
     const weeksElapsed = Math.floor(daysSinceMondayWeekOne / 7);
-    console.log(dayOfWeekOfFirstOfMonth, daysSinceMondayWeekOne, weeksElapsed);
 
     return weeksElapsed;
 }

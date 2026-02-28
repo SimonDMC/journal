@@ -255,18 +255,25 @@ export default function Calendar(props: { entries: string[] }) {
                 intendedDay = newDate.getUTCDate();
             } else return;
 
+            // save cursor
             internalSelectedDay = newDate.toISOString().substring(0, 10);
             setSelectedDay(internalSelectedDay);
             sessionStorage.setItem("journal-cursor", internalSelectedDay);
 
+            // figure out how much we're moving by
             const newMonthIndex = newDate.getUTCFullYear() * 12 + newDate.getUTCMonth();
             const shownMonthIndex = dayAdjustedTime.getUTCFullYear() * 12 + dayAdjustedTime.getUTCMonth() + internalMonthOffset;
             const monthDelta = newMonthIndex - shownMonthIndex;
 
-            if (monthDelta != 0) {
-                targetOffset = width * -monthDelta;
-                animateSwipe();
+            // stop current glide animation if necessary
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
             }
+
+            // glide to correct month
+            targetOffset = width * -monthDelta;
+            animateSwipe();
         }
 
         // touch listeners specifically have to be added via addEventListener, otherwise they're
