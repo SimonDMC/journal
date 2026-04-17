@@ -33,7 +33,7 @@ export const Route = createFileRoute("/entry")({
     },
 });
 
-export function Entry() {
+function Entry() {
     const [wordCount, setWordCount] = useState(0);
     const navigate = useNavigate();
     const router = useRouter();

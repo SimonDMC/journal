@@ -9,8 +9,8 @@ import { useNavigate } from "@tanstack/react-router";
 
 export default function Calendar(props: { entries: string[] }) {
     // Entirely copied from https://github.com/SimonDMC/bidirectional-scroll
-    const [monthOffset, setMonthOffset] = useState(0);
-    const [selectedDay, setSelectedDay] = useState(today);
+    const [monthOffset, setMonthOffset] = useState(parseInt(sessionStorage.getItem("journal-month") ?? "0"));
+    const [selectedDay, setSelectedDay] = useState(sessionStorage.getItem("journal-cursor") ?? today);
     const navigate = useNavigate();
 
     // keeping the entire logic in a useEffect is "unreactful" but since it's entirely
@@ -40,8 +40,8 @@ export default function Calendar(props: { entries: string[] }) {
         // offset calculations
         let offset = 0;
         // useState variables, which don't receive state updates because of useEffect
-        let internalMonthOffset = 0;
-        let internalSelectedDay = today;
+        let internalMonthOffset = monthOffset;
+        let internalSelectedDay = selectedDay;
         // velocity with which the last swipe was released
         let velocity = 0;
         // currently ongoing animation frame id, used to cancel when another swipe is initiated
@@ -67,18 +67,6 @@ export default function Calendar(props: { entries: string[] }) {
             cancelAnimationFrame(measureFrameId);
             deltaTime = 300 / frames;
         }, 300);
-
-        // select the month and day that we had selected before
-        const retrievedMonthIndex = sessionStorage.getItem("journal-month");
-        if (retrievedMonthIndex) {
-            setMonthOffset(parseInt(retrievedMonthIndex));
-            internalMonthOffset = parseInt(retrievedMonthIndex);
-        }
-        const retrievedSelectedDay = sessionStorage.getItem("journal-cursor");
-        if (retrievedSelectedDay) {
-            setSelectedDay(retrievedSelectedDay);
-            internalSelectedDay = retrievedSelectedDay;
-        }
 
         function animateSwipe() {
             // linear interpolation

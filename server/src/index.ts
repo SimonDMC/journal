@@ -56,7 +56,7 @@ export default {
 
     async scheduled(controller: ScheduledController, env: Env) {
         switch (controller.cron) {
-            case "0 0 * * *":
+            case "0 0 * * MON":
                 await downloadDB(env);
                 break;
         }

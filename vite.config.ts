@@ -1,5 +1,5 @@
 import { defineConfig, type Connect, type ResolvedConfig, type ViteDevServer } from "vite";
-import react from "@vitejs/plugin-react-oxc";
+import react from "@vitejs/plugin-react";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { viteStaticCopy } from "vite-plugin-static-copy";
@@ -61,7 +61,7 @@ function spaFallback() {
     return {
         name: "spa-fallback",
         configureServer(server: ViteDevServer) {
-            server.middlewares.use((req: Connect.IncomingMessage, res: ServerResponse, next: Connect.NextFunction) => {
+            server.middlewares.use((req: Connect.IncomingMessage, _: ServerResponse, next: Connect.NextFunction) => {
                 // rewrite request back to / if it's a static request
                 if (req.method === "GET" && req.url && !req.url.startsWith("/api/") && req.headers.accept?.includes("text/html")) {
                     req.url = "/";
@@ -107,13 +107,6 @@ export default defineConfig({
                         return id.toString().split("node_modules/")[1].split("/")[0].toString();
                     }
                 },
-            },
-        }, */
-        /* rolldownOptions: {
-            checks: {
-                // disable annoying "cloudflare took too long" warnings (can probably be removed
-                // once stable vite 8.0.0 releases)
-                pluginTimings: false,
             },
         }, */
         chunkSizeWarningLimit: 2500,

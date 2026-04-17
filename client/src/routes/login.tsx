@@ -11,7 +11,7 @@ export const Route = createFileRoute("/login")({
     component: Login,
 });
 
-export function Login() {
+function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
