@@ -28,9 +28,16 @@ export async function downloadDB(env: Env) {
     // db has exported
     if (response.status == "complete" && response.result?.signed_url) {
         const exportResponse = await fetch(response.result.signed_url);
-        // stream directly into r2
+        const gzipStream = new CompressionStream("gzip");
+        const compressedStream = exportResponse.body!.pipeThrough(gzipStream);
+        // stream directly into r2, gzipped
         const today = new Date().toISOString().substring(0, 10);
-        await env.BUCKET.put(`${today}.sql`, exportResponse.body);
+        await env.BUCKET.put(`${today}.sql.gz`, compressedStream, {
+            httpMetadata: {
+                contentEncoding: "gzip",
+                contentType: "application/x-sql",
+            },
+        });
     }
 
     console.log("Database finished exporting!");
