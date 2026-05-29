@@ -1,6 +1,9 @@
 import "../styles/search.css";
 import { useEffect, useState } from "react";
-import SearchResult, { type SearchResults, type SearchResultType } from "../components/search-result/SearchResult";
+import SearchResult, {
+    type SearchResults,
+    type SearchResultType,
+} from "../components/search-result/SearchResult";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine } from "@fortawesome/free-solid-svg-icons";
 import { db } from "../database/db";
@@ -133,7 +136,9 @@ function Search() {
             if (event.ctrlKey) {
                 document.getElementById("plot-button")?.click();
             } else {
-                const activeResult = document.querySelector(".result.active :nth-child(2)") as HTMLElement;
+                const activeResult = document.querySelector(
+                    ".result.active :nth-child(2)",
+                ) as HTMLElement;
                 if (activeResult) activeResult.click();
             }
         }
@@ -144,6 +149,9 @@ function Search() {
     }
 
     async function search(query: string) {
+        // time how long search takes
+        const startTime = Date.now();
+
         setSearchQuery(query);
         // save in query params for back navigation
         navigate({
@@ -176,7 +184,11 @@ function Search() {
 
             const matches: RegExpExecArray[] = [];
             for (const queryFragment of query.split(" OR ")) {
-                matches.push(...entry.content.matchAll(new RegExp(queryFragment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi")));
+                matches.push(
+                    ...entry.content.matchAll(
+                        new RegExp(queryFragment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"),
+                    ),
+                );
             }
 
             const searchResult = { date: entry.date, matches: [] } as SearchResultType;
@@ -212,6 +224,12 @@ function Search() {
                     index: ++i,
                     query: match[0],
                 });
+
+                // only show max 5 instances within an entry, perf optimization
+                const instances = searchResult.matches.length;
+                if (instances > 5) {
+                    searchResult.matches.splice(4, instances - 5);
+                }
             }
             if (searchResult.matches.length > 0) {
                 results.push(searchResult);
@@ -221,7 +239,10 @@ function Search() {
         // sort results by date
         results.sort((a, b) => (a.date < b.date ? 1 : -1));
 
-        // only keep first 40 and last 10 results if there are more
+        // only keep first 40 and last 10 results if there are more (perf optimization)
+        // the philosophy behind this decision is as follows: i'm too lazy to add "show more" for
+        // now and if you're looking for something not too specific you likely care about the last
+        // time you mentioned it or the very first time
         const length = results.length;
         if (length > 50) {
             results.splice(40, length - 50);
@@ -236,6 +257,9 @@ function Search() {
 
         // save in sessionstorage for back navigation
         sessionStorage.setItem("journal-search-cache", JSON.stringify({ results, length }));
+
+        // log search time for perf auditing
+        console.log(`Search for '${query}' took ${Date.now() - startTime} ms`);
     }
 
     return (
@@ -252,7 +276,11 @@ function Search() {
                 <Link to="/search-plot" search={{ query: searchQuery }} id="plot-button">
                     <FontAwesomeIcon icon={faChartLine} />
                 </Link>
-                <p id="result-count">{searchQuery.length < 3 ? "" : `${results.length} result${results.length === 1 ? "" : "s"}`}</p>
+                <p id="result-count">
+                    {searchQuery.length < 3
+                        ? ""
+                        : `${results.length} result${results.length === 1 ? "" : "s"}`}
+                </p>
                 <div className="results">
                     {results.results.map((result, index) => (
                         <SearchResult
