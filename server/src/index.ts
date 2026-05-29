@@ -12,7 +12,11 @@ import { serverSyncHandle } from "./routes/server-sync";
 import { createAccountHandle } from "./routes/create-account";
 import { downloadDB } from "./cron";
 
-type Route = [method: string, path: RegExp, handler: (request: Request, env: Env) => Promise<Response>];
+type Route = [
+    method: string,
+    path: RegExp,
+    handler: (request: Request, env: Env) => Promise<Response>,
+];
 
 const routes: Route[] = [
     ["GET", /^overview$/, overviewHandle],

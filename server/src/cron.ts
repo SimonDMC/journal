@@ -29,10 +29,13 @@ export async function downloadDB(env: Env) {
     if (response.status == "complete" && response.result?.signed_url) {
         const exportResponse = await fetch(response.result.signed_url);
         const gzipStream = new CompressionStream("gzip");
+        // gzip whole database in memory, since R2 doesn't support direct streaming. if the
+        // database gets larger than ~50MB we'll have to start chunking and uploading in parts,
+        // but that's not a cause of concern right now
         const compressedStream = exportResponse.body!.pipeThrough(gzipStream);
-        // stream directly into r2, gzipped
+        const compressedBuffer = await new Response(compressedStream).arrayBuffer();
         const today = new Date().toISOString().substring(0, 10);
-        await env.BUCKET.put(`${today}.sql.gz`, compressedStream, {
+        await env.BUCKET.put(`${today}.sql.gz`, compressedBuffer, {
             httpMetadata: {
                 contentEncoding: "gzip",
                 contentType: "application/x-sql",
