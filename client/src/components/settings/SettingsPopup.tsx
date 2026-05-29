@@ -150,6 +150,11 @@ export default function SettingsPopup() {
                         )}
                         {selected == "debug" && (
                             <SettingsContent>
+                                <div className="settings-text debug-disclaimer">
+                                    These actions are for testing, debugging and diagnosing. I would
+                                    advise against using them unless you know what you're doing.
+                                </div>
+                                <SettingsSeparator />
                                 <SettingsButton
                                     label="Invoke Sync"
                                     desc="Force a server sync, uploading outstanding entries and downloading missing ones"
@@ -176,12 +181,12 @@ export default function SettingsPopup() {
                                 />
                                 <SettingsButton
                                     label="View Key Hash"
-                                    desc="Show a hash of your encryption key, useful for verifying it matches across clients"
+                                    desc="Show a hash of your encryption key, useful for verifying it matches across devices"
                                     actionLabel="View"
                                     action={showKeyHash}
                                 />
                                 <SettingsSeparator />
-                                <div className="build-info">
+                                <div className="settings-text build-info">
                                     Build <code>{__BUILD_INFO__.commitHash}</code> —{" "}
                                     {formatTimestampShort(__BUILD_INFO__.buildTimestamp)}.
                                     <br />

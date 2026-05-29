@@ -30,6 +30,7 @@
     gap: 0.1em;
     color: #ccc;
     border-right: 2px solid #222;
+    flex-shrink: 0;
 }
 
 .settings-tab {
@@ -101,12 +102,15 @@
 
 .settings-row .left {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
 }
 
 .settings-row .info-wrap {
     position: relative;
     padding: 0 0.2em;
+    height: 1em;
+    display: flex;
+    align-items: center;
 }
 
 .settings-row .info-icon {
@@ -130,7 +134,8 @@
     padding: 0.4em 0.6em;
     border-radius: 0.3em;
     z-index: 1;
-    translate: -50% calc(-100% - 1.7em);
+    /* x + 0.5em to account for tooltip drift to the left (?), y - 1.1 to move tooltip up */
+    translate: calc(-50% + 0.5em) calc(-50% - 1.1em);
     box-shadow: 0 0 0.5em #00000088;
     opacity: 0;
     pointer-events: none;
@@ -138,13 +143,25 @@
         opacity 0.2s,
         translate 0.2s;
     /* offset by parent scroll (not in translate to prevent interpolation) */
-    margin-top: calc(var(--scroll) * -1);
+    transform: translate(0, calc(var(--scroll) * -1));
 }
 
 .settings-row .info-wrap:hover .settings-tooltip {
     opacity: 1;
-    /* make it bottom-aligned instead of top-aligned */
-    translate: -50% calc(-100% - 1.8em);
+    /* make it bottom-aligned instead of center-aligned */
+    translate: calc(-50% + 0.5em) calc(-50% - 1.2em);
+}
+
+.settings-tooltip::after {
+    content: " ";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -0.5em;
+    border-width: 0.5em;
+    border-style: solid;
+    border-color: #222 transparent transparent transparent;
+    translate: 0 -1px;
 }
 
 .settings-button {
@@ -194,8 +211,11 @@
     background-color: #000;
 }
 
-.build-info {
+.settings-text {
     color: #ccc;
+}
+
+.build-info {
     user-select: text;
 }
 
@@ -222,7 +242,7 @@
         justify-content: center;
     }
 
-    .build-info {
+    .settings-text {
         font-size: 0.9em;
     }
 

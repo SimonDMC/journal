@@ -14,7 +14,10 @@ import SettingsPopup from "./components/settings/SettingsPopup";
 import { useSettings } from "./state/settings";
 
 // Create a new router instance
-export const router = createRouter({ routeTree, defaultPreload: "intent" /* defaultViewTransition: true */ });
+export const router = createRouter({
+    routeTree,
+    defaultPreload: "intent" /* defaultViewTransition: true */,
+});
 
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {
@@ -42,7 +45,6 @@ document.addEventListener("keydown", (e) => {
     if (settingsOpen) {
         // no other navigation below when settings are open
         e.stopImmediatePropagation();
-        console.log("BLOCKING ALL KEY INPUTS");
 
         if (e.key == "Escape" || (e.key == "," && e.ctrlKey)) {
             closeSettings();
@@ -61,6 +63,6 @@ if (!rootElement.innerHTML) {
             <ToastContainer transition={Slide} />
             <UpdatePopup />
             <SettingsPopup />
-        </StrictMode>
+        </StrictMode>,
     );
 }
