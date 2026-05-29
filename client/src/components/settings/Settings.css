@@ -15,7 +15,7 @@
     background-color: black;
     border: 2px solid #333;
     font-size: 1.5em;
-    border-radius: .3em;
+    border-radius: 0.3em;
     width: min(30em, 95vw);
     height: min(20em, 95vh);
     display: flex;
@@ -27,20 +27,21 @@
     width: 8em;
     display: flex;
     flex-direction: column;
-    gap: .1em;
+    gap: 0.1em;
     color: #ccc;
     border-right: 2px solid #222;
 }
 
 .settings-tab {
     cursor: pointer;
-    padding: .05em .3em;
+    padding: 0.05em 0.3em;
     border-radius: 5px;
     background-color: transparent;
-    transition: background-color .2s;
+    transition: background-color 0.2s;
 }
 
-.settings-tab:hover, .settings-tab.selected {
+.settings-tab:hover,
+.settings-tab.selected {
     background-color: #222;
 }
 
@@ -49,7 +50,7 @@
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: .3em;
+    gap: 0.3em;
     overflow-y: scroll;
     scrollbar-width: none;
 }
@@ -68,7 +69,7 @@
     display: flex;
     align-items: center;
     position: relative;
-    transition: background-color .2s;
+    transition: background-color 0.2s;
     font-size: 0.7em;
 }
 
@@ -90,11 +91,11 @@
     height: 1.3em;
     border-radius: 3em;
     background-color: #fff;
-    margin-left: .1em;
-    transition: transform .2s;
+    margin-left: 0.1em;
+    transition: transform 0.2s;
 }
 
-.settings-row .toggle-wrap input:checked+.circle {
+.settings-row .toggle-wrap input:checked + .circle {
     transform: translateX(1.2em);
 }
 
@@ -105,12 +106,12 @@
 
 .settings-row .info-wrap {
     position: relative;
-    padding: 0 .2em;
+    padding: 0 0.2em;
 }
 
 .settings-row .info-icon {
     color: #555;
-    width: .7em;
+    width: 0.7em;
 }
 
 .settings-row .right {
@@ -121,19 +122,21 @@
 
 .settings-tooltip {
     position: fixed;
-    font-size: .8em;
+    font-size: 0.8em;
     max-width: 25em;
     width: max-content;
     line-height: 1.1em;
     background-color: #222;
-    padding: .4em .6em;
-    border-radius: .3em;
+    padding: 0.4em 0.6em;
+    border-radius: 0.3em;
     z-index: 1;
     translate: -50% calc(-100% - 1.7em);
-    box-shadow: 0 0 .5em #00000088;
+    box-shadow: 0 0 0.5em #00000088;
     opacity: 0;
     pointer-events: none;
-    transition: opacity .2s, translate .2s;
+    transition:
+        opacity 0.2s,
+        translate 0.2s;
     /* offset by parent scroll (not in translate to prevent interpolation) */
     margin-top: calc(var(--scroll) * -1);
 }
@@ -148,9 +151,9 @@
     width: fit-content;
     color: #ccc;
     border: 2px solid #333;
-    font-size: .9em;
+    font-size: 0.9em;
     padding: 0.05em 0.4em;
-    border-radius: .3em;
+    border-radius: 0.3em;
     transition: background-color 0.2s;
 }
 
@@ -159,10 +162,10 @@
 }
 
 .settings-password {
-    font-size: .9em;
+    font-size: 0.9em;
     width: 10em;
-    padding-left: .3em;
-    border-radius: .3em;
+    padding-left: 0.3em;
+    border-radius: 0.3em;
 }
 
 .settings-password-row {
@@ -173,17 +176,18 @@
     height: 2px;
     min-height: 2px;
     width: 100%;
-    margin: .5em 0;
+    margin: 0.5em 0;
     background-color: #222;
 }
 
 .settings-select {
     font-family: inherit;
-    font-size: .9em;
+    font-size: 0.9em;
     color: #ccc;
     border: 2px solid #333;
-    border-radius: .3em;
+    border-radius: 0.3em;
     padding: 0.15em 0.2em;
+    background-color: transparent;
 }
 
 .settings-select option {
@@ -198,8 +202,8 @@
 .build-info code {
     font-size: 1.2em;
     background-color: #222;
-    padding: .1em .3em;
-    border-radius: .2em;
+    padding: 0.1em 0.3em;
+    border-radius: 0.2em;
 }
 
 @media (max-width: 600px) {
@@ -219,7 +223,7 @@
     }
 
     .build-info {
-        font-size: .9em;
+        font-size: 0.9em;
     }
 
     .settings-tooltip {
