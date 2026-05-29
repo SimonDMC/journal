@@ -4,13 +4,24 @@ import CalendarMonth from "./CalendarMonth";
 import { flushSync } from "react-dom";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { adjustTime, dayAdjustedTime, getDaysOfMonth, moveLeft, moveRight, today } from "../../util/time";
+import {
+    adjustTime,
+    dayAdjustedTime,
+    getDaysOfMonth,
+    moveLeft,
+    moveRight,
+    today,
+} from "../../util/time";
 import { useNavigate } from "@tanstack/react-router";
 
 export default function Calendar(props: { entries: string[] }) {
     // Entirely copied from https://github.com/SimonDMC/bidirectional-scroll
-    const [monthOffset, setMonthOffset] = useState(parseInt(sessionStorage.getItem("journal-month") ?? "0"));
-    const [selectedDay, setSelectedDay] = useState(sessionStorage.getItem("journal-cursor") ?? today);
+    const [monthOffset, setMonthOffset] = useState(
+        parseInt(sessionStorage.getItem("journal-month") ?? "0"),
+    );
+    const [selectedDay, setSelectedDay] = useState(
+        sessionStorage.getItem("journal-cursor") ?? today,
+    );
     const navigate = useNavigate();
 
     // keeping the entire logic in a useEffect is "unreactful" but since it's entirely
@@ -54,7 +65,7 @@ export default function Calendar(props: { entries: string[] }) {
         // the scroll offset we are animating to
         let targetOffset = 0;
 
-        // figure out approximate delta time over 300ms of measurement
+        // figure out approximate delta time over 1s of measurement
         let deltaTime = 1000 / 60;
         let frames = 0;
         let measureFrameId = 0;
@@ -65,8 +76,8 @@ export default function Calendar(props: { entries: string[] }) {
         measureFrameId = requestAnimationFrame(measureDelta);
         setTimeout(() => {
             cancelAnimationFrame(measureFrameId);
-            deltaTime = 300 / frames;
-        }, 300);
+            deltaTime = 1000 / frames;
+        }, 1000);
 
         function animateSwipe() {
             // linear interpolation
@@ -219,27 +230,51 @@ export default function Calendar(props: { entries: string[] }) {
             let newDate;
             if (e.key == "ArrowLeft") {
                 if (e.ctrlKey) {
-                    newDate = adjustTime(new Date(year - 1, month - 1, Math.min(intendedDay, getDaysOfMonth(year - 1, month - 1))));
+                    newDate = adjustTime(
+                        new Date(
+                            year - 1,
+                            month - 1,
+                            Math.min(intendedDay, getDaysOfMonth(year - 1, month - 1)),
+                        ),
+                    );
                 } else if (e.shiftKey) {
-                    newDate = adjustTime(new Date(year, month - 2, Math.min(intendedDay, getDaysOfMonth(year, month - 2))));
+                    newDate = adjustTime(
+                        new Date(
+                            year,
+                            month - 2,
+                            Math.min(intendedDay, getDaysOfMonth(year, month - 2)),
+                        ),
+                    );
                 } else {
                     newDate = moveLeft(internalSelectedDay);
                     intendedDay = newDate.getUTCDate();
                 }
             } else if (e.key == "ArrowRight") {
                 if (e.ctrlKey) {
-                    newDate = adjustTime(new Date(year + 1, month - 1, Math.min(intendedDay, getDaysOfMonth(year + 1, month - 1))));
+                    newDate = adjustTime(
+                        new Date(
+                            year + 1,
+                            month - 1,
+                            Math.min(intendedDay, getDaysOfMonth(year + 1, month - 1)),
+                        ),
+                    );
                 } else if (e.shiftKey) {
-                    newDate = adjustTime(new Date(year, month, Math.min(intendedDay, getDaysOfMonth(year, month))));
+                    newDate = adjustTime(
+                        new Date(year, month, Math.min(intendedDay, getDaysOfMonth(year, month))),
+                    );
                 } else {
                     newDate = moveRight(internalSelectedDay);
                     intendedDay = newDate.getUTCDate();
                 }
             } else if (e.key == "ArrowUp") {
-                newDate = new Date(new Date(internalSelectedDay).getTime() - 7 * 24 * 60 * 60 * 1000);
+                newDate = new Date(
+                    new Date(internalSelectedDay).getTime() - 7 * 24 * 60 * 60 * 1000,
+                );
                 intendedDay = newDate.getUTCDate();
             } else if (e.key == "ArrowDown") {
-                newDate = new Date(new Date(internalSelectedDay).getTime() + 7 * 24 * 60 * 60 * 1000);
+                newDate = new Date(
+                    new Date(internalSelectedDay).getTime() + 7 * 24 * 60 * 60 * 1000,
+                );
                 intendedDay = newDate.getUTCDate();
             } else return;
 
@@ -250,7 +285,10 @@ export default function Calendar(props: { entries: string[] }) {
 
             // figure out how much we're moving by
             const newMonthIndex = newDate.getUTCFullYear() * 12 + newDate.getUTCMonth();
-            const shownMonthIndex = dayAdjustedTime.getUTCFullYear() * 12 + dayAdjustedTime.getUTCMonth() + internalMonthOffset;
+            const shownMonthIndex =
+                dayAdjustedTime.getUTCFullYear() * 12 +
+                dayAdjustedTime.getUTCMonth() +
+                internalMonthOffset;
             const monthDelta = newMonthIndex - shownMonthIndex;
 
             // stop current glide animation if necessary
@@ -312,11 +350,31 @@ export default function Calendar(props: { entries: string[] }) {
                 </div>
             </div>
             <div id="calendar-wrapper">
-                <CalendarMonth monthIndex={monthOffset - 2} entries={props.entries} selectedDay={selectedDay} />
-                <CalendarMonth monthIndex={monthOffset - 1} entries={props.entries} selectedDay={selectedDay} />
-                <CalendarMonth monthIndex={monthOffset} entries={props.entries} selectedDay={selectedDay} />
-                <CalendarMonth monthIndex={monthOffset + 1} entries={props.entries} selectedDay={selectedDay} />
-                <CalendarMonth monthIndex={monthOffset + 2} entries={props.entries} selectedDay={selectedDay} />
+                <CalendarMonth
+                    monthIndex={monthOffset - 2}
+                    entries={props.entries}
+                    selectedDay={selectedDay}
+                />
+                <CalendarMonth
+                    monthIndex={monthOffset - 1}
+                    entries={props.entries}
+                    selectedDay={selectedDay}
+                />
+                <CalendarMonth
+                    monthIndex={monthOffset}
+                    entries={props.entries}
+                    selectedDay={selectedDay}
+                />
+                <CalendarMonth
+                    monthIndex={monthOffset + 1}
+                    entries={props.entries}
+                    selectedDay={selectedDay}
+                />
+                <CalendarMonth
+                    monthIndex={monthOffset + 2}
+                    entries={props.entries}
+                    selectedDay={selectedDay}
+                />
             </div>
         </div>
     );
