@@ -41,9 +41,24 @@ export default function SettingsPopup() {
                 >
                     <div className="settings-body">
                         <div className="settings-tabs">
-                            <SettingsTab id="general" label="General" setSelected={setSelected} selected={selected} />
-                            <SettingsTab id="security" label="Security" setSelected={setSelected} selected={selected} />
-                            <SettingsTab id="debug" label="Debug" setSelected={setSelected} selected={selected} />
+                            <SettingsTab
+                                id="general"
+                                label="General"
+                                setSelected={setSelected}
+                                selected={selected}
+                            />
+                            <SettingsTab
+                                id="security"
+                                label="Security"
+                                setSelected={setSelected}
+                                selected={selected}
+                            />
+                            <SettingsTab
+                                id="debug"
+                                label="Debug"
+                                setSelected={setSelected}
+                                selected={selected}
+                            />
                         </div>
                         {selected == "general" && (
                             <SettingsContent>
@@ -94,15 +109,24 @@ export default function SettingsPopup() {
                                     actionLabel="Upload"
                                     action={uploadKey}
                                 />
-                                <SettingsButton label="Download Key" actionLabel="Download" action={downloadKey} />
+                                <SettingsButton
+                                    label="Download Key"
+                                    actionLabel="Download"
+                                    action={downloadKey}
+                                />
                                 <SettingsSeparator />
                                 <SettingsSelect
                                     label="Secondary Auth"
                                     settingKey="security.secondary_auth"
                                     desc="Add a second layer of authentication to Journal"
-                                    options={{ none: "None", codeword: "Codeword", passkey: "Passkey" }}
+                                    options={{
+                                        none: "None",
+                                        codeword: "Codeword",
+                                        passkey: "Passkey",
+                                    }}
                                 />
-                                {settingsState.getString("security.secondary_auth") == "codeword" && (
+                                {settingsState.getString("security.secondary_auth") ==
+                                    "codeword" && (
                                     <SettingsPassword
                                         label="Set Codeword"
                                         desc="Set a codeword that you'll have to type every time you open Journal"
@@ -113,7 +137,8 @@ export default function SettingsPopup() {
                                         actionFail={setCodewordMismatched}
                                     />
                                 )}
-                                {settingsState.getString("security.secondary_auth") == "passkey" && (
+                                {settingsState.getString("security.secondary_auth") ==
+                                    "passkey" && (
                                     <SettingsButton
                                         label="Setup Passkey"
                                         desc="Setup a passkey, making you verify with a face or fingerprint scan every time you open Journal (based on what your device supports)"
@@ -157,9 +182,11 @@ export default function SettingsPopup() {
                                 />
                                 <SettingsSeparator />
                                 <div className="build-info">
-                                    Build <code>{__BUILD_INFO__.commitHash}</code> — {formatTimestampShort(__BUILD_INFO__.buildTimestamp)}.
+                                    Build <code>{__BUILD_INFO__.commitHash}</code> —{" "}
+                                    {formatTimestampShort(__BUILD_INFO__.buildTimestamp)}.
                                     <br />
-                                    Version <strong>v{getCurrentVersion()}</strong>. © SimonDMC, 2025.
+                                    Version <strong>v{getCurrentVersion()}</strong>. © SimonDMC,
+                                    2026.
                                 </div>
                             </SettingsContent>
                         )}
