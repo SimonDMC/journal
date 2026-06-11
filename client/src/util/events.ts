@@ -5,6 +5,7 @@ export const eventTarget = new EventTarget();
 type UpdateReadyDetail = {
     version: string;
     changelogs: string[];
+    updateMode: string;
 };
 
 export class UpdateReadyEvent extends CustomEvent<UpdateReadyDetail> {

@@ -1,7 +1,6 @@
 import { API_URL } from "../util/config";
 import "../styles/login.css";
 import { useEffect } from "react";
-import { checkForUpdate } from "../util/update";
 import { db } from "../database/db";
 import { errorToast } from "../util/toast";
 import { enforceAuth, RouteType } from "../util/auth";
@@ -16,7 +15,6 @@ function Login() {
 
     useEffect(() => {
         enforceAuth(navigate, RouteType.Unauthed);
-        checkForUpdate();
     }, [navigate]);
 
     async function login() {
@@ -49,7 +47,10 @@ function Login() {
             // TODO: Review this
             // wipe local database on login with a different account to prevent syncing entries with
             // another account
-            if (localStorage.getItem("journal-username") && localStorage.getItem("journal-username") != username) {
+            if (
+                localStorage.getItem("journal-username") &&
+                localStorage.getItem("journal-username") != username
+            ) {
                 await db.entries.clear();
             }
             localStorage.setItem("journal-username", username);
@@ -99,8 +100,9 @@ function Login() {
             </div>
             <dialog onClick={closeInfo}>
                 <p>
-                    This is an app I use for keeping a daily personal journal. There is no way to create an account yet, I want to work on
-                    it a bit more before I make it public. But it will be, some day. Shoot me a message if you want an account.
+                    This is an app I use for keeping a daily personal journal. There is no way to
+                    create an account yet, I want to work on it a bit more before I make it public.
+                    But it will be, some day. Shoot me a message if you want an account.
                 </p>
                 <form method="dialog">
                     <button>Close</button>

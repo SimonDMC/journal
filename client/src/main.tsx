@@ -12,6 +12,7 @@ import { syncDatabase } from "./database/sync";
 import { runMigrations } from "./util/migrations";
 import SettingsPopup from "./components/settings/SettingsPopup";
 import { useSettings } from "./state/settings";
+import { checkForUpdate, invokeUpdatePopup } from "./util/update";
 
 // Create a new router instance
 export const router = createRouter({
@@ -29,12 +30,30 @@ declare module "@tanstack/react-router" {
 // Figure out if we need a bottom mobile PWA margin
 const bottomMarginVisible = window.matchMedia("(display-mode: standalone)").matches ? true : false;
 
-// Sync on page load (once per session)
+// Sync database at the beginning of the session
 if (!sessionStorage.getItem("journal-synced")) {
-    // then run potential migrations
+    // and then run potential migrations
     syncDatabase().then(() => runMigrations());
     sessionStorage.setItem("journal-synced", "true");
 }
+
+// Check for update -- only once, at the beginning of the session, unless it's available and
+// wasn't dismissed
+async function checkForUpdateIfDesired() {
+    if (!sessionStorage.getItem("journal-update-undesired")) {
+        const updatePolicy = useSettings.getState().getString("general.update_policy");
+        if (updatePolicy == "manual") return;
+
+        const versionsFile = await checkForUpdate();
+        if (!versionsFile) {
+            sessionStorage.setItem("journal-update-undesired", "true");
+            return;
+        }
+
+        invokeUpdatePopup(versionsFile, updatePolicy);
+    }
+}
+checkForUpdateIfDesired();
 
 // Global settings keybind
 const { openSettings, closeSettings } = useSettings.getState();

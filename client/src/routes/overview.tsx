@@ -4,7 +4,6 @@ import Calendar from "../components/calendar/Calendar";
 import ProfileIcon from "../components/profile-icon/ProfileIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { checkForUpdate } from "../util/update";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "../database/db";
 import { enforceAuth, RouteType } from "../util/auth";
@@ -12,6 +11,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { dayAdjustedTime, today } from "../util/time";
 import { eventTarget, KeyCreateEvent, OfflineModeEvent } from "../util/events";
 import { useSettings } from "../state/settings";
+import { getCurrentVersion } from "../util/update";
+import { infoToast } from "../util/toast";
 
 export const Route = createFileRoute("/overview")({
     component: Overview,
@@ -27,12 +28,21 @@ function Overview() {
     const [offline, setOffline] = useState(false);
 
     const entriesFull = useLiveQuery(() => db.entries.toArray()) ?? [];
-    const entryDates = entriesFull.filter((entry) => entry.content !== null).map((entry) => entry.date);
+    const entryDates = entriesFull
+        .filter((entry) => entry.content !== null)
+        .map((entry) => entry.date);
     const wordCount = entriesFull.reduce((acc, cur) => (acc += cur.word_count), 0);
 
     useEffect(() => {
         enforceAuth(navigate, RouteType.Authed);
-        checkForUpdate();
+
+        // Show popup if we auto-updated
+        if (sessionStorage.getItem("journal-updated-automatically") && getCurrentVersion()) {
+            console.log(`Updated Journal to ${getCurrentVersion()}!`);
+            infoToast(`Updated Journal to ${getCurrentVersion()}!`);
+            // TODO: fix update toast appearing before reload, thus immediately disappearing
+            sessionStorage.removeItem("journal-updated-automatically");
+        }
 
         // check key status
         if (!localStorage.getItem("journal-key")) setKeyExists(false);
@@ -99,7 +109,12 @@ function Overview() {
                 Today
             </Link>
             {showOneYearAgoEnabled && (
-                <Link to="/entry" search={{ date: oneYearAgo }} id="lastYear" className={`nav-link ${oneYearAgoExists || "inactive"}`}>
+                <Link
+                    to="/entry"
+                    search={{ date: oneYearAgo }}
+                    id="lastYear"
+                    className={`nav-link ${oneYearAgoExists || "inactive"}`}
+                >
                     One Year Ago
                 </Link>
             )}

@@ -14,7 +14,7 @@ import SettingsSelect from "./SettingsSelect";
 import { setCodeword, setCodewordMismatched, setupPasskey } from "../../settings/auth";
 import { syncDatabase } from "../../database/sync";
 import SettingsContent from "./SettingsContent";
-import { forceReload, getCurrentVersion } from "../../util/update";
+import { checkForUpdateManually, forceReload, getCurrentVersion } from "../../util/update";
 import { showKeyHash } from "../../util/encryption";
 import { wipeLocalDatabase } from "../../settings/debug";
 import { formatTimestampShort } from "../../util/time";
@@ -83,6 +83,23 @@ export default function SettingsPopup() {
                                     desc="Download a copy of all your entries"
                                     actionLabel="Export"
                                     action={exportEntries}
+                                />
+                                <SettingsSeparator />
+                                <SettingsSelect
+                                    label="Update Policy"
+                                    settingKey="general.update_policy"
+                                    desc="Choose whether Journal should check for updates, and whether they should install automatically or only upon confirmation"
+                                    options={{
+                                        silent: "Silent",
+                                        automatic: "Automatic",
+                                        confirm: "Confirm",
+                                        manual: "Manual",
+                                    }}
+                                />
+                                <SettingsButton
+                                    label="Check for Updates"
+                                    actionLabel="Check"
+                                    action={checkForUpdateManually}
                                 />
                             </SettingsContent>
                         )}

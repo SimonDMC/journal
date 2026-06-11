@@ -5,14 +5,15 @@ const DEFAULTS: Record<string, unknown> = {
     "general.show_mood": true,
     "general.show_stats": true,
     "general.show_one_year_ago": true,
+    "general.update_policy": "confirm",
     "security.secondary_auth": "none",
 };
 
 type SettingsState = {
     settings: Record<string, unknown>;
     getSetting: (key: string) => unknown;
-    getBoolean: (key: string) => boolean | undefined;
-    getString: (key: string) => string | undefined;
+    getBoolean: (key: string) => boolean;
+    getString: (key: string) => string;
     setSetting: (key: string, value: unknown) => void;
     settingsOpen: boolean;
     openSettings: () => void;
@@ -31,11 +32,11 @@ export const useSettings = create<SettingsState>()(
             },
 
             getBoolean: (key) => {
-                return get().getSetting(key) as boolean | undefined;
+                return get().getSetting(key) as boolean;
             },
 
             getString: (key) => {
-                return get().getSetting(key) as string | undefined;
+                return get().getSetting(key) as string;
             },
 
             setSetting: (key, value) => {
@@ -51,8 +52,8 @@ export const useSettings = create<SettingsState>()(
         {
             name: `journal-settings`, // storage key
             partialize: (state) => ({ settings: state.settings }), // only persist settings
-        }
-    )
+        },
+    ),
 );
 
 export function getUserName() {

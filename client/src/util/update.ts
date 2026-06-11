@@ -1,4 +1,6 @@
 import { eventTarget, UpdateReadyEvent } from "./events";
+import { useSettings } from "../state/settings";
+import { infoToast } from "./toast";
 
 type VersionsFile = {
     current: {
@@ -17,38 +19,67 @@ export function getCurrentVersion() {
     return localStorage.getItem("journal-version");
 }
 
-export async function checkForUpdate() {
-    let json;
+export async function checkForUpdate(): Promise<VersionsFile | null> {
+    let versionsFile;
     try {
         const res = await fetch("/versions.json");
-        json = (await res.json()) as VersionsFile;
+        versionsFile = (await res.json()) as VersionsFile;
     } catch {
-        console.log("Couldn't fetch version data.");
-        return;
+        console.error("Couldn't fetch version data.");
+        return null;
     }
-    const version = json.current.version;
+    const latestVersion = versionsFile.current.version;
 
     // install update if newer
     const currentVersion = getCurrentVersion();
     if (!currentVersion) {
         forceReload();
-        return;
+        return null;
     }
 
-    if (compareVersions(currentVersion, version)) {
-        const keys = await caches.keys();
-        if (!keys.includes(`journal-cache-${version}`)) {
-            await installApp(version);
-        }
-
-        eventTarget.dispatchEvent(
-            new UpdateReadyEvent({
-                version,
-                // only show what's new
-                changelogs: json.history.filter((v) => compareVersions(currentVersion, v.version)).map((v) => v.desc),
-            }),
-        );
+    // check successful if latest version is ahead of current
+    if (compareVersions(currentVersion, latestVersion)) {
+        return versionsFile;
     }
+
+    // otherwise no update exists
+    return null;
+}
+
+export async function checkForUpdateManually() {
+    const versionsFile = await checkForUpdate();
+    if (versionsFile) {
+        // to prevent popup stacking, close the settings popup and open the update popup
+        invokeUpdatePopup(versionsFile, "confirm");
+        useSettings.getState().closeSettings();
+    } else {
+        // inform about no update found
+        infoToast("No update available.");
+    }
+}
+
+export async function invokeUpdatePopup(versionsFile: VersionsFile, updateMode: string) {
+    const currentVersion = getCurrentVersion();
+    if (!currentVersion) {
+        forceReload();
+        return null;
+    }
+
+    const keys = await caches.keys();
+    if (!keys.includes(`journal-cache-${versionsFile.current.version}`)) {
+        await installApp(versionsFile.current.version);
+    }
+
+    eventTarget.dispatchEvent(
+        new UpdateReadyEvent({
+            version: versionsFile.current.version,
+            // only show what's new
+            changelogs: versionsFile.history
+                .filter((v) => compareVersions(currentVersion, v.version))
+                .map((v) => v.desc),
+            updateMode,
+        }),
+    );
 }
 
 // returns true if versionA is older, false otherwise
