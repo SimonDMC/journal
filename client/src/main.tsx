@@ -13,6 +13,7 @@ import { runMigrations } from "./util/migrations";
 import SettingsPopup from "./components/settings/SettingsPopup";
 import { useSettings } from "./state/settings";
 import { checkForUpdate, invokeUpdatePopup } from "./util/update";
+import { injectAppropriateManifest } from "./util/pwa";
 
 // Create a new router instance
 export const router = createRouter({
@@ -70,6 +71,9 @@ document.addEventListener("keydown", (e) => {
         }
     }
 });
+
+// Add manifest.json
+injectAppropriateManifest();
 
 // Render the app
 const rootElement = document.getElementById("root")!;

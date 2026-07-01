@@ -1,0 +1,16 @@
+{
+    "name": "Journal",
+    "description": "Until I can preserve my memories indefinitely, this will have to do.",
+    "icons": [
+        {
+            "src": "pwa-apple.png",
+            "type": "image/png",
+            "sizes": "1024x1024"
+        }
+    ],
+    "id": "com.simondmc.journal",
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#000000"
+}

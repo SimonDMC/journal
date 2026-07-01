@@ -3,10 +3,9 @@
     "description": "Until I can preserve my memories indefinitely, this will have to do.",
     "icons": [
         {
-            "src": "maskable.png",
+            "src": "pwa-default.png",
             "type": "image/png",
-            "sizes": "512x512",
-            "purpose": "maskable any"
+            "sizes": "512x512"
         }
     ],
     "id": "com.simondmc.journal",
