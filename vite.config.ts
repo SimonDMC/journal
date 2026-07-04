@@ -43,7 +43,10 @@ function generateBuildMeta() {
             dirSize(path.join(__dirname, config.build.outDir)).then((size) => {
                 const sizeInMb = size / 1024 / 1024;
                 const roundedSize = Math.round(sizeInMb * 100) / 100;
-                console.log(chalk.cyan("Bundle size:"), chalk.bold(chalk.yellow(`${roundedSize} MB`)));
+                console.log(
+                    chalk.cyan("Bundle size:"),
+                    chalk.bold(chalk.yellow(`${roundedSize} MB`)),
+                );
             });
         },
     };
@@ -61,13 +64,20 @@ function spaFallback() {
     return {
         name: "spa-fallback",
         configureServer(server: ViteDevServer) {
-            server.middlewares.use((req: Connect.IncomingMessage, _: ServerResponse, next: Connect.NextFunction) => {
-                // rewrite request back to / if it's a static request
-                if (req.method === "GET" && req.url && !req.url.startsWith("/api/") && req.headers.accept?.includes("text/html")) {
-                    req.url = "/";
-                }
-                next();
-            });
+            server.middlewares.use(
+                (req: Connect.IncomingMessage, _: ServerResponse, next: Connect.NextFunction) => {
+                    // rewrite request back to / if it's a static request
+                    if (
+                        req.method === "GET" &&
+                        req.url &&
+                        !req.url.startsWith("/api/") &&
+                        req.headers.accept?.includes("text/html")
+                    ) {
+                        req.url = "/";
+                    }
+                    next();
+                },
+            );
         },
     };
 }
@@ -88,7 +98,13 @@ export default defineConfig({
         viteStaticCopy({
             targets: [
                 { src: "versions.json", dest: "" },
-                { src: "client/src/sw.js", dest: "" },
+                {
+                    src: "client/src/sw.js",
+                    dest: "",
+                    rename: {
+                        stripBase: 2,
+                    },
+                },
             ],
             silent: true,
         }),
