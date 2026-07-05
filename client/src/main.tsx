@@ -61,12 +61,18 @@ const { openSettings, closeSettings } = useSettings.getState();
 document.addEventListener("keydown", (e) => {
     const { settingsOpen } = useSettings.getState();
 
-    if (e.key == "," && e.ctrlKey) openSettings();
+    const isMac = navigator.platform.toLowerCase().includes("mac");
+    // allow ^, on mac since ⌘, is swallowed by safari (but not chrome)
+    const isModifierPressed = e.ctrlKey || (isMac && e.metaKey);
+    if (e.key == "," && isModifierPressed) {
+        e.preventDefault();
+        openSettings();
+    }
     if (settingsOpen) {
         // no other navigation below when settings are open
         e.stopImmediatePropagation();
 
-        if (e.key == "Escape" || (e.key == "," && e.ctrlKey)) {
+        if (e.key == "Escape" || (e.key == "," && isModifierPressed)) {
             closeSettings();
         }
     }

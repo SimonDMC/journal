@@ -3,7 +3,10 @@ import { useEffect, useRef } from "react";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { enforceAuth, logout, RouteType } from "../util/auth";
-import { generateAuthenticationOptions, verifyAuthenticationResponse } from "@simplewebauthn/server";
+import {
+    generateAuthenticationOptions,
+    verifyAuthenticationResponse,
+} from "@simplewebauthn/server";
 import { startAuthentication } from "@simplewebauthn/browser";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useSettings } from "../state/settings";
@@ -25,6 +28,7 @@ function Passkey() {
                 const passkey = useSettings.getState().getSetting("data.passkey") as Passkey;
                 const optionsJSON = await generateAuthenticationOptions({
                     rpID: window.location.hostname,
+                    userVerification: "required",
                     allowCredentials: [
                         {
                             id: passkey.id!,

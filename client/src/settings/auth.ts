@@ -48,8 +48,7 @@ export async function setupPasskey() {
         attestationType: "none",
         authenticatorSelection: {
             residentKey: "preferred",
-            userVerification: "preferred",
-            authenticatorAttachment: "platform",
+            userVerification: "required",
         },
     });
 

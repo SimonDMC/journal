@@ -229,6 +229,7 @@ export default function Calendar(props: { entries: string[] }) {
 
             let newDate;
             if (e.key == "ArrowLeft") {
+                // cannot macOS-ify this keybind, since ⌘←/⌘→ are hotkeys for desktop swapping
                 if (e.ctrlKey) {
                     newDate = adjustTime(
                         new Date(
