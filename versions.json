@@ -1,10 +1,15 @@
 {
   "current": {
-    "version": "0.0.24",
-    "desc": "Fixed safari, changed search styling",
-    "released": 1783249259681
+    "version": "0.0.25",
+    "desc": "Fixed 2FA passkey verification mismatch",
+    "released": 1783268137192
   },
   "history": [
+    {
+      "version": "0.0.25",
+      "desc": "Fixed 2FA passkey verification mismatch",
+      "released": 1783268137192
+    },
     {
       "version": "0.0.24",
       "desc": "Fixed safari, changed search styling",
