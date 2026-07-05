@@ -1,10 +1,15 @@
 {
   "current": {
-    "version": "0.0.23",
-    "desc": "Improved search performance, visual tweaks",
-    "released": 1780052149270
+    "version": "0.0.24",
+    "desc": "Fixed safari, changed search styling",
+    "released": 1783249259681
   },
   "history": [
+    {
+      "version": "0.0.24",
+      "desc": "Fixed safari, changed search styling",
+      "released": 1783249259681
+    },
     {
       "version": "0.0.23",
       "desc": "Improved search performance, visual tweaks",

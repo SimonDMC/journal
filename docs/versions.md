@@ -15,7 +15,8 @@ installed version number, the client displays an update popup.
 ### Versioning CLI
 
 To publish, unpublish, and modify versions, use the versioning CLI, accessed via the `version`
-command. Do not edit the versioning file directly.
+command. Do not edit the versioning file directly. If your shell reports the `version` command
+couldn't be found, register it first by running `npm link`, or prefix all commands with `npm exec`.
 
 - `version add <number> <changelog>` publishes a new version, e.g. `version add 1.1.3 Bug fixes`.
 - `version remove <number>` unpublishes a version, e.g. `version remove 1.1.3`.
