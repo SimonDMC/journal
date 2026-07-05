@@ -21,7 +21,9 @@ export const loginHandle = async (request: Request, env: Env): Promise<Response>
     const password = body.password;
 
     // check if valid login
-    const user = await env.DB.prepare("SELECT password, id FROM Users WHERE username = ?").bind(username).all();
+    const user = await env.DB.prepare("SELECT password, id FROM Users WHERE username = ?")
+        .bind(username)
+        .all();
 
     if (user.results.length === 0) {
         return new Response("Unauthorized", { status: 401 });
@@ -38,11 +40,18 @@ export const loginHandle = async (request: Request, env: Env): Promise<Response>
     const token = crypto.randomUUID().toString();
 
     // insert session into database
-    await env.DB.prepare("INSERT INTO sessions (user_id, token) VALUES (?, ?);").bind(user_id, token).all();
+    await env.DB.prepare("INSERT INTO sessions (user_id, token) VALUES (?, ?);")
+        .bind(user_id, token)
+        .all();
+
+    // don't force secure cookie if on localhost (safari cares)
+    const host = new URL(request.url).host;
+    const isLocalhost =
+        host.includes("localhost") || host.includes("127.0.0.1") || host.includes("[::1]");
 
     return new Response("OK", {
         headers: {
-            "Set-Cookie": `session=${token}; Path=/; HttpOnly; SameSite=Strict; Secure; Max-Age=${60 * 60 * 24 * 365}`,
+            "Set-Cookie": `session=${token}; Path=/; HttpOnly; SameSite=Strict; ${isLocalhost ? "" : "Secure;"} Max-Age=${60 * 60 * 24 * 365}`,
         },
     });
 };

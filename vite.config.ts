@@ -102,7 +102,7 @@ export default defineConfig({
                     src: "client/src/sw.js",
                     dest: "",
                     rename: {
-                        stripBase: 2,
+                        stripBase: true,
                     },
                 },
             ],

@@ -42,6 +42,9 @@ function Search() {
     const navigate = useNavigate();
     const initialParams = Route.useSearch();
 
+    const SEARCH_MIN_PADDING = window.innerWidth < 600 ? 15 : 30;
+    const SEARCH_MAX_PADDING = 70;
+
     const entries = useLiveQuery(() => db.entries.toArray())?.map((entry) => {
         if (entry.content == null) return entry;
         // strip html
@@ -172,12 +175,6 @@ function Search() {
             }
         }
 
-        // extra context for mobile
-        let extraContext = 0;
-        if (window.innerWidth < 600) {
-            extraContext = 8;
-        }
-
         const results: SearchResultType[] = [];
         for (const entry of entries ?? []) {
             if (entry.content === null) continue;
@@ -199,18 +196,22 @@ function Search() {
                 // cut context
                 let fromStart = false;
                 let fromEnd = false;
-                let startIndex = match.index - 20 - extraContext;
-                let endIndex = match.index + 25 + extraContext;
-                // if there's extra space on either side, adjust
-                if (startIndex < 0) {
+                let startIndex = match.index - SEARCH_MIN_PADDING;
+                let endIndex = match.index + SEARCH_MAX_PADDING;
+                // if the snippet is near the beginning of the entry, adjust start and end points
+                if (startIndex <= 0) {
                     endIndex -= startIndex - 2;
                     startIndex = 0;
                     fromStart = true;
                 }
-                if (endIndex > entry.content.length) {
+                // if we're close to the end, switch to end-only display
+                if (match.index + SEARCH_MIN_PADDING > entry.content.length) {
                     startIndex -= endIndex - entry.content.length + 2;
                     // edge case where the whole entry is shorter than the context window
-                    startIndex = Math.max(0, startIndex);
+                    if (startIndex < 0) {
+                        startIndex = 0;
+                        fromStart = true;
+                    }
                     endIndex = entry.content.length;
                     fromEnd = true;
                 }

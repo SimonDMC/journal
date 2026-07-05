@@ -50,7 +50,7 @@
 }
 
 /* i wish i knew why this is necessary, but it fixes line spacing */
-.safari .ck-content {
+.ios .ck-content {
     background-size: 100% calc(1.8em - 0.7px);
 }
 

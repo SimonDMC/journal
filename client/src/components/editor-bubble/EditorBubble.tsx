@@ -1,7 +1,7 @@
 import "./EditorBubble.css";
 import Select, { type SelectInstance } from "react-select";
 import { useEffect, useState, type MutableRefObject } from "react";
-import { moods, locations } from "../../util/parameters";
+import { moods } from "../../util/parameters";
 import { today } from "../../util/time";
 import { useSettings } from "../../state/settings";
 
@@ -28,7 +28,8 @@ export default function EditorBubble(props: {
         indicatorsContainer: () => "select-indicators-container",
         menu: () => "select-menu",
         menuList: () => "select-menu-list",
-        option: ({ isSelected }: { isSelected: boolean }) => (isSelected ? "select-option selected" : "select-option"),
+        option: ({ isSelected }: { isSelected: boolean }) =>
+            isSelected ? "select-option selected" : "select-option",
     };
 
     const [shouldSave, setShouldSave] = useState(false);
@@ -66,24 +67,6 @@ export default function EditorBubble(props: {
                         openMenuOnFocus={true}
                     />
                 )}
-                {
-                    /* only show location if in 2024 */
-                    props.date.substring(0, 4) === "2024" && (
-                        <Select
-                            instanceId="location"
-                            options={locations}
-                            placeholder="Location"
-                            value={locations.find((location) => location.value === props.location)}
-                            menuPlacement="top"
-                            isSearchable={false}
-                            onChange={(option) => {
-                                if (option) props.setLocation(option.value);
-                                if (props.date == today) setShouldSave(true);
-                            }}
-                            classNames={selectStyles}
-                        />
-                    )
-                }
             </div>
             <button type="button" onClick={() => props.saveEntry()} id="save-button">
                 Save

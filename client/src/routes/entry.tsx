@@ -42,7 +42,7 @@ function Entry() {
     const { date } = Route.useSearch();
 
     const [initialContent, setInitialContent] = useState("");
-    const [isSafari, setIsSafari] = useState(false);
+    const [isIOS, setIsIOS] = useState(false);
     const [quoteImageOpen, setQuoteImageOpen] = useState(false);
     const [editorLoaded, setEditorLoaded] = useState(false);
     const [mood, setMood] = useState<number | null>(null);
@@ -51,7 +51,7 @@ function Entry() {
     useEffect(() => {
         enforceAuth(navigate, RouteType.Authed);
 
-        setIsSafari((navigator.vendor && navigator.vendor.indexOf("Apple") > -1) as boolean);
+        setIsIOS(navigator.userAgent.includes("iPhone") as boolean);
 
         // load entry
         db.entries.get(date).then(async (data) => {
@@ -101,13 +101,18 @@ function Entry() {
             }
 
             // refocus entry
-            if ((event.key == "Enter" || event.key == " ") && !document.activeElement?.classList.contains("ck-content")) {
+            if (
+                (event.key == "Enter" || event.key == " ") &&
+                !document.activeElement?.classList.contains("ck-content")
+            ) {
                 moveCursorToEnd(document.querySelector(".ck-content")!);
                 event.preventDefault();
             }
 
-            // capture ctrl + s
-            if (event.key === "s" && event.ctrlKey) {
+            // save
+            const isMac = navigator.platform.toLowerCase().includes("mac");
+            const isModifierPressed = isMac ? event.metaKey : event.ctrlKey;
+            if (event.key === "s" && isModifierPressed) {
                 // prevent the browser from opening the save dialog
                 event.preventDefault();
 
@@ -204,9 +209,9 @@ function Entry() {
     }
 
     return (
-        <main className={`entry ${isSafari ? "safari" : ""}`}>
+        <main className={`entry ${isIOS ? "ios" : ""}`}>
             {editorLoaded || <div id="loadingEntry">Loading...</div>}
-            <div className={`content ${date?.substring(0, 4) === "2024" && "short"}`}>
+            <div className="content">
                 {editorLoaded && <div className="line"></div>}
                 <Editor
                     content={initialContent}
