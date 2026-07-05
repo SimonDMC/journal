@@ -24,7 +24,7 @@ export const uploadHandle = async (request: Request, env: Env): Promise<Response
     }
 
     // wipe existing entries
-    await env.DB.prepare("DELETE FROM Entries WHERE user_id = ?;").bind(user_id).all();
+    await env.DB.prepare("DELETE FROM Entries WHERE user_id = ?;").bind(user_id).run();
 
     // Split the results into chunks
     for (let i = 0; i < entries.length; i += MAX_ROWS) {
@@ -45,10 +45,10 @@ export const uploadHandle = async (request: Request, env: Env): Promise<Response
 
         // Execute the query for this chunk
         await env.DB.prepare(
-            `INSERT INTO Entries (user_id, date, content, word_count, mood, location, hash, last_modified) VALUES ${placeholders};`
+            `INSERT INTO Entries (user_id, date, content, word_count, mood, location, hash, last_modified) VALUES ${placeholders};`,
         )
             .bind(...values)
-            .all();
+            .run();
     }
 
     return new Response("OK");

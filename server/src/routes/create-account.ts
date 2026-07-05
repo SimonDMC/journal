@@ -22,9 +22,9 @@ export const createAccountHandle = async (request: Request, env: Env): Promise<R
         return new Response("Unauthorized", { status: 401 });
     }
 
-    env.DB.prepare("INSERT INTO Users (username, password) VALUES (?, ?);")
+    await env.DB.prepare("INSERT INTO Users (username, password) VALUES (?, ?);")
         .bind(body.username, await bcrypt.hash(body.password, 10))
-        .all();
+        .run();
 
     return new Response("OK");
 };

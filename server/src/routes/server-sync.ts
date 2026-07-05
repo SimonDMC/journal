@@ -44,10 +44,10 @@ export const serverSyncHandle = async (request: Request, env: Env): Promise<Resp
 				word_count = excluded.word_count,
 				hash = excluded.hash,
 				last_modified = excluded.last_modified;
-		`
+		`,
         )
             .bind(...values)
-            .all();
+            .run();
     }
 
     return new Response("OK");

@@ -36,20 +36,33 @@ export const setEntryHandle = async (request: Request, env: Env): Promise<Respon
     const hash = body.hash;
 
     // get entry for today if it exists
-    const entry = await env.DB.prepare("SELECT id FROM Entries WHERE user_id = ? AND date = ?;").bind(user_id, date).all();
+    const entry = await env.DB.prepare("SELECT id FROM Entries WHERE user_id = ? AND date = ?;")
+        .bind(user_id, date)
+        .all();
 
     if (entry.results.length === 0) {
         // add entry if it doesn't exist
-        await env.DB.prepare("INSERT INTO Entries (user_id, date, content, word_count, mood, location, hash) VALUES (?, ?, ?, ?, ?, ?, ?);")
+        await env.DB.prepare(
+            "INSERT INTO Entries (user_id, date, content, word_count, mood, location, hash) VALUES (?, ?, ?, ?, ?, ?, ?);",
+        )
             .bind(user_id, date, content, word_count, mood, location, hash)
-            .all();
+            .run();
     } else {
         // update entry if it does exist
         await env.DB.prepare(
-            "UPDATE Entries SET content = ?, word_count = ?, mood = ?, location = ?, hash = ?, last_modified = ? WHERE user_id = ? AND date = ?;"
+            "UPDATE Entries SET content = ?, word_count = ?, mood = ?, location = ?, hash = ?, last_modified = ? WHERE user_id = ? AND date = ?;",
         )
-            .bind(content, word_count, mood, location, hash, new Date().toISOString(), user_id, date)
-            .all();
+            .bind(
+                content,
+                word_count,
+                mood,
+                location,
+                hash,
+                new Date().toISOString(),
+                user_id,
+                date,
+            )
+            .run();
     }
 
     return new Response("OK");

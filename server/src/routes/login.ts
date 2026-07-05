@@ -42,7 +42,7 @@ export const loginHandle = async (request: Request, env: Env): Promise<Response>
     // insert session into database
     await env.DB.prepare("INSERT INTO sessions (user_id, token) VALUES (?, ?);")
         .bind(user_id, token)
-        .all();
+        .run();
 
     // don't force secure cookie if on localhost (safari cares)
     const host = new URL(request.url).host;
