@@ -1,5 +1,5 @@
 import "../styles/entry.css";
-import { type MutableRefObject, useEffect, useRef, useState } from "react";
+import { type RefObject, useEffect, useRef, useState } from "react";
 import EditorBubble from "../components/editor-bubble/EditorBubble.tsx";
 import { db } from "../database/db.ts";
 import { syncEntry } from "../database/sync.ts";
@@ -38,11 +38,10 @@ function Entry() {
     const navigate = useNavigate();
     const router = useRouter();
     const contentRef = useRef("");
-    const moodSelectRef: MutableRefObject<SelectInstance | null> = useRef(null);
+    const moodSelectRef: RefObject<SelectInstance | null> = useRef(null);
     const { date } = Route.useSearch();
 
     const [initialContent, setInitialContent] = useState("");
-    const [isIOS, setIsIOS] = useState(false);
     const [quoteImageOpen, setQuoteImageOpen] = useState(false);
     const [editorLoaded, setEditorLoaded] = useState(false);
     const [mood, setMood] = useState<number | null>(null);
@@ -50,8 +49,6 @@ function Entry() {
 
     useEffect(() => {
         enforceAuth(navigate, RouteType.Authed);
-
-        setIsIOS(navigator.userAgent.includes("iPhone") as boolean);
 
         // load entry
         db.entries.get(date).then(async (data) => {
@@ -209,7 +206,7 @@ function Entry() {
     }
 
     return (
-        <main className={`entry ${isIOS ? "ios" : ""}`}>
+        <main className="entry">
             {editorLoaded || <div id="loadingEntry">Loading...</div>}
             <div className="content">
                 {editorLoaded && <div className="line"></div>}

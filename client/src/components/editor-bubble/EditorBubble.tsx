@@ -1,6 +1,6 @@
 import "./EditorBubble.css";
 import Select, { type SelectInstance } from "react-select";
-import { useEffect, useState, type MutableRefObject } from "react";
+import { useEffect, useState, type RefObject } from "react";
 import { moods } from "../../util/parameters";
 import { today } from "../../util/time";
 import { useSettings } from "../../state/settings";
@@ -17,7 +17,7 @@ export default function EditorBubble(props: {
     location: number | null;
     setLocation: React.Dispatch<React.SetStateAction<number | null>>;
     date: string;
-    ref: MutableRefObject<SelectInstance | null>;
+    ref: RefObject<SelectInstance | null>;
     wordCount: number;
 }) {
     const selectStyles = {

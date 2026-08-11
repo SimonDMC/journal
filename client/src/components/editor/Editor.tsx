@@ -1,5 +1,5 @@
 import "./Editor.css";
-import { useEffect, useRef, type MutableRefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import { setCursorAfterNthOccurrence, moveCursorToEnd } from "../../util/selection";
 import { QuoteButton } from "../quote-button/QuoteButton";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
@@ -34,7 +34,7 @@ export default function Editor(props: {
     setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
     date: string;
 }) {
-    const editorRef: MutableRefObject<BalloonEditor | null> = useRef(null);
+    const editorRef: RefObject<BalloonEditor | null> = useRef(null);
     const autosaveLoaded = useRef(false);
     const { query, index } = entryRoute.useSearch();
 
@@ -54,7 +54,16 @@ export default function Editor(props: {
     const editorConfig = {
         licenseKey: "GPL",
         toolbar: {
-            items: ["bold", "italic", "underline", "strikethrough", "subscript", "superscript", "code", "quote"],
+            items: [
+                "bold",
+                "italic",
+                "underline",
+                "strikethrough",
+                "subscript",
+                "superscript",
+                "code",
+                "quote",
+            ],
             shouldNotGroupWhenFull: true,
         },
         plugins: [

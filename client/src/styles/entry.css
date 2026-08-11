@@ -17,7 +17,7 @@ main.entry {
 
 main.entry .date {
     position: absolute;
-    top: .4em;
+    top: 0.4em;
     font-size: 1.7em;
     color: #ccc;
     font-weight: 700;
@@ -70,7 +70,6 @@ main.entry .date {
         margin-bottom: 14rem;
         margin-top: 3em;
         height: 100%;
-        font-size: 1.1em;
     }
 
     /* no mood */
@@ -84,6 +83,6 @@ main.entry .date {
 
     main.entry .date {
         font-size: 1.2em;
-        top: .8em;
+        top: 0.8em;
     }
 }

@@ -22,9 +22,10 @@
 .ck-content {
     --ck-spacing-large: 0.25em;
     --ck-content-font-family: var(--font);
-    --ck-content-font-size: 1em;
+    --ck-content-font-size: 21px;
     --ck-content-font-color: white;
-    --ck-content-line-height: 1.8em;
+    /* safari needs an integer line height, so em cannot be used here */
+    --ck-content-line-height: 37px;
 
     border: none !important;
     padding: 0.2em 0.5em;
@@ -36,9 +37,9 @@
     height: 100%;
     position: absolute;
     background: linear-gradient(#ffffff33 0px, #ffffff33 2px, transparent 2px);
-    background-size: 100% 1.8em;
+    background-size: 100% var(--ck-content-line-height);
     background-attachment: local;
-    background-position: 0 1.6em;
+    background-position: 0 calc(var(--ck-content-line-height) - 4px);
     resize: none;
     font-feature-settings: "ss03";
     scrollbar-width: none;
@@ -47,11 +48,6 @@
 .ck-content p {
     /* when scrolling to the end of today, leave a 5em gap at the bottom */
     scroll-margin-bottom: 5em;
-}
-
-/* i wish i knew why this is necessary, but it fixes line spacing */
-.ios .ck-content {
-    background-size: 100% calc(1.8em - 0.7px);
 }
 
 .ck-content code {
@@ -96,5 +92,11 @@
     .ck-content {
         /* reset left padding since line is gone */
         padding-left: 1em !important;
+
+        --ck-spacing-large: 5px;
+        --ck-content-font-family: var(--font);
+        --ck-content-font-size: 18px;
+        --ck-content-font-color: white;
+        --ck-content-line-height: 33px;
     }
 }
