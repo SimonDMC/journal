@@ -7,7 +7,7 @@
     display: flex;
     flex-direction: column;
     color: #ccc;
-    gap: .7em;
+    gap: 0.7em;
     align-items: center;
     position: absolute;
     bottom: 1em;
@@ -34,7 +34,7 @@ select {
 }
 
 .select-container {
-    width: 9em;
+    width: 9.2em;
 }
 
 .select-container * {
@@ -89,7 +89,6 @@ select {
 .select-indicators-container * {
     color: #ccc !important;
 }
-
 
 @media (hover: hover) and (pointer: fine) {
     .bubble button:hover {
