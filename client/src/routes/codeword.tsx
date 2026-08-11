@@ -54,7 +54,14 @@ function Codeword() {
 
     return (
         <main className="codeword">
-            <input type="text" id="codeword" autoFocus onBlur={selectInput} onInput={countChars} onKeyDown={inputKeyDown} />
+            <input
+                type="text"
+                id="codeword"
+                autoFocus
+                onBlur={selectInput}
+                onInput={countChars}
+                onKeyDown={inputKeyDown}
+            />
             <span id="codeword-display">0</span>
             <a onClick={() => logout(navigate)} className="logout-icon">
                 <FontAwesomeIcon icon={faArrowRightFromBracket} />

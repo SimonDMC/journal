@@ -41,7 +41,8 @@ svg {
     display: block;
 }
 
-sub, sup {
+sub,
+sup {
     font-size: 75%;
     line-height: 0;
     position: relative;
@@ -49,11 +50,11 @@ sub, sup {
 }
 
 sub {
-    bottom: -.25em;
+    bottom: -0.25em;
 }
 
 sup {
-    top: -.5em;
+    top: -0.5em;
 }
 
 /* CSS reset end */
@@ -63,7 +64,7 @@ sup {
     font-style: normal;
     font-weight: 100 900;
     font-display: swap;
-    src: url('/InterVariable.woff2') format('woff2');
+    src: url("/InterVariable.woff2") format("woff2");
 }
 
 @font-face {
@@ -71,12 +72,15 @@ sup {
     font-style: italic;
     font-weight: 100 900;
     font-display: swap;
-    src: url('/InterVariable-Italic.woff2') format('woff2');
+    src: url("/InterVariable-Italic.woff2") format("woff2");
 }
 
 :root {
     font-family: InterVariable, sans-serif;
-    font-feature-settings: "liga"1, "calt"1, "ss03" !important;
+    font-feature-settings:
+        "liga" 1,
+        "calt" 1,
+        "ss03" !important;
 }
 
 @supports (font-variation-settings: normal) {

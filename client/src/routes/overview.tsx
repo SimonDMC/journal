@@ -11,7 +11,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { dayAdjustedTime, today } from "../util/time";
 import { eventTarget, KeyCreateEvent, OfflineModeEvent } from "../util/events";
 import { useSettings } from "../state/settings";
-import { getCurrentVersion } from "../util/update";
+import { checkForUpdateIfDesired, getCurrentVersion } from "../util/update";
 import { infoToast } from "../util/toast";
 
 export const Route = createFileRoute("/overview")({
@@ -34,13 +34,14 @@ function Overview() {
     const wordCount = entriesFull.reduce((acc, cur) => (acc += cur.word_count), 0);
 
     useEffect(() => {
-        enforceAuth(navigate, RouteType.Authed);
+        // if this route is inaccessible, don't check for update or do any of the other stuff
+        if (!enforceAuth(navigate, RouteType.Authed)) return;
+        checkForUpdateIfDesired();
 
         // Show popup if we auto-updated
         if (sessionStorage.getItem("journal-updated-automatically") && getCurrentVersion()) {
             console.log(`Updated Journal to ${getCurrentVersion()}!`);
             infoToast(`Updated Journal to ${getCurrentVersion()}!`);
-            // TODO: fix update toast appearing before reload, thus immediately disappearing
             sessionStorage.removeItem("journal-updated-automatically");
         }
 

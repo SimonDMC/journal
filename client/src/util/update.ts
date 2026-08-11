@@ -19,7 +19,36 @@ export function getCurrentVersion() {
     return localStorage.getItem("journal-version");
 }
 
-export async function checkForUpdate(): Promise<VersionsFile | null> {
+// Check for update -- only once, at the beginning of the session, unless it's available and
+// wasn't dismissed
+export async function checkForUpdateIfDesired() {
+    if (!sessionStorage.getItem("journal-update-undesired")) {
+        const updatePolicy = useSettings.getState().getString("general.update_policy");
+        if (updatePolicy == "manual") return;
+
+        const versionsFile = await checkForUpdate();
+        if (!versionsFile) {
+            sessionStorage.setItem("journal-update-undesired", "true");
+            return;
+        }
+
+        invokeUpdatePopup(versionsFile, updatePolicy);
+    }
+}
+
+export async function checkForUpdateManually() {
+    const versionsFile = await checkForUpdate();
+    if (versionsFile) {
+        // to prevent popup stacking, close the settings popup and open the update popup
+        invokeUpdatePopup(versionsFile, "confirm");
+        useSettings.getState().closeSettings();
+    } else {
+        // inform about no update found
+        infoToast("No update available.");
+    }
+}
+
+async function checkForUpdate(): Promise<VersionsFile | null> {
     let versionsFile;
     try {
         const res = await fetch("/versions.json");
@@ -44,18 +73,6 @@ export async function checkForUpdate(): Promise<VersionsFile | null> {
 
     // otherwise no update exists
     return null;
-}
-
-export async function checkForUpdateManually() {
-    const versionsFile = await checkForUpdate();
-    if (versionsFile) {
-        // to prevent popup stacking, close the settings popup and open the update popup
-        invokeUpdatePopup(versionsFile, "confirm");
-        useSettings.getState().closeSettings();
-    } else {
-        // inform about no update found
-        infoToast("No update available.");
-    }
 }
 
 export async function invokeUpdatePopup(versionsFile: VersionsFile, updateMode: string) {
@@ -121,6 +138,7 @@ export async function installApp(version: string) {
     });
 
     await Promise.all(fetchPromises);
+    console.log(`Installed version ${version}!`);
 }
 
 export async function forceReload() {

@@ -12,8 +12,8 @@ import { syncDatabase } from "./database/sync";
 import { runMigrations } from "./util/migrations";
 import SettingsPopup from "./components/settings/SettingsPopup";
 import { useSettings } from "./state/settings";
-import { checkForUpdate, invokeUpdatePopup } from "./util/update";
 import { injectAppropriateManifest } from "./util/pwa";
+import { getCurrentVersion } from "./util/update";
 
 // Create a new router instance
 export const router = createRouter({
@@ -38,23 +38,7 @@ if (!sessionStorage.getItem("journal-synced")) {
     sessionStorage.setItem("journal-synced", "true");
 }
 
-// Check for update -- only once, at the beginning of the session, unless it's available and
-// wasn't dismissed
-async function checkForUpdateIfDesired() {
-    if (!sessionStorage.getItem("journal-update-undesired")) {
-        const updatePolicy = useSettings.getState().getString("general.update_policy");
-        if (updatePolicy == "manual") return;
-
-        const versionsFile = await checkForUpdate();
-        if (!versionsFile) {
-            sessionStorage.setItem("journal-update-undesired", "true");
-            return;
-        }
-
-        invokeUpdatePopup(versionsFile, updatePolicy);
-    }
-}
-checkForUpdateIfDesired();
+console.log("Loaded version", getCurrentVersion());
 
 // Global settings keybind
 const { openSettings, closeSettings } = useSettings.getState();

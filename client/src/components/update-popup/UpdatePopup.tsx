@@ -19,12 +19,19 @@ export default function UpdatePopup() {
             setNewVersion(version);
             setChangelog(changelogs);
 
-            if (["silent", "automatic"].includes(updateMode)) {
-                // update automatically, and set flag for info toast after reload
-                if (updateMode === "automatic") {
-                    sessionStorage.setItem("journal-updated-automatically", "true");
-                }
-                applyUpdate();
+            // update automatically, and set flag for info toast after reload
+            if (updateMode == "automatic") {
+                console.log(`Updating Journal to ${version}...`);
+                sessionStorage.setItem("journal-updated-automatically", "true");
+                applyUpdate(version);
+                return;
+            }
+
+            // update automatically, but silently
+            if (updateMode == "silent") {
+                console.log(`Updating Journal to ${version}...`);
+                sessionStorage.setItem("journal-updated-automatically", "true");
+                applyUpdate(version);
                 return;
             }
 
@@ -40,7 +47,7 @@ export default function UpdatePopup() {
             event.stopImmediatePropagation();
             // apply update using enter
             if (event.key === "Enter") {
-                applyUpdate();
+                applyUpdate(newVersion);
             }
             // dismiss update using esc
             if (event.key === "Escape") {
@@ -64,14 +71,15 @@ export default function UpdatePopup() {
         sessionStorage.setItem("journal-update-undesired", "true");
     }
 
-    async function applyUpdate() {
+    async function applyUpdate(version: string) {
         // mark as unsynced, so that migrations immediately trigger
         sessionStorage.removeItem("journal-synced");
-        localStorage.setItem("journal-version", newVersion);
+        console.log("After reload, version will be", version);
+        localStorage.setItem("journal-version", version);
         // wipe old cache
         const caches = await window.caches.keys();
         for (const cache of caches) {
-            if (cache != `journal-cache-${newVersion}`) window.caches.delete(cache);
+            if (cache != `journal-cache-${version}`) window.caches.delete(cache);
         }
         window.location.reload();
     }
@@ -105,7 +113,7 @@ export default function UpdatePopup() {
                         <div className="progress-bar"></div>
                         <div className="button-row">
                             <button onClick={dismissUpdate}>Dismiss</button>
-                            <button onClick={applyUpdate}>Apply</button>
+                            <button onClick={() => applyUpdate(newVersion)}>Apply</button>
                         </div>
                     </div>
                 </motion.div>

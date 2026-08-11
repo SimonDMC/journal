@@ -39,20 +39,6 @@ function Passkey() {
 
                 const asseResp = await startAuthentication({ optionsJSON });
 
-                console.log({
-                    asseResp,
-                    optionsJSONChallenge: optionsJSON.challenge,
-                    expectedChallenge: optionsJSON.challenge,
-                    expectedOrigin: origin,
-                    expectedRPID: window.location.hostname,
-                    credential: {
-                        id: passkey.id,
-                        publicKey: passkey.publicKey,
-                        counter: passkey.counter,
-                        transports: passkey.transports,
-                    },
-                });
-
                 await verifyAuthenticationResponse({
                     response: asseResp,
                     expectedChallenge: optionsJSON.challenge,

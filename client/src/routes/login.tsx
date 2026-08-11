@@ -5,6 +5,7 @@ import { db } from "../database/db";
 import { errorToast } from "../util/toast";
 import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { checkForUpdateIfDesired } from "../util/update";
 
 export const Route = createFileRoute("/login")({
     component: Login,
@@ -14,7 +15,8 @@ function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        enforceAuth(navigate, RouteType.Unauthed);
+        if (!enforceAuth(navigate, RouteType.Unauthed)) return;
+        checkForUpdateIfDesired();
     }, [navigate]);
 
     async function login() {
