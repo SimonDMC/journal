@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { viteStaticCopy } from "vite-plugin-static-copy";
-import { dirSize } from "./client/src/util/filesystem";
+import { dirSize } from "./client/src/util/filesystem.ts";
 import type { OutputBundle, OutputOptions } from "rolldown";
 import fs from "fs";
 import path from "path";
@@ -29,7 +29,7 @@ function generateBuildMeta() {
             // compile asset list
             const assets = [...STATIC_ASSETS, ...Object.keys(bundle)];
 
-            const assetListDir = path.join(__dirname, config.build.outDir);
+            const assetListDir = path.join(import.meta.dirname, config.build.outDir);
             fs.mkdirSync(assetListDir, { recursive: true });
             const assetListPath = path.join(assetListDir, "asset-list.json");
             fs.writeFileSync(assetListPath, JSON.stringify({ assets }, null, 2));
@@ -40,7 +40,7 @@ function generateBuildMeta() {
             if (!config.build.outDir.endsWith("client")) return;
 
             // log bundle size
-            dirSize(path.join(__dirname, config.build.outDir)).then((size) => {
+            dirSize(path.join(import.meta.dirname, config.build.outDir)).then((size) => {
                 const sizeInMb = size / 1024 / 1024;
                 const roundedSize = Math.round(sizeInMb * 100) / 100;
                 console.log(

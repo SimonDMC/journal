@@ -9,43 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SearchPlotRouteImport } from './routes/search-plot'
-import { Route as SearchRouteImport } from './routes/search'
-import { Route as PasskeyRouteImport } from './routes/passkey'
-import { Route as OverviewRouteImport } from './routes/overview'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as EntryRouteImport } from './routes/entry'
-import { Route as CodewordRouteImport } from './routes/codeword'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CodewordRouteImport } from './routes/codeword'
+import { Route as EntryRouteImport } from './routes/entry'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as OverviewRouteImport } from './routes/overview'
+import { Route as PasskeyRouteImport } from './routes/passkey'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as SearchPlotRouteImport } from './routes/search-plot'
 
-const SearchPlotRoute = SearchPlotRouteImport.update({
-  id: '/search-plot',
-  path: '/search-plot',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SearchRoute = SearchRouteImport.update({
-  id: '/search',
-  path: '/search',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PasskeyRoute = PasskeyRouteImport.update({
-  id: '/passkey',
-  path: '/passkey',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OverviewRoute = OverviewRouteImport.update({
-  id: '/overview',
-  path: '/overview',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EntryRoute = EntryRouteImport.update({
-  id: '/entry',
-  path: '/entry',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CodewordRoute = CodewordRouteImport.update({
@@ -53,9 +28,34 @@ const CodewordRoute = CodewordRouteImport.update({
   path: '/codeword',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const EntryRoute = EntryRouteImport.update({
+  id: '/entry',
+  path: '/entry',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OverviewRoute = OverviewRouteImport.update({
+  id: '/overview',
+  path: '/overview',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PasskeyRoute = PasskeyRouteImport.update({
+  id: '/passkey',
+  path: '/passkey',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchPlotRoute = SearchPlotRouteImport.update({
+  id: '/search-plot',
+  path: '/search-plot',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -136,46 +136,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/search-plot': {
-      id: '/search-plot'
-      path: '/search-plot'
-      fullPath: '/search-plot'
-      preLoaderRoute: typeof SearchPlotRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/search': {
-      id: '/search'
-      path: '/search'
-      fullPath: '/search'
-      preLoaderRoute: typeof SearchRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/passkey': {
-      id: '/passkey'
-      path: '/passkey'
-      fullPath: '/passkey'
-      preLoaderRoute: typeof PasskeyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/overview': {
-      id: '/overview'
-      path: '/overview'
-      fullPath: '/overview'
-      preLoaderRoute: typeof OverviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/entry': {
-      id: '/entry'
-      path: '/entry'
-      fullPath: '/entry'
-      preLoaderRoute: typeof EntryRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/codeword': {
@@ -185,11 +150,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CodewordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/entry': {
+      id: '/entry'
+      path: '/entry'
+      fullPath: '/entry'
+      preLoaderRoute: typeof EntryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/overview': {
+      id: '/overview'
+      path: '/overview'
+      fullPath: '/overview'
+      preLoaderRoute: typeof OverviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/passkey': {
+      id: '/passkey'
+      path: '/passkey'
+      fullPath: '/passkey'
+      preLoaderRoute: typeof PasskeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search-plot': {
+      id: '/search-plot'
+      path: '/search-plot'
+      fullPath: '/search-plot'
+      preLoaderRoute: typeof SearchPlotRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
