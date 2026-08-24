@@ -13,7 +13,7 @@
         "ver": "./scripts/createVersion.js"
     },
     "dependencies": {
-        "@ckeditor/ckeditor5-react": "^11.1.2",
+        "@ckeditor/ckeditor5-react": "^11.2.0",
         "@fortawesome/fontawesome-svg-core": "^6.7.2",
         "@fortawesome/free-solid-svg-icons": "^6.7.2",
         "@fortawesome/react-fontawesome": "^0.2.6",
@@ -40,6 +40,7 @@
         "@cloudflare/workers-types": "^4.20250823.0",
         "@tanstack/react-router": "^1.166.7",
         "@tanstack/router-plugin": "^1.167.22",
+        "@types/bun": "^1.4.0",
         "@types/cookie": "^0.6.0",
         "@types/node": "^20.19.0",
         "@types/react": "^19.2.14",

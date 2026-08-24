@@ -3,9 +3,21 @@
 // them somewhat unnecessary and removing them brings down the file
 // size 255kB -> 108kB
 
+// Discord emoji extraction guide (Aug 2026):
+// 1. Open chrome devtools network tab
+// 2. Open discord.com/app
+// 3. Search `emoji` in network tab
+// 4. Click the JS file that pops up, /assets/vnd-emoji.*hash*.js
+// 5. Scroll to the very bottom, to the line which has JSON.parse('{emojis:[...]}')
+// 6. Copy the JSON, without the 's
+// 7. Switch to console and run JSON.stringify(*clipboard*)
+//    -> this step is necessary because the JSON string contains \x__ syntax which is valid in JS
+//       but not in JSON
+// 8. Copy the result and that's your emoji-in.json file
+
 // Usage:
 // 1. Create file `public/emoji-in.json` with emoji in discord format
-// 2. Run `bun src/scripts/createEmojiFile.ts`
+// 2. Run `bun scripts/createEmojiFile.ts`
 // 3. Done. CKEditor emoji file generates into `public/emoji.json`
 
 type EmojiIn = {
@@ -14,7 +26,7 @@ type EmojiIn = {
     unicodeVersion: string;
 };
 
-const file = Bun.file("../public/emoji-in.json");
+const file = Bun.file("./client/public/emoji-in.json");
 const emojisIn = await file.json();
 
 const emojisOut = emojisIn.emojis
@@ -29,5 +41,5 @@ const emojisOut = emojisIn.emojis
         };
     });
 
-Bun.write("../public/emoji.json", JSON.stringify(emojisOut));
+Bun.write("./client/public/emoji.json", JSON.stringify(emojisOut));
 export {};
