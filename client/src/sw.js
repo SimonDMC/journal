@@ -27,7 +27,11 @@ self.addEventListener("fetch", (event) => {
     }
 
     // Don't cache local requests while developing
-    if (url.host == "localhost:5173" || url.pathname == "/__scheduled" || url.pathname == "/cdn-cgi/handler/scheduled") {
+    if (
+        url.host == "localhost:5173" ||
+        url.pathname == "/__scheduled" ||
+        url.pathname == "/cdn-cgi/handler/scheduled"
+    ) {
         event.respondWith(fetch(event.request));
         return;
     }
@@ -39,7 +43,10 @@ self.addEventListener("fetch", (event) => {
             // The version to use is the oldest available, since on install it wipes the old ones
             .then((names) => caches.open(names[0]))
             .then(async (cache) => {
-                const cachedResponse = await cache.match(event.request);
+                const cachedResponse = await cache.match(event.request, {
+                    ignoreVary: true,
+                    ignoreSearch: true,
+                });
                 // Serve from cache if cached
                 if (cachedResponse) {
                     return cachedResponse;
@@ -49,7 +56,7 @@ self.addEventListener("fetch", (event) => {
                     let index = await cache.match("/");
 
                     if (!index) {
-                        indexPage = await fetch(event.request);
+                        const indexPage = await fetch(event.request);
                         await cache.put("/", indexPage.clone());
                         return indexPage;
                     }
@@ -61,6 +68,6 @@ self.addEventListener("fetch", (event) => {
                     cache.put(event.request, networkResponse.clone());
                 }
                 return networkResponse;
-            })
+            }),
     );
 });

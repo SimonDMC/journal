@@ -14,11 +14,14 @@ import SettingsPopup from "./components/settings/SettingsPopup";
 import { useSettings } from "./state/settings";
 import { injectAppropriateManifest } from "./util/pwa";
 import { getCurrentVersion } from "./util/update";
+import { NotFound } from "./routes/-not-found";
 
 // Create a new router instance
 export const router = createRouter({
     routeTree,
-    defaultPreload: "intent" /* defaultViewTransition: true */,
+    defaultPreload: "intent",
+    /* defaultViewTransition: true, */
+    defaultNotFoundComponent: () => <NotFound />,
 });
 
 // Register the router instance for type safety

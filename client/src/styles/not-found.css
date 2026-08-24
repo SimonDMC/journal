@@ -1,0 +1,22 @@
+main.not-found {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100svh;
+    font-size: 2em;
+    color: #ccc;
+
+    .page-not-found {
+        font-weight: 500;
+        margin-bottom: 0.4em;
+        font-size: 1.2em;
+    }
+
+    a {
+        border: 2px solid #333;
+        padding: 0.2em 0.6em;
+        border-radius: 0.3em;
+        transition: background-color 0.2s;
+    }
+}
