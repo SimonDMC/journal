@@ -1,10 +1,15 @@
 {
   "current": {
-    "version": "0.0.26",
-    "desc": "Fixed entry spacing, update policy + actions",
-    "released": 1786448170623
+    "version": "0.0.27",
+    "desc": "Updated emoji, added 404 page",
+    "released": 1787576124484
   },
   "history": [
+    {
+      "version": "0.0.27",
+      "desc": "Updated emoji, added 404 page",
+      "released": 1787576124484
+    },
     {
       "version": "0.0.26",
       "desc": "Fixed entry spacing, update policy + actions",
