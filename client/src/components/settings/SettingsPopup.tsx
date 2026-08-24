@@ -17,7 +17,7 @@ import SettingsContent from "./SettingsContent";
 import { checkForUpdateManually, forceReload, getCurrentVersion } from "../../util/update";
 import { showKeyHash } from "../../util/encryption";
 import { wipeLocalDatabase } from "../../settings/debug";
-import { formatTimestampShort } from "../../util/time";
+import { formatTimestampShort, getYear } from "../../util/time";
 
 export default function SettingsPopup() {
     const [selected, setSelected] = useState("general");
@@ -208,7 +208,7 @@ export default function SettingsPopup() {
                                     {formatTimestampShort(__BUILD_INFO__.buildTimestamp)}.
                                     <br />
                                     Version <strong>v{getCurrentVersion()}</strong>. © SimonDMC,
-                                    2026.
+                                    {getYear(__BUILD_INFO__.buildTimestamp)}.
                                 </div>
                             </SettingsContent>
                         )}

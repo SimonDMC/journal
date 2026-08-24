@@ -19,7 +19,7 @@ export const adjustedTimestamp = Date.now() - new Date().getTimezoneOffset() * 6
 export const dayAdjustedTime = new Date(adjustedTimestamp - 4 * 60 * 60 * 1000);
 export const today = dayAdjustedTime.toISOString().substring(0, 10);
 
-// format date as Dayofweek, Month Day, Year
+// format date as Monday, January 1, 2026
 export function formatDate(dateString: string) {
     const parts = dateString.split("-").map(Number);
     const date = new Date(parts[0], parts[1] - 1, parts[2]);
@@ -33,6 +33,7 @@ export function formatDate(dateString: string) {
     return formattedDate;
 }
 
+// format date as Jan 1
 export function formatTimestampShort(timestamp: number) {
     return new Date(timestamp).toLocaleString("en-US", {
         month: "short",
@@ -41,6 +42,10 @@ export function formatTimestampShort(timestamp: number) {
         minute: "2-digit",
         hour12: true,
     });
+}
+
+export function getYear(timestamp: number) {
+    return new Date(timestamp).getFullYear();
 }
 
 // converts a date created from (year, month, day) constructor to a (`year-month-day`) one

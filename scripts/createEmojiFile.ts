@@ -16,9 +16,9 @@
 // 8. Copy the result and that's your emoji-in.json file
 
 // Usage:
-// 1. Create file `public/emoji-in.json` with emoji in discord format
+// 1. Create file `client/public/emoji-in.json` with emoji in discord format
 // 2. Run `bun scripts/createEmojiFile.ts`
-// 3. Done. CKEditor emoji file generates into `public/emoji.json`
+// 3. Done. CKEditor emoji file generates into `client/public/emoji.json`
 
 type EmojiIn = {
     names: string[];
