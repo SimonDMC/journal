@@ -1,13 +1,22 @@
-import { db, type Entry } from "./db";
+import { db } from "./db";
 import { API_URL } from "../util/config";
 import { decryptEntry, encryptEntry } from "../util/encryption";
 import { warningToast } from "../util/toast";
 import { eventTarget, OfflineModeEvent } from "../util/events";
 import { logoutImperatively } from "../util/auth";
+import type { EncryptedEntry, EncryptedEntryData } from "../types/entry";
+import { calculateWords } from "../util/words";
 
-type ClientSyncBody = {
+interface ClientSyncBody {
+    // deleted entries have a null hash
     [key: string]: string | null;
-};
+}
+
+interface ClientSyncResponse {
+    missing: EncryptedEntry[];
+    differing: EncryptedEntry[];
+    excess: string[];
+}
 
 export async function syncDatabase() {
     // don't sync if no key is set
@@ -44,33 +53,28 @@ export async function syncDatabase() {
         return;
     }
 
-    const json = await clientSyncResponse.json();
+    const json = (await clientSyncResponse.json()) as ClientSyncResponse;
     console.log(json);
 
     // 3. Save all missing entries locally
-    for (const entry of json.missing) {
-        try {
-            entry.decrypted = await decryptEntry(entry.content);
-        } catch (error) {
-            console.log(error);
-            warningToast("Sync failed (decryption)");
-            return;
-        }
-    }
     try {
-        await db.entries.bulkAdd(
-            json.missing.map((entry: Entry & { decrypted: string }) => {
+        const missingEntriesSync = await Promise.all(
+            json.missing.map(async (entry: EncryptedEntry) => {
+                const decrypted = await decryptEntry(entry.data);
+                const entryData = JSON.parse(decrypted!) as EncryptedEntryData;
+
                 return {
                     date: entry.date,
-                    content: entry.decrypted,
+                    content: entryData.content,
+                    extras: entryData.extras,
                     hash: entry.hash,
-                    mood: entry.mood,
-                    location: entry.location,
-                    word_count: entry.word_count,
-                    last_modified: entry.last_modified,
+                    word_count: calculateWords(entryData.content),
+                    last_modified: entryData.last_modified,
                 };
-            })
+            }),
         );
+
+        await db.entries.bulkAdd(missingEntriesSync);
     } catch (e) {
         console.error(e);
         warningToast("Sync failed (adding)");
@@ -78,7 +82,7 @@ export async function syncDatabase() {
     }
 
     // 4. Decide based off last modification date which version of differing entries to use
-    const serverSyncEntries = [];
+    const serverSyncEntries: EncryptedEntry[] = [];
     for (const entry of json.differing) {
         const localEntry = await db.entries.get(entry.date);
         if (!localEntry) {
@@ -86,43 +90,46 @@ export async function syncDatabase() {
             return;
         }
 
-        const remoteTime = new Date(entry.last_modified).getTime();
-        const localTime = new Date(localEntry.last_modified).getTime();
+        try {
+            const decrypted = await decryptEntry(entry.data);
+            const entryData = JSON.parse(decrypted!) as EncryptedEntryData;
 
-        // crucially, remote wins if the updated time is identical. otherwise we could get into
-        // a loop where two clients have differing entries with the same timestamp and sync
-        // keeps alternating between the two
-        if (localTime > remoteTime) {
-            // local wins
-            console.log(
-                `Sync conflict at day ${localEntry.date} -- choosing local @ ${localEntry.last_modified} over remote @ ${entry.last_modified}`
-            );
-            serverSyncEntries.push(localEntry);
-        } else {
-            // remote wins
-            console.log(
-                `Sync conflict at day ${localEntry.date} -- choosing remote @ ${entry.last_modified} over local @ ${localEntry.last_modified}`
-            );
-            await db.entries.delete(entry.date);
+            const remoteTime = new Date(entryData.last_modified).getTime();
+            const localTime = new Date(localEntry.last_modified).getTime();
 
-            let decrypted;
-            try {
-                decrypted = await decryptEntry(entry.content);
-            } catch (error) {
-                console.log(error);
-                warningToast("Sync failed (decryption)");
-                return;
+            // crucially, remote wins if the updated time is identical. otherwise we could get into
+            // a loop where two clients have differing entries with the same timestamp and sync
+            // keeps alternating between the two
+            if (localTime > remoteTime) {
+                // local wins
+                console.log(
+                    `Sync conflict at day ${localEntry.date} -- choosing local @ ${localEntry.last_modified} over remote @ ${entryData.last_modified}`,
+                );
+                serverSyncEntries.push({
+                    date: localEntry.date,
+                    data: await encryptEntry(localEntry),
+                    hash: localEntry.hash,
+                });
+            } else {
+                // remote wins
+                console.log(
+                    `Sync conflict at day ${localEntry.date} -- choosing remote @ ${entryData.last_modified} over local @ ${localEntry.last_modified}`,
+                );
+                await db.entries.delete(entry.date);
+
+                await db.entries.add({
+                    date: entry.date,
+                    content: entryData.content,
+                    hash: entry.hash,
+                    extras: {},
+                    word_count: calculateWords(entryData.content),
+                    last_modified: entryData.last_modified,
+                });
             }
-
-            await db.entries.add({
-                date: entry.date,
-                content: decrypted,
-                hash: entry.hash,
-                mood: entry.mood,
-                location: entry.location,
-                word_count: entry.word_count,
-                last_modified: entry.last_modified,
-            });
+        } catch (error) {
+            console.log(error);
+            warningToast("Sync failed (decryption)");
+            return;
         }
     }
 
@@ -134,23 +141,20 @@ export async function syncDatabase() {
             return;
         }
 
-        serverSyncEntries.push(localEntry);
-    }
-
-    // 6. Encrypt entries and send over to server
-    for (const entry of serverSyncEntries) {
-        let encryptedContent;
         try {
-            encryptedContent = await encryptEntry(entry.content);
+            serverSyncEntries.push({
+                date: localEntry.date,
+                data: await encryptEntry(localEntry),
+                hash: localEntry.hash,
+            });
         } catch (error) {
             console.log(error);
             warningToast("Sync failed (encryption)");
             return;
         }
-
-        entry.content = encryptedContent;
     }
 
+    // 6. Send over excess and new local entries to server
     if (serverSyncEntries.length > 0) {
         const serverSyncResponse = await fetch(`${API_URL}/server-sync`, {
             method: "POST",
@@ -168,14 +172,6 @@ export async function syncEntry(date: string): Promise<boolean> {
     const entry = await db.entries.get(date);
     if (!entry) return false;
 
-    let encryptedContent;
-    try {
-        encryptedContent = await encryptEntry(entry.content);
-    } catch (error) {
-        console.log(error);
-        return false;
-    }
-
     try {
         const res = await fetch(`${API_URL}/entry/${date}`, {
             method: "POST",
@@ -183,11 +179,7 @@ export async function syncEntry(date: string): Promise<boolean> {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                content: encryptedContent,
-                mood: entry.mood,
-                location: entry.location,
-                // word count has to be sent because you can't recalculate it once encrypted
-                word_count: entry.word_count,
+                data: await encryptEntry(entry),
                 hash: entry.hash,
             }),
         });

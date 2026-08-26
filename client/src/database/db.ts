@@ -1,14 +1,5 @@
 import Dexie, { type EntityTable } from "dexie";
-
-interface Entry {
-    date: string;
-    content: string | null;
-    hash: string | null;
-    mood: number | null;
-    location: number | null;
-    word_count: number;
-    last_modified: string;
-}
+import type { Entry } from "../types/entry";
 
 const db = new Dexie("JournalDatabase") as Dexie & {
     entries: EntityTable<
@@ -17,10 +8,27 @@ const db = new Dexie("JournalDatabase") as Dexie & {
     >;
 };
 
-// Schema declaration:
+// V1, January 2025
 db.version(1).stores({
     entries: "date, content, hash, mood, location, word_count, last_modified",
 });
 
-export type { Entry };
+// V2, August 2026 - full removal of location, extracting mood into a more generic "extras" object,
+// removing indices on unnecessary properties
+db.version(2)
+    .stores({
+        entries: "date",
+    })
+    .upgrade((tx) => {
+        // remove location, move mood, init extras
+        return tx
+            .table("entries")
+            .toCollection()
+            .modify((entry) => {
+                entry.extras = { mood: entry.mood };
+                delete entry.mood;
+                delete entry.location;
+            });
+    });
+
 export { db };

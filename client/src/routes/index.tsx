@@ -15,7 +15,10 @@ function Home() {
             navigator.serviceWorker.register("/sw.js");
         }
 
-        enforceAuth(navigate, RouteType.Unauthed);
+        console.log(1);
+
+        enforceAuth(navigate, RouteType.Redirect);
+        console.log(2);
     }, [navigate]);
 
     return <main></main>;

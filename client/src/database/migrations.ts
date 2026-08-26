@@ -1,9 +1,10 @@
-import { db } from "../database/db";
+import { db } from "./db";
 import { useSettings } from "../state/settings";
-import { API_URL } from "./config";
-import { encryptEntry } from "./encryption";
-import { successToast, warningToast } from "./toast";
-import { calculateWords } from "./words";
+import { API_URL } from "../util/config";
+import { encryptEntry } from "../util/encryption";
+import { successToast, warningToast } from "../util/toast";
+import { calculateWords } from "../util/words";
+import type { EncryptedEntry } from "../types/entry";
 
 const migrationMap = new Map<string, () => Promise<MigrationResponse>>([
     ["0.0.8", v0_0_8_fixWordCount],
@@ -19,7 +20,9 @@ type MigrationResponse = {
 
 // Run all available migrations
 export async function runMigrations() {
-    const completeMigrations = JSON.parse(localStorage.getItem("journal-migrations") ?? "[]") as string[];
+    const completeMigrations = JSON.parse(
+        localStorage.getItem("journal-migrations") ?? "[]",
+    ) as string[];
 
     let migrationsDone = 0;
     let shouldReload = false;
@@ -43,7 +46,8 @@ export async function runMigrations() {
     }
 
     // update done migrations if any were ran
-    if (migrationsDone) localStorage.setItem("journal-migrations", JSON.stringify(completeMigrations));
+    if (migrationsDone)
+        localStorage.setItem("journal-migrations", JSON.stringify(completeMigrations));
     // reload page if any migration requested it
     if (shouldReload) window.location.reload();
 }
@@ -52,27 +56,34 @@ export async function runMigrations() {
 
 // recalculate all word counts and sync necessary ones
 async function v0_0_8_fixWordCount(): Promise<MigrationResponse> {
-    const miscalculatedEntries = [];
+    const miscalculatedEntries: EncryptedEntry[] = [];
 
     // compile list of entries with wrong word counts (and recalculate them)
     for (const entry of await db.entries.toArray()) {
         const correctWordCount = calculateWords(entry.content);
         if (entry.word_count != correctWordCount) {
-            let encryptedContent;
+            entry.word_count = correctWordCount;
+
             try {
-                encryptedContent = await encryptEntry(entry.content);
+                miscalculatedEntries.push({
+                    date: entry.date,
+                    data: await encryptEntry(entry),
+                    hash: entry.hash,
+                });
             } catch {
                 return { success: false, message: "Word count fix failed (encryption)" };
             }
 
-            entry.content = encryptedContent;
-            entry.word_count = correctWordCount;
-
-            miscalculatedEntries.push(entry);
+            await db.entries.update(entry.date, { word_count: entry.word_count });
         }
     }
 
-    // remote sync first to make sure it's really synced
+    // do nothing if there are no miscalculated entries
+    if (miscalculatedEntries.length == 0) {
+        return { success: true };
+    }
+
+    // remote sync to make sure it's really synced
     try {
         await fetch(`${API_URL}/server-sync`, {
             method: "POST",
@@ -83,17 +94,8 @@ async function v0_0_8_fixWordCount(): Promise<MigrationResponse> {
         return { success: false, message: "Couldn't reach server for fixing word counts!" };
     }
 
-    // update local entries
-    for (const entry of miscalculatedEntries) {
-        await db.entries.update(entry.date, { word_count: entry.word_count });
-    }
-
-    // only show toast if any changes were made
-    if (miscalculatedEntries.length) {
-        return { success: true, message: "Successfully fixed word counts!" };
-    } else {
-        return { success: true };
-    }
+    // show toast if any changes were made
+    return { success: true, message: "Successfully fixed word counts!" };
 }
 
 // rename all localStorage and sessionStorage keys to include journal- prefix
@@ -156,10 +158,14 @@ async function v0_0_17_migrateSettings(): Promise<MigrationResponse> {
 
         // copy over settings
         const settingsState = useSettings.getState();
-        if (parsedSettings["2fa_method"] == 1) settingsState.setSetting("security.secondary_auth", "codeword");
-        if (parsedSettings["2fa_method"] == 2) settingsState.setSetting("security.secondary_auth", "passkey");
-        if (parsedSettings.codeword) settingsState.setSetting("data.codeword_hash", parsedSettings.codeword);
-        if (parsedSettings.passkey) settingsState.setSetting("data.passkey", parsedSettings.passkey);
+        if (parsedSettings["2fa_method"] == 1)
+            settingsState.setSetting("security.secondary_auth", "codeword");
+        if (parsedSettings["2fa_method"] == 2)
+            settingsState.setSetting("security.secondary_auth", "passkey");
+        if (parsedSettings.codeword)
+            settingsState.setSetting("data.codeword_hash", parsedSettings.codeword);
+        if (parsedSettings.passkey)
+            settingsState.setSetting("data.passkey", parsedSettings.passkey);
     }
 
     return { success: true, reload: true };

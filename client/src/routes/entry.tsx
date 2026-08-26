@@ -14,6 +14,7 @@ import { formatDate } from "../util/time.ts";
 import { calculateWords } from "../util/words.ts";
 import { eventTarget, QuoteImageOpenEvent } from "../util/events.ts";
 import BackArrow from "../components/back-arrow/BackArrow.tsx";
+import type { EntryExtras } from "../types/entry.ts";
 
 export type EntrySearchParams = {
     date: string;
@@ -45,7 +46,6 @@ function Entry() {
     const [quoteImageOpen, setQuoteImageOpen] = useState(false);
     const [editorLoaded, setEditorLoaded] = useState(false);
     const [mood, setMood] = useState<number | null>(null);
-    const [location, setLocation] = useState<number | null>(null);
 
     useEffect(() => {
         enforceAuth(navigate, RouteType.Authed);
@@ -54,10 +54,9 @@ function Entry() {
         db.entries.get(date).then(async (data) => {
             if (!data || data.content === null) return;
 
-            if (data.mood) {
-                setMood(data.mood);
+            if (data.extras.mood) {
+                setMood(data.extras.mood);
             }
-            if (data.location) setLocation(data.location);
 
             contentRef.current = data.content;
             setInitialContent(data.content);
@@ -128,7 +127,7 @@ function Entry() {
             document.removeEventListener("keydown", keyDown);
             eventTarget.removeEventListener(QuoteImageOpenEvent.eventId, quoteImageOpenHandler);
         };
-    }, [quoteImageOpen, mood, location]);
+    }, [quoteImageOpen, mood]);
 
     async function handleContentChange(newContent: string) {
         contentRef.current = newContent;
@@ -143,8 +142,7 @@ function Entry() {
         if (text === "") {
             const entryJson = {
                 content: null,
-                mood: null,
-                location: null,
+                extras: {},
                 word_count: 0,
                 hash: null,
                 last_modified: new Date().toISOString(),
@@ -162,11 +160,11 @@ function Entry() {
         }
 
         // compute hash -- docs/hash.md
-        const toHashObject: { content: string; mood?: number; location?: number } = {
+        const toHashObject: { content: string; extras: EntryExtras } = {
             content: text,
+            extras: {},
         };
-        if (mood) toHashObject.mood = mood;
-        if (location) toHashObject.location = location;
+        if (mood) toHashObject.extras.mood = mood;
         const toHashString = JSON.stringify(toHashObject);
 
         const encoder = new TextEncoder();
@@ -176,12 +174,12 @@ function Entry() {
 
         const entryJson = {
             content: text,
-            mood: mood,
-            location: location,
+            extras: {} as EntryExtras,
             word_count: calculateWords(text),
             hash: hashed,
             last_modified: new Date().toISOString(),
         };
+        if (mood) entryJson.extras.mood = mood;
 
         if (existingEntry) {
             // update existing entry
@@ -226,8 +224,6 @@ function Entry() {
                 saveLocally={saveLocally}
                 mood={mood}
                 setMood={setMood}
-                location={location}
-                setLocation={setLocation}
                 date={date}
                 ref={moodSelectRef}
                 wordCount={wordCount}

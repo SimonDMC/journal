@@ -5,6 +5,7 @@ import { router } from "../main";
 import { useSettings } from "../state/settings";
 
 export enum RouteType {
+    Redirect,
     Unauthed,
     SecondaryAuth,
     Authed,
