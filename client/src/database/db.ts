@@ -25,7 +25,8 @@ db.version(2)
             .table("entries")
             .toCollection()
             .modify((entry) => {
-                entry.extras = { mood: entry.mood };
+                entry.extras = {};
+                if (entry.mood) entry.extras.mood = entry.mood;
                 delete entry.mood;
                 delete entry.location;
             });

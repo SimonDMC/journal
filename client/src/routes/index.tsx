@@ -15,11 +15,8 @@ function Home() {
             navigator.serviceWorker.register("/sw.js");
         }
 
-        console.log(1);
-
         enforceAuth(navigate, RouteType.Redirect);
-        console.log(2);
     }, [navigate]);
 
-    return <main></main>;
+    return <main />;
 }

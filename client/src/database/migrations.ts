@@ -1,10 +1,10 @@
 import { db } from "./db";
 import { useSettings } from "../state/settings";
-import { API_URL } from "../util/config";
-import { encryptEntry } from "../util/encryption";
+import { encryptEntry } from "../util/crypto";
 import { successToast, warningToast } from "../util/toast";
 import { calculateWords } from "../util/words";
 import type { EncryptedEntry } from "../types/entry";
+import { postAPI } from "../services/api";
 
 const migrationMap = new Map<string, () => Promise<MigrationResponse>>([
     ["0.0.8", v0_0_8_fixWordCount],
@@ -85,10 +85,7 @@ async function v0_0_8_fixWordCount(): Promise<MigrationResponse> {
 
     // remote sync to make sure it's really synced
     try {
-        await fetch(`${API_URL}/server-sync`, {
-            method: "POST",
-            body: JSON.stringify(miscalculatedEntries),
-        });
+        await postAPI("/server-sync", miscalculatedEntries);
     } catch (e) {
         console.error(e);
         return { success: false, message: "Couldn't reach server for fixing word counts!" };

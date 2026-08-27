@@ -9,12 +9,13 @@ import QuoteImage from "../components/quote-image/QuoteImage.tsx";
 import Editor from "../components/editor/Editor.tsx";
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import type { SelectInstance } from "react-select";
-import { moods } from "../util/parameters.ts";
+import { moods } from "../util/extras.ts";
 import { formatDate } from "../util/time.ts";
 import { calculateWords } from "../util/words.ts";
 import { eventTarget, QuoteImageOpenEvent } from "../util/events.ts";
 import BackArrow from "../components/back-arrow/BackArrow.tsx";
-import type { EntryExtras } from "../types/entry.ts";
+import type { Entry, EntryExtras } from "../types/entry.ts";
+import { hashEntry } from "../util/crypto.ts";
 
 export type EntrySearchParams = {
     date: string;
@@ -159,27 +160,15 @@ function Entry() {
             return;
         }
 
-        // compute hash -- docs/hash.md
-        const toHashObject: { content: string; extras: EntryExtras } = {
-            content: text,
-            extras: {},
-        };
-        if (mood) toHashObject.extras.mood = mood;
-        const toHashString = JSON.stringify(toHashObject);
-
-        const encoder = new TextEncoder();
-        const data = encoder.encode(toHashString);
-        const hashBuffer = await window.crypto.subtle.digest("SHA-1", data);
-        const hashed = btoa(String.fromCharCode(...new Uint8Array(hashBuffer))).slice(0, -1);
-
         const entryJson = {
             content: text,
             extras: {} as EntryExtras,
             word_count: calculateWords(text),
-            hash: hashed,
             last_modified: new Date().toISOString(),
+            hash: null as null | string,
         };
         if (mood) entryJson.extras.mood = mood;
+        entryJson.hash = await hashEntry(entryJson);
 
         if (existingEntry) {
             // update existing entry

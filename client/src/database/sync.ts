@@ -1,11 +1,11 @@
 import { db } from "./db";
-import { API_URL } from "../util/config";
-import { decryptEntry, encryptEntry } from "../util/encryption";
+import { decryptEntry, encryptEntry } from "../util/crypto";
 import { warningToast } from "../util/toast";
 import { eventTarget, OfflineModeEvent } from "../util/events";
 import { logoutImperatively } from "../util/auth";
-import type { EncryptedEntry, EncryptedEntryData } from "../types/entry";
+import type { EncryptedEntry } from "../types/entry";
 import { calculateWords } from "../util/words";
+import { postAPI } from "../services/api";
 
 interface ClientSyncBody {
     // deleted entries have a null hash
@@ -36,10 +36,7 @@ export async function syncDatabase() {
 
     let clientSyncResponse;
     try {
-        clientSyncResponse = await fetch(`${API_URL}/client-sync`, {
-            method: "POST",
-            body: JSON.stringify(entries),
-        });
+        clientSyncResponse = await postAPI("/client-sync", entries);
 
         if (clientSyncResponse.status == 401) {
             // unauthorized! log out
@@ -61,15 +58,14 @@ export async function syncDatabase() {
         const missingEntriesSync = await Promise.all(
             json.missing.map(async (entry: EncryptedEntry) => {
                 const decrypted = await decryptEntry(entry.data);
-                const entryData = JSON.parse(decrypted!) as EncryptedEntryData;
 
                 return {
                     date: entry.date,
-                    content: entryData.content,
-                    extras: entryData.extras,
+                    content: decrypted?.content ?? null,
+                    extras: decrypted?.extras ?? {},
                     hash: entry.hash,
-                    word_count: calculateWords(entryData.content),
-                    last_modified: entryData.last_modified,
+                    word_count: decrypted?.content ? calculateWords(decrypted.content) : 0,
+                    last_modified: decrypted?.last_modified,
                 };
             }),
         );
@@ -92,9 +88,8 @@ export async function syncDatabase() {
 
         try {
             const decrypted = await decryptEntry(entry.data);
-            const entryData = JSON.parse(decrypted!) as EncryptedEntryData;
 
-            const remoteTime = new Date(entryData.last_modified).getTime();
+            const remoteTime = new Date(decrypted.last_modified).getTime();
             const localTime = new Date(localEntry.last_modified).getTime();
 
             // crucially, remote wins if the updated time is identical. otherwise we could get into
@@ -103,7 +98,7 @@ export async function syncDatabase() {
             if (localTime > remoteTime) {
                 // local wins
                 console.log(
-                    `Sync conflict at day ${localEntry.date} -- choosing local @ ${localEntry.last_modified} over remote @ ${entryData.last_modified}`,
+                    `Sync conflict at day ${localEntry.date} -- choosing local @ ${localEntry.last_modified} over remote @ ${decrypted.last_modified}`,
                 );
                 serverSyncEntries.push({
                     date: localEntry.date,
@@ -113,18 +108,21 @@ export async function syncDatabase() {
             } else {
                 // remote wins
                 console.log(
-                    `Sync conflict at day ${localEntry.date} -- choosing remote @ ${entryData.last_modified} over local @ ${localEntry.last_modified}`,
+                    `Sync conflict at day ${localEntry.date} -- choosing remote @ ${decrypted.last_modified} over local @ ${localEntry.last_modified}`,
                 );
                 await db.entries.delete(entry.date);
 
-                await db.entries.add({
+                const remoteEntry = {
                     date: entry.date,
-                    content: entryData.content,
+                    content: decrypted.content,
                     hash: entry.hash,
                     extras: {},
-                    word_count: calculateWords(entryData.content),
-                    last_modified: entryData.last_modified,
-                });
+                    word_count: calculateWords(decrypted.content),
+                    last_modified: decrypted.last_modified,
+                };
+                if (decrypted.extras.mood) remoteEntry.extras = { mood: decrypted.extras.mood };
+
+                await db.entries.add(remoteEntry);
             }
         } catch (error) {
             console.log(error);
@@ -156,10 +154,7 @@ export async function syncDatabase() {
 
     // 6. Send over excess and new local entries to server
     if (serverSyncEntries.length > 0) {
-        const serverSyncResponse = await fetch(`${API_URL}/server-sync`, {
-            method: "POST",
-            body: JSON.stringify(serverSyncEntries),
-        });
+        const serverSyncResponse = await postAPI("/server-sync", serverSyncEntries);
 
         if (!serverSyncResponse.ok) {
             warningToast("Sync failed (server request)");
@@ -173,15 +168,9 @@ export async function syncEntry(date: string): Promise<boolean> {
     if (!entry) return false;
 
     try {
-        const res = await fetch(`${API_URL}/entry/${date}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                data: await encryptEntry(entry),
-                hash: entry.hash,
-            }),
+        const res = await postAPI(`/entry/${date}`, {
+            data: await encryptEntry(entry),
+            hash: entry.hash,
         });
 
         return res.ok;

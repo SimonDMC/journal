@@ -16,7 +16,7 @@ export interface EntryExtras {
 
 export interface EncryptedEntry {
     date: string;
-    data: string | null;
+    data: string;
     hash: string | null;
 }
 
@@ -24,4 +24,9 @@ export interface EncryptedEntryData {
     content: string | null;
     extras: EntryExtras;
     last_modified: string;
+}
+
+export interface HashedEntryData {
+    content: string | null;
+    extras: EntryExtras;
 }

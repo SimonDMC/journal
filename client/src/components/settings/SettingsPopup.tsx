@@ -15,7 +15,7 @@ import { setCodeword, setCodewordMismatched, setupPasskey } from "../../settings
 import { syncDatabase } from "../../database/sync";
 import SettingsContent from "./SettingsContent";
 import { checkForUpdateManually, forceReload, getCurrentVersion } from "../../util/update";
-import { showKeyHash } from "../../util/encryption";
+import { showKeyHash } from "../../util/crypto";
 import { wipeLocalDatabase } from "../../settings/debug";
 import { formatTimestampShort, getYear } from "../../util/time";
 
@@ -100,6 +100,11 @@ export default function SettingsPopup() {
                                     label="Check for Updates"
                                     actionLabel="Check"
                                     action={checkForUpdateManually}
+                                />
+                                <SettingsToggle
+                                    label="Suppress all errors"
+                                    settingKey="general.suppress_toasts"
+                                    desc="Prevent error and warning toasts from appearing. Useful if you're intentionally running an outdated version and getting spammed with API errors."
                                 />
                             </SettingsContent>
                         )}
@@ -207,7 +212,7 @@ export default function SettingsPopup() {
                                     Build <code>{__BUILD_INFO__.commitHash}</code> —{" "}
                                     {formatTimestampShort(__BUILD_INFO__.buildTimestamp)}.
                                     <br />
-                                    Version <strong>v{getCurrentVersion()}</strong>. © SimonDMC,
+                                    Version <strong>v{getCurrentVersion()}</strong>. © SimonDMC,{" "}
                                     {getYear(__BUILD_INFO__.buildTimestamp)}.
                                 </div>
                             </SettingsContent>

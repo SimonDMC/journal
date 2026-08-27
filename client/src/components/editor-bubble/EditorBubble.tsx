@@ -1,7 +1,7 @@
 import "./EditorBubble.css";
 import Select, { type SelectInstance } from "react-select";
 import { useEffect, useState, type RefObject } from "react";
-import { moods } from "../../util/parameters";
+import { moods } from "../../util/extras";
 import { today } from "../../util/time";
 import { useSettings } from "../../state/settings";
 

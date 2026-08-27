@@ -1,16 +1,20 @@
 import { auth } from "../auth";
-import type { EntryWithTimestamp } from "../types";
+import type { Entry } from "../types";
+import { olderThan } from "../version";
 import { MAX_ROWS } from "./upload";
 
 export const serverSyncHandle = async (request: Request, env: Env): Promise<Response> => {
+    // 0.0.28 revamped entry storage in a non-backwards-compatible way
+    if (olderThan(request, "0.0.28")) return new Response("Outdated version", { status: 410 });
+
     // auth
     const user_id = await auth(request, env);
     if (!user_id) return new Response("Unauthorized", { status: 401 });
 
     // get entries from request body
-    let entriesToSave: EntryWithTimestamp[];
+    let entriesToSave: Entry[];
     try {
-        entriesToSave = (await request.json()) as EntryWithTimestamp[];
+        entriesToSave = (await request.json()) as Entry[];
     } catch {
         return new Response("Bad request", { status: 400 });
     }
@@ -20,30 +24,17 @@ export const serverSyncHandle = async (request: Request, env: Env): Promise<Resp
         const chunk = entriesToSave.slice(i, i + MAX_ROWS);
 
         // Prepare placeholders and values
-        const placeholders = chunk.map(() => "(?, ?, ?, ?, ?, ?, ?, ?)").join(",");
-        const values = chunk.flatMap((entry) => [
-            user_id,
-            entry.date,
-            entry.content,
-            entry.mood,
-            entry.location,
-            entry.word_count,
-            entry.hash,
-            entry.last_modified,
-        ]);
+        const placeholders = chunk.map(() => "(?, ?, ?, ?)").join(",");
+        const values = chunk.flatMap((entry) => [user_id, entry.date, entry.data, entry.hash]);
 
         // Perform the upsert
         await env.DB.prepare(
             `
-			INSERT INTO Entries (user_id, date, content, mood, location, word_count, hash, last_modified)
+			INSERT INTO Entries_v2 (user_id, date, data, hash)
 			VALUES ${placeholders}
 			ON CONFLICT(user_id, date) DO UPDATE SET
-				content = excluded.content,
-				mood = excluded.mood,
-				location = excluded.location,
-				word_count = excluded.word_count,
-				hash = excluded.hash,
-				last_modified = excluded.last_modified;
+				data = excluded.data,
+				hash = excluded.hash;
 		`,
         )
             .bind(...values)

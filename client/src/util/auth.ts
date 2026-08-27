@@ -1,8 +1,8 @@
-import { API_URL } from "./config";
 import type { UseNavigateResult } from "@tanstack/router-core";
 import { errorToast } from "./toast";
 import { router } from "../main";
 import { useSettings } from "../state/settings";
+import { postAPI } from "../services/api";
 
 export enum RouteType {
     Redirect,
@@ -70,9 +70,7 @@ export function enforceAuth(navigate: UseNavigateResult<string>, route: RouteTyp
 
 async function logoutWithoutNav() {
     try {
-        await fetch(`${API_URL}/logout`, {
-            method: "POST",
-        });
+        await postAPI("/logout", {});
     } catch (e) {
         console.error(e);
         errorToast("Couldn't reach server.");

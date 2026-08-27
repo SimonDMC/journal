@@ -1,14 +1,15 @@
 import { auth } from "../auth";
+import { olderThan } from "../version";
 
 type RequestContent = {
-    content: string;
-    mood?: number;
-    location?: string;
-    word_count: number;
+    data: string;
     hash?: string;
 };
 
 export const setEntryHandle = async (request: Request, env: Env): Promise<Response> => {
+    // 0.0.28 revamped entry storage in a non-backwards-compatible way
+    if (olderThan(request, "0.0.28")) return new Response("Outdated version", { status: 410 });
+
     // auth
     const user_id = await auth(request, env);
     if (!user_id) return new Response("Unauthorized", { status: 401 });
@@ -25,43 +26,31 @@ export const setEntryHandle = async (request: Request, env: Env): Promise<Respon
         return new Response("Bad request", { status: 400 });
     }
 
-    if (body.content === undefined) {
+    if (body.data === undefined) {
         return new Response("Bad request", { status: 400 });
     }
 
-    const content = body.content;
-    const mood = body.mood ?? null;
-    const location = body.location ?? null;
-    const word_count = body.word_count;
+    const data = body.data;
     const hash = body.hash;
 
     // get entry for today if it exists
-    const entry = await env.DB.prepare("SELECT id FROM Entries WHERE user_id = ? AND date = ?;")
+    const entry = await env.DB.prepare("SELECT id FROM Entries_v2 WHERE user_id = ? AND date = ?;")
         .bind(user_id, date)
         .all();
 
     if (entry.results.length === 0) {
         // add entry if it doesn't exist
         await env.DB.prepare(
-            "INSERT INTO Entries (user_id, date, content, word_count, mood, location, hash) VALUES (?, ?, ?, ?, ?, ?, ?);",
+            "INSERT INTO Entries_v2 (user_id, date, data, hash) VALUES (?, ?, ?, ?);",
         )
-            .bind(user_id, date, content, word_count, mood, location, hash)
+            .bind(user_id, date, data, hash)
             .run();
     } else {
         // update entry if it does exist
         await env.DB.prepare(
-            "UPDATE Entries SET content = ?, word_count = ?, mood = ?, location = ?, hash = ?, last_modified = ? WHERE user_id = ? AND date = ?;",
+            "UPDATE Entries_v2 SET data = ?, hash = ? WHERE user_id = ? AND date = ?;",
         )
-            .bind(
-                content,
-                word_count,
-                mood,
-                location,
-                hash,
-                new Date().toISOString(),
-                user_id,
-                date,
-            )
+            .bind(data, hash, user_id, date)
             .run();
     }
 

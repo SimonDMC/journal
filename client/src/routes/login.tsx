@@ -1,4 +1,3 @@
-import { API_URL } from "../util/config";
 import "../styles/login.css";
 import { useEffect } from "react";
 import { db } from "../database/db";
@@ -6,6 +5,7 @@ import { errorToast } from "../util/toast";
 import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { checkForUpdateIfDesired } from "../util/update";
+import { postAPI } from "../services/api";
 
 export const Route = createFileRoute("/login")({
     component: Login,
@@ -25,15 +25,9 @@ function Login() {
 
         let res;
         try {
-            res = await fetch(`${API_URL}/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password,
-                }),
+            res = await postAPI("/login", {
+                username: username,
+                password: password,
             });
         } catch (e) {
             console.error(e);

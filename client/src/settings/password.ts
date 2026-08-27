@@ -1,11 +1,8 @@
-import { API_URL } from "../util/config";
+import { postAPI } from "../services/api";
 import { errorToast, successToast } from "../util/toast";
 
 export async function changePassword(password: string) {
-    const res = await fetch(`${API_URL}/change-password`, {
-        method: "POST",
-        body: JSON.stringify({ password }),
-    });
+    const res = await postAPI("/change-password", { password });
 
     if (res.ok) {
         successToast("Password changed successfully!");

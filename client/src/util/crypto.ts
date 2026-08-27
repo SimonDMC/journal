@@ -1,4 +1,4 @@
-import type { EncryptedEntryData, Entry } from "../types/entry";
+import type { EncryptedEntryData, Entry, HashedEntryData } from "../types/entry";
 import { KEY_GENERATOR } from "./config";
 
 let cryptoKey: CryptoKey | undefined;
@@ -31,9 +31,7 @@ export async function showKeyHash() {
     );
 }
 
-export async function encryptEntry(entry: Entry): Promise<string | null> {
-    if (entry.content === null) return null;
-
+export async function encryptEntry(entry: Entry): Promise<string> {
     const toEncrypt: EncryptedEntryData = {
         content: entry.content,
         extras: entry.extras,
@@ -59,9 +57,11 @@ export async function encryptEntry(entry: Entry): Promise<string | null> {
     return btoa(String.fromCharCode(...result));
 }
 
-export async function decryptEntry(encrypted: string | null): Promise<string | null> {
-    if (encrypted === null) return null;
+export async function decryptEntry(encrypted: string): Promise<EncryptedEntryData> {
+    return JSON.parse(await decryptText(encrypted));
+}
 
+export async function decryptText(encrypted: string): Promise<string> {
     const toDecrypt = new Uint8Array([...atob(encrypted)].map((c) => c.charCodeAt(0)));
     const iv = toDecrypt.slice(0, 16);
     const buffer = toDecrypt.slice(16);
@@ -73,4 +73,20 @@ export async function decryptEntry(encrypted: string | null): Promise<string | n
 
     const decrypted = await crypto.subtle.decrypt({ name: "AES-CBC", iv }, key, buffer);
     return new TextDecoder().decode(decrypted);
+}
+
+export async function hashEntry(entry: HashedEntryData): Promise<string | null> {
+    if (entry.content === null) return null;
+
+    const toHashObject: HashedEntryData = {
+        content: entry.content,
+        extras: {},
+    };
+    if (entry.extras.mood) toHashObject.extras.mood = entry.extras.mood;
+    const toHashString = JSON.stringify(toHashObject);
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(toHashString);
+    const hashBuffer = await window.crypto.subtle.digest("SHA-1", data);
+    return btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
 }
