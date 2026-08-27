@@ -58,10 +58,14 @@ export async function encryptEntry(entry: Entry): Promise<string> {
 }
 
 export async function decryptEntry(encrypted: string): Promise<EncryptedEntryData> {
-    return JSON.parse(await decryptText(encrypted));
+    // this is a safe null assertion - decryptText only returns null if input is null, which it
+    // never is here
+    return JSON.parse((await decryptText(encrypted))!);
 }
 
-export async function decryptText(encrypted: string): Promise<string> {
+export async function decryptText(encrypted: string | null): Promise<string | null> {
+    if (encrypted === null) return null;
+
     const toDecrypt = new Uint8Array([...atob(encrypted)].map((c) => c.charCodeAt(0)));
     const iv = toDecrypt.slice(0, 16);
     const buffer = toDecrypt.slice(16);

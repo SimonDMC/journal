@@ -14,7 +14,7 @@ export const upgradeEntriesV2PullHandle = async (request: Request, env: Env): Pr
         .bind(user_id)
         .all();
 
-    return new Response(JSON.stringify(data));
+    return new Response(JSON.stringify(data.results));
 };
 
 export const upgradeEntriesV2PushHandle = async (request: Request, env: Env): Promise<Response> => {

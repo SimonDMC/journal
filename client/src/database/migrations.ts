@@ -1,15 +1,16 @@
 import { db } from "./db";
 import { useSettings } from "../state/settings";
-import { encryptEntry } from "../util/crypto";
+import { decryptText, encryptEntry, hashEntry } from "../util/crypto";
 import { successToast, warningToast } from "../util/toast";
 import { calculateWords } from "../util/words";
-import type { EncryptedEntry } from "../types/entry";
+import type { EncryptedEntry, EntryExtras } from "../types/entry";
 import { postAPI } from "../services/api";
 
 const migrationMap = new Map<string, () => Promise<MigrationResponse>>([
     ["0.0.8", v0_0_8_fixWordCount],
     ["0.0.13", v0_0_13_fixLocalStorageKeys],
     ["0.0.17", v0_0_17_migrateSettings],
+    ["0.0.28", v0_0_28_migrateEntries],
 ]);
 
 type MigrationResponse = {
@@ -166,4 +167,55 @@ async function v0_0_17_migrateSettings(): Promise<MigrationResponse> {
     }
 
     return { success: true, reload: true };
+}
+
+interface Entry_v1 {
+    date: string;
+    content: string | null;
+    hash: string | null;
+    mood: number | null;
+    location: number | null;
+    word_count: number;
+    last_modified: string;
+}
+// migrate all entries in remote database from v1 to v2 format
+async function v0_0_28_migrateEntries(): Promise<MigrationResponse> {
+    try {
+        const pullRes = await postAPI("/migrate/entries-v2-pull", {});
+        const dbEntries = (await pullRes.json()) as Entry_v1[];
+
+        // migration was already done, do nothing
+        if (dbEntries.length == 0) return { success: true };
+
+        const migratedEntries: EncryptedEntry[] = [];
+        for (const entry of dbEntries) {
+            entry.content = await decryptText(entry.content);
+
+            const migratedEntry = {
+                date: entry.date,
+                content: entry.content,
+                extras: {} as EntryExtras,
+                word_count: entry.word_count,
+                last_modified: entry.last_modified,
+                hash: null,
+            };
+            if (entry.mood) migratedEntry.extras.mood = entry.mood;
+
+            migratedEntries.push({
+                date: entry.date,
+                data: await encryptEntry(migratedEntry),
+                hash: await hashEntry(migratedEntry),
+            });
+        }
+
+        const pushRes = await postAPI("/migrate/entries-v2-push", migratedEntries);
+
+        if (pushRes.ok)
+            return { success: true, message: "Successfully upgraded all database entries." };
+
+        return { success: false, message: "Couldn't upgrade database entries to v2." };
+    } catch (e) {
+        console.error(e);
+        return { success: false, message: "Couldn't upgrade database entries to v2." };
+    }
 }
