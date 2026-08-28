@@ -15,12 +15,17 @@ type VersionsFile = {
     }[];
 };
 
+/**
+ * Retrieve the currently running app version
+ */
 export function getCurrentVersion() {
     return localStorage.getItem("journal-version");
 }
 
-// Check for update -- only once, at the beginning of the session, unless it's available and
-// wasn't dismissed
+/**
+ * Check for update -- only once, at the beginning of the session, unless it's available and
+ * wasn't dismissed
+ */
 export async function checkForUpdateIfDesired() {
     if (!sessionStorage.getItem("journal-update-undesired")) {
         const updatePolicy = useSettings.getState().getString("general.update_policy");
@@ -99,8 +104,13 @@ export async function invokeUpdatePopup(versionsFile: VersionsFile, updateMode: 
     );
 }
 
-// returns true if versionA is older, false otherwise
-export function compareVersions(versionA: string, versionB: string) {
+/**
+ * Compares two app versions
+ * @param versionA
+ * @param versionB
+ * @returns true if versionA is older, false otherwise
+ */
+export function compareVersions(versionA: string, versionB: string): boolean {
     const subversionsA = versionA.split(".").map((s) => parseInt(s));
     const subversionsB = versionB.split(".").map((s) => parseInt(s));
     const subversions = Math.max(subversionsA.length, subversionsB.length);
@@ -111,7 +121,9 @@ export function compareVersions(versionA: string, versionB: string) {
     return false;
 }
 
-// downloads all necessary files for journal to work offline
+/**
+ * Downloads all necessary files for Journal to work offline
+ */
 export async function installApp(version: string) {
     console.log(`Installing version ${version}!`);
 

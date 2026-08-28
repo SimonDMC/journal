@@ -45,13 +45,14 @@ self.addEventListener("fetch", (event) => {
             .then(async (cache) => {
                 const cachedResponse = await cache.match(event.request, {
                     ignoreVary: true,
-                    ignoreSearch: true,
                 });
                 // Serve from cache if cached
                 if (cachedResponse) {
                     return cachedResponse;
                 }
                 // For any request with no file extension, return index
+                // Amazingly, this also lets us bypass the cache while downloading a new version by
+                // adding ?v=X.X.X to the URL
                 if (!url.pathname.includes(".")) {
                     let index = await cache.match("/");
 

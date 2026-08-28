@@ -1,4 +1,5 @@
 import { Slide, toast, type ToastOptions } from "react-toastify";
+import { useSettings } from "../state/settings";
 
 const toastOptions = {
     position: "top-right",
@@ -15,9 +16,11 @@ export function successToast(message: string) {
 }
 
 export function warningToast(message: string) {
+    if (useSettings.getState().getSetting("general.suppress_toasts")) return;
     toast.warn(message, toastOptions);
 }
 
 export function errorToast(message: string) {
+    if (useSettings.getState().getSetting("general.suppress_toasts")) return;
     toast.error(message, toastOptions);
 }

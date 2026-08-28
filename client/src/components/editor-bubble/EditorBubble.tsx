@@ -1,7 +1,7 @@
 import "./EditorBubble.css";
 import Select, { type SelectInstance } from "react-select";
 import { useEffect, useState, type RefObject } from "react";
-import { moods } from "../../util/parameters";
+import { moods } from "../../util/extras";
 import { today } from "../../util/time";
 import { useSettings } from "../../state/settings";
 
@@ -14,8 +14,6 @@ export default function EditorBubble(props: {
     saveLocally: () => Promise<void>;
     mood: number | null;
     setMood: React.Dispatch<React.SetStateAction<number | null>>;
-    location: number | null;
-    setLocation: React.Dispatch<React.SetStateAction<number | null>>;
     date: string;
     ref: RefObject<SelectInstance | null>;
     wordCount: number;
@@ -36,7 +34,7 @@ export default function EditorBubble(props: {
     const showMood = useSettings((s) => s.getBoolean("general.show_mood"));
     const { saveLocally } = props;
 
-    // autosave whenever mood or location is updated (if it's today)
+    // autosave whenever mood is updated (if it's today)
     useEffect(() => {
         if (shouldSave) {
             console.log("SAVING");
@@ -44,7 +42,7 @@ export default function EditorBubble(props: {
             saveLocally();
             setShouldSave(false);
         }
-    }, [props.mood, props.location, shouldSave, saveLocally]);
+    }, [props.mood, shouldSave, saveLocally]);
 
     return (
         <div className="bubble">

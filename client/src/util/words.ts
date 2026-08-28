@@ -1,3 +1,6 @@
+/**
+ * Calculates the amount of words in an entry content
+ */
 export function calculateWords(content: string | null): number {
     if (content === null) return 0;
 

@@ -1,7 +1,7 @@
 import { db } from "../database/db";
 import { syncDatabase } from "../database/sync";
-import { API_URL } from "../util/config";
-import { encryptEntry } from "../util/encryption";
+import { postAPI } from "../services/api";
+import { encryptEntry } from "../util/crypto";
 import { today } from "../util/time";
 import { errorToast, successToast } from "../util/toast";
 
@@ -17,7 +17,11 @@ export async function exportEntries() {
 }
 
 export async function uploadEntries() {
-    if (!confirm("This operation will wipe all your existing entries. Make sure you know what you're doing. Do you want to continue?"))
+    if (
+        !confirm(
+            "This operation will wipe all your existing entries. Make sure you know what you're doing. Do you want to continue?",
+        )
+    )
         return;
 
     const inputEl = document.createElement("input");
@@ -32,12 +36,27 @@ export async function uploadEntries() {
             const json = JSON.parse(reader.result as string);
             let hasError = false;
 
-            // legacy exports have entries in {results: [...]}
-            // new exports have entries in [...]
+            // v0 exports have entries in {results: [...]}
+            // v1+ exports have entries in [...]
             for (const entry of json.results ?? json) {
                 let encrypted;
                 try {
-                    encrypted = await encryptEntry(entry.content);
+                    // remove location and move mood, if present (v1-)
+                    delete entry.location;
+                    if (entry.mood) {
+                        entry.extras = {
+                            mood: entry.mood,
+                        };
+                    }
+                    delete entry.mood;
+
+                    encrypted = await encryptEntry(entry);
+
+                    // remove encrypted parameters
+                    delete entry.content;
+                    delete entry.extras;
+                    delete entry.word_count;
+                    delete entry.last_modified;
                 } catch (error) {
                     hasError = true;
                     console.log(error);
@@ -45,7 +64,7 @@ export async function uploadEntries() {
                     continue;
                 }
 
-                entry.content = encrypted;
+                entry.data = encrypted;
             }
 
             if (hasError) {
@@ -56,10 +75,7 @@ export async function uploadEntries() {
             // wipe all local entries
             await db.entries.clear();
 
-            const res = await fetch(`${API_URL}/upload`, {
-                method: "POST",
-                body: JSON.stringify(json.results ?? json),
-            });
+            const res = await postAPI("/upload", json.results ?? json);
 
             if (res.ok) {
                 successToast("Data imported successfully!");

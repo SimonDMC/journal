@@ -1,16 +1,16 @@
-import { bootstrapHandle } from "./routes/bootstrap";
 import { changePasswordHandle } from "./routes/change-password";
-import { getEntryHandle } from "./routes/get-entry";
 import { loginHandle } from "./routes/login";
 import { setEntryHandle } from "./routes/set-entry";
-import { overviewHandle } from "./routes/overview";
-import { downloadHandle } from "./routes/download";
 import { logoutHandle } from "./routes/logout";
 import { uploadHandle } from "./routes/upload";
 import { clientSyncHandle } from "./routes/client-sync";
 import { serverSyncHandle } from "./routes/server-sync";
 import { createAccountHandle } from "./routes/create-account";
 import { downloadDB } from "./cron";
+import {
+    upgradeEntriesV2PullHandle,
+    upgradeEntriesV2PushHandle,
+} from "./routes/migrations/upgrade-entries-v2";
 
 type Route = [
     method: string,
@@ -19,10 +19,6 @@ type Route = [
 ];
 
 const routes: Route[] = [
-    ["GET", /^overview$/, overviewHandle],
-    ["GET", /^bootstrap$/, bootstrapHandle],
-    ["GET", /^entry\/\d{4}-\d{2}-\d{2}$/, getEntryHandle],
-    ["GET", /^download$/, downloadHandle],
     ["POST", /^entry\/\d{4}-\d{2}-\d{2}$/, setEntryHandle],
     ["POST", /^login$/, loginHandle],
     ["POST", /^upload$/, uploadHandle],
@@ -31,6 +27,9 @@ const routes: Route[] = [
     ["POST", /^logout$/, logoutHandle],
     ["POST", /^change-password$/, changePasswordHandle],
     ["POST", /^create-account$/, createAccountHandle],
+
+    ["POST", /^migrate\/entries-v2-pull$/, upgradeEntriesV2PullHandle],
+    ["POST", /^migrate\/entries-v2-push$/, upgradeEntriesV2PushHandle],
 ];
 
 export default {

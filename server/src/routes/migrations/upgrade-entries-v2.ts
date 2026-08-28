@@ -1,14 +1,23 @@
-import { auth } from "../auth";
-import type { Entry } from "../types";
-import { olderThan } from "../version";
+import { auth } from "../../auth";
+import type { Entry } from "../../types";
+import { MAX_ROWS } from "../upload";
 
-export const MAX_VARIABLES = 100;
-export const MAX_ROWS = Math.floor(MAX_VARIABLES / 8);
+export const upgradeEntriesV2PullHandle = async (request: Request, env: Env): Promise<Response> => {
+    // auth
+    const user_id = await auth(request, env);
+    if (!user_id) return new Response("Unauthorized", { status: 401 });
 
-export const uploadHandle = async (request: Request, env: Env): Promise<Response> => {
-    // 0.0.28 revamped entry storage in a non-backwards-compatible way
-    if (olderThan(request, "0.0.28")) return new Response("Outdated version", { status: 410 });
+    // get unmigrated data from legacy entries table
+    const data = await env.DB.prepare(
+        "SELECT E.* FROM Users U JOIN Entries_v1 E ON U.id = E.user_id WHERE U.id = ? AND NOT EXISTS (SELECT 1 FROM Entries_v2 E2 WHERE E2.user_id = E.user_id AND E2.date = E.date);",
+    )
+        .bind(user_id)
+        .all();
 
+    return new Response(JSON.stringify(data.results));
+};
+
+export const upgradeEntriesV2PushHandle = async (request: Request, env: Env): Promise<Response> => {
     // auth
     const user_id = await auth(request, env);
     if (!user_id) return new Response("Unauthorized", { status: 401 });
@@ -24,9 +33,6 @@ export const uploadHandle = async (request: Request, env: Env): Promise<Response
     if (entries === undefined) {
         return new Response("Bad request", { status: 400 });
     }
-
-    // wipe existing entries
-    await env.DB.prepare("DELETE FROM Entries_v2 WHERE user_id = ?;").bind(user_id).run();
 
     // Split the results into chunks
     for (let i = 0; i < entries.length; i += MAX_ROWS) {

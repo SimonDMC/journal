@@ -9,7 +9,7 @@ import { StrictMode } from "react";
 import BottomMargin from "./components/bottom-margin/BottomMargin";
 import UpdatePopup from "./components/update-popup/UpdatePopup";
 import { syncDatabase } from "./database/sync";
-import { runMigrations } from "./util/migrations";
+import { runMigrations } from "./database/migrations";
 import SettingsPopup from "./components/settings/SettingsPopup";
 import { useSettings } from "./state/settings";
 import { injectAppropriateManifest } from "./util/pwa";
