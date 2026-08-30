@@ -66,24 +66,36 @@ function Entry() {
 
     useEffect(() => {
         const keyDown = async (event: KeyboardEvent) => {
+            const moodSelected =
+                document.activeElement?.id === moodSelectRef.current?.getElementId("input");
+
             if (event.key === "Escape") {
                 event.preventDefault();
 
                 // exit or close popup on esc
                 if (quoteImageOpen) {
+                    // close quote image popup if open
                     setQuoteImageOpen(false);
+                } else if (moodSelected) {
+                    // close mood select if open
+                    moodSelectRef.current?.blur();
                 } else if (document.activeElement?.tagName != "BODY" && event.shiftKey) {
                     // or deselect element if shift+esc
                     (document.activeElement as HTMLElement).blur();
                 } else if (!event.shiftKey) {
-                    // or exit if text is unfocused
+                    // or exit, if nothing is blocking esc key
                     router.history.back();
                 }
             }
 
             // select mood
+            // ^M instead of ⌘M on mac because ⌘M is reserved by minimize
             if (event.key == "m" && event.ctrlKey && moodSelectRef.current) {
-                moodSelectRef.current.focus();
+                if (moodSelected) {
+                    moodSelectRef.current?.blur();
+                } else {
+                    moodSelectRef.current.focus();
+                }
             }
 
             if (
