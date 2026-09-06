@@ -15,9 +15,10 @@ import { setCodeword, setCodewordMismatched, setupPasskey } from "../../settings
 import { syncDatabase } from "../../database/sync";
 import SettingsContent from "./SettingsContent";
 import { checkForUpdateManually, forceReload, getCurrentVersion } from "../../util/update";
-import { showKeyHash } from "../../util/crypto";
+import { decryptTextAndLog, showKeyHash } from "../../util/crypto";
 import { wipeLocalDatabase } from "../../settings/debug";
 import { formatTimestampShort, getYear } from "../../util/time";
+import SettingsInput from "./SettingsInput";
 
 export default function SettingsPopup() {
     const [selected, setSelected] = useState("general");
@@ -206,6 +207,13 @@ export default function SettingsPopup() {
                                     desc="Show a hash of your encryption key, useful for verifying it matches across devices"
                                     actionLabel="View"
                                     action={showKeyHash}
+                                />
+                                <SettingsInput
+                                    label="Decrypt Text"
+                                    desc="Decrypt some text with your encryption key and log the output to console"
+                                    placeholder="Text"
+                                    actionLabel="Decrypt"
+                                    action={decryptTextAndLog}
                                 />
                                 <SettingsSeparator />
                                 <div className="settings-text build-info">

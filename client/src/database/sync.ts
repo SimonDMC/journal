@@ -120,7 +120,8 @@ export async function syncDatabase() {
                     word_count: calculateWords(decrypted.content),
                     last_modified: decrypted.last_modified,
                 };
-                if (decrypted.extras.mood) remoteEntry.extras = { mood: decrypted.extras.mood };
+                // decrypted.extras should *never* be undefined, but it somehow happened to me
+                if (decrypted.extras?.mood) remoteEntry.extras = { mood: decrypted.extras.mood };
 
                 await db.entries.add(remoteEntry);
             }

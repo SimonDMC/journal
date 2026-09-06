@@ -79,6 +79,10 @@ export async function decryptText(encrypted: string | null): Promise<string | nu
     return new TextDecoder().decode(decrypted);
 }
 
+export async function decryptTextAndLog(encrypted: string | null) {
+    console.log(await decryptText(encrypted));
+}
+
 export async function hashEntry(entry: HashedEntryData): Promise<string | null> {
     if (entry.content === null) return null;
 
