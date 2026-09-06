@@ -1,7 +1,7 @@
 import { db } from "../database/db";
 import { syncDatabase } from "../database/sync";
 import { postAPI } from "../services/api";
-import { encryptEntry } from "../util/crypto";
+import { encryptEntry, hashEntry } from "../util/crypto";
 import { today } from "../util/time";
 import { errorToast, successToast } from "../util/toast";
 
@@ -43,6 +43,7 @@ export async function uploadEntries() {
                 try {
                     // remove location and move mood, if present (v1-)
                     delete entry.location;
+                    entry.extras ??= {};
                     if (entry.mood) {
                         entry.extras = {
                             mood: entry.mood,
@@ -51,6 +52,9 @@ export async function uploadEntries() {
                     delete entry.mood;
 
                     encrypted = await encryptEntry(entry);
+
+                    // recompute hash, we can't trust it
+                    entry.hash = await hashEntry(entry);
 
                     // remove encrypted parameters
                     delete entry.content;
