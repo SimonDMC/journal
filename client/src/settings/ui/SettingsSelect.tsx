@@ -1,5 +1,5 @@
-import { useSettings } from "../../../state/settings";
-import { InfoIcon } from "../../icons/InfoIcon";
+import { useSettings } from "../util/state";
+import { InfoIcon } from "../../components/icons/InfoIcon";
 import "../Settings.css";
 
 export default function SettingsSelect(props: {

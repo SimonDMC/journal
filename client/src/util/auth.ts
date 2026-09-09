@@ -1,7 +1,7 @@
 import type { UseNavigateResult } from "@tanstack/router-core";
 import { errorToast } from "./toast";
 import { router } from "../main";
-import { useSettings } from "../state/settings";
+import { useSettings } from "../settings/util/state";
 import { postAPI } from "../services/api";
 
 export enum RouteType {

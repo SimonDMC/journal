@@ -10,7 +10,7 @@ import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { dayAdjustedTime, today } from "../util/time";
 import { eventTarget, KeyCreateEvent, OfflineModeEvent } from "../util/events";
-import { useSettings } from "../state/settings";
+import { useSettings } from "../settings/util/state";
 import { checkForUpdateIfDesired, getCurrentVersion } from "../util/update";
 import { infoToast } from "../util/toast";
 

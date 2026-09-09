@@ -2,10 +2,11 @@ import "./Settings.css";
 import { useState } from "react";
 import SettingsTab from "./ui/SettingsTab";
 import { AnimatePresence, motion } from "framer-motion";
-import { useSettings } from "../../state/settings";
+import { useSettings } from "./util/state";
 import SettingsGeneralTab from "./tabs/SettingsGeneralTab";
 import SettingsSecurityTab from "./tabs/SettingsSecurityTab";
 import SettingsDebugTab from "./tabs/SettingsDebugTab";
+import SettingsAccountTab from "./tabs/SettingsAccountTab";
 
 export default function SettingsPopup() {
     const [selected, setSelected] = useState("general");
@@ -36,19 +37,28 @@ export default function SettingsPopup() {
                                 selected={selected}
                             />
                             <SettingsTab
+                                id="account"
+                                label="Account"
+                                setSelected={setSelected}
+                                selected={selected}
+                            />
+                            <SettingsTab
                                 id="security"
                                 label="Security"
                                 setSelected={setSelected}
                                 selected={selected}
                             />
-                            <SettingsTab
-                                id="debug"
-                                label="Debug"
-                                setSelected={setSelected}
-                                selected={selected}
-                            />
+                            {settingsState.getBoolean("general.show_debug") && (
+                                <SettingsTab
+                                    id="debug"
+                                    label="Debug"
+                                    setSelected={setSelected}
+                                    selected={selected}
+                                />
+                            )}
                         </div>
                         {selected == "general" && <SettingsGeneralTab />}
+                        {selected == "account" && <SettingsAccountTab />}
                         {selected == "security" && <SettingsSecurityTab />}
                         {selected == "debug" && <SettingsDebugTab />}
                     </div>

@@ -11,7 +11,7 @@ import { eventTarget, QuoteImageOpenEvent } from "../../util/events";
 import { getRouteApi } from "@tanstack/react-router";
 import { MONTH_NAMES } from "../../util/time";
 import { AnimatePresence, motion } from "framer-motion";
-import { getUserName } from "../../state/settings";
+import { getUserName } from "../../util/account";
 
 type QuoteImageParams = {
     content?: string;
@@ -98,7 +98,9 @@ export default function QuoteImage(params: { open: boolean; setOpen: (open: bool
                             <button onClick={downloadImage}>
                                 <DownloadIcon />
                             </button>
-                            <button onClick={copyImage}>{copying ? <CheckmarkIcon /> : <CopyIcon />}</button>
+                            <button onClick={copyImage}>
+                                {copying ? <CheckmarkIcon /> : <CopyIcon />}
+                            </button>
                         </div>
                         <div className="quoteImageBorder">
                             <div id="quoteImage">

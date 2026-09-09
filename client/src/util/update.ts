@@ -1,5 +1,5 @@
 import { eventTarget, UpdateReadyEvent } from "./events";
-import { useSettings } from "../state/settings";
+import { useSettings } from "../settings/util/state";
 import { infoToast } from "./toast";
 
 type VersionsFile = {

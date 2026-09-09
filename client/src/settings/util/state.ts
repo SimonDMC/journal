@@ -55,7 +55,3 @@ export const useSettings = create<SettingsState>()(
         },
     ),
 );
-
-export function getUserName() {
-    return localStorage.getItem("journal-username") ?? "User";
-}

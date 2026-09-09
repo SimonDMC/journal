@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { useSettings } from "../state/settings";
+import { useSettings } from "../settings/util/state";
 import { decryptText, encryptEntry, hashEntry } from "../util/crypto";
 import { successToast, warningToast } from "../util/toast";
 import { calculateWords } from "../util/words";

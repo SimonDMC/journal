@@ -1,9 +1,9 @@
-import { syncDatabase } from "../../../database/sync";
-import { wipeLocalDatabase } from "../../../settings/debug";
-import { uploadEntries } from "../../../settings/entries";
-import { showKeyHash, decryptTextAndLog } from "../../../util/crypto";
-import { formatTimestampShort, getYear } from "../../../util/time";
-import { forceReload, getCurrentVersion } from "../../../util/update";
+import { syncDatabase } from "../../database/sync";
+import { wipeLocalDatabase } from "../util/debug";
+import { uploadEntries } from "../util/entries";
+import { showKeyHash, decryptTextAndLog } from "../../util/crypto";
+import { formatTimestampShort, getYear } from "../../util/time";
+import { forceReload, getCurrentVersion } from "../../util/update";
 import SettingsButton from "../ui/SettingsButton";
 import SettingsContent from "../ui/SettingsContent";
 import SettingsInput from "../ui/SettingsInput";

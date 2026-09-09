@@ -4,7 +4,7 @@ import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { enforceAuth, logout, RouteType } from "../util/auth";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useSettings } from "../state/settings";
+import { useSettings } from "../settings/util/state";
 
 export const Route = createFileRoute("/codeword")({
     component: Codeword,

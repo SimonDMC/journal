@@ -1,7 +1,7 @@
-import { setCodeword, setCodewordMismatched, setupPasskey } from "../../../settings/auth";
-import { generateKey, uploadKey, downloadKey } from "../../../settings/key";
-import { changePassword, changePasswordMismatched } from "../../../settings/password";
-import { useSettings } from "../../../state/settings";
+import { setCodeword, setCodewordMismatched, setupPasskey } from "../util/auth";
+import { generateKey, uploadKey, downloadKey } from "../util/key";
+import { changePassword, changePasswordMismatched } from "../util/password";
+import { useSettings } from "../util/state";
 import SettingsButton from "../ui/SettingsButton";
 import SettingsContent from "../ui/SettingsContent";
 import SettingsPassword from "../ui/SettingsPassword";

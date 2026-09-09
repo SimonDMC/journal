@@ -9,8 +9,8 @@ import {
 } from "@simplewebauthn/server";
 import { startAuthentication } from "@simplewebauthn/browser";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useSettings } from "../state/settings";
-import type { Passkey } from "../settings/auth";
+import { useSettings } from "../settings/util/state";
+import type { Passkey } from "../settings/util/auth";
 
 export const Route = createFileRoute("/passkey")({
     component: Passkey,

@@ -1,5 +1,5 @@
-import { exportEntries } from "../../../settings/entries";
-import { checkForUpdateManually } from "../../../util/update";
+import { exportEntries } from "../util/entries";
+import { checkForUpdateManually } from "../../util/update";
 import SettingsButton from "../ui/SettingsButton";
 import SettingsContent from "../ui/SettingsContent";
 import SettingsSelect from "../ui/SettingsSelect";
@@ -35,7 +35,7 @@ export default function SettingsGeneralTab() {
             <SettingsSelect
                 label="Update Policy"
                 settingKey="general.update_policy"
-                desc="Choose whether Journal should check for updates, and whether they should install automatically or only upon confirmation"
+                desc="Choose whether Journal should check for updates, and whether they should install automatically or only upon confirmation."
                 options={{
                     silent: "Silent",
                     automatic: "Automatic",
@@ -53,6 +53,8 @@ export default function SettingsGeneralTab() {
                 settingKey="general.suppress_toasts"
                 desc="Prevent error and warning toasts from appearing. Useful if you're intentionally running an outdated version and getting spammed with API errors."
             />
+            <SettingsSeparator />
+            <SettingsToggle label="Show debug tab" settingKey="general.show_debug" />
         </SettingsContent>
     );
 }

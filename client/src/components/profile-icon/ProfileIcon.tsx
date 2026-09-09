@@ -9,8 +9,9 @@ import { useEffect, useRef, useState } from "react";
 import { logout } from "../../util/auth";
 import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "framer-motion";
-import { getUserName, useSettings } from "../../state/settings";
-import { exportEntries } from "../../settings/entries";
+import { useSettings } from "../../settings/util/state";
+import { exportEntries } from "../../settings/util/entries";
+import { getUserName } from "../../util/account";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);

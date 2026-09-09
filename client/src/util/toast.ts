@@ -1,5 +1,5 @@
 import { Slide, toast, type ToastOptions } from "react-toastify";
-import { useSettings } from "../state/settings";
+import { useSettings } from "../settings/util/state";
 
 const toastOptions = {
     position: "top-right",
