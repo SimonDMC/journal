@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { InfoIcon } from "../icons/InfoIcon";
-import "./Settings.css";
+import { InfoIcon } from "../../icons/InfoIcon";
+import "../Settings.css";
 
 export default function SettingsPassword(props: {
     label: string;
@@ -40,7 +40,8 @@ export default function SettingsPassword(props: {
                     value={mainInput}
                     onChange={(e) => setMainInput(e.target.value)}
                     onKeyDown={(e) => {
-                        if (e.key == "Enter") ((e.target as HTMLElement).nextSibling as HTMLElement).focus();
+                        if (e.key == "Enter")
+                            ((e.target as HTMLElement).nextSibling as HTMLElement).focus();
                     }}
                 />
                 <input

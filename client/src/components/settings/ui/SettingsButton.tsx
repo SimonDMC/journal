@@ -1,7 +1,12 @@
-import { InfoIcon } from "../icons/InfoIcon";
-import "./Settings.css";
+import { InfoIcon } from "../../icons/InfoIcon";
+import "../Settings.css";
 
-export default function SettingsButton(props: { label: string; desc?: string; actionLabel: string; action: () => void }) {
+export default function SettingsButton(props: {
+    label: string;
+    desc?: string;
+    actionLabel: string;
+    action: () => void;
+}) {
     return (
         <div className="settings-row">
             <div className="left">
