@@ -11,7 +11,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "framer-motion";
 import { useSettings } from "../../settings/util/state";
 import { exportEntries } from "../../settings/util/entries";
-import { getUserName } from "../../util/account";
+import { getUserName } from "../../settings/util/account";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);

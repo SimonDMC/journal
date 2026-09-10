@@ -11,3 +11,7 @@ export function isLoggedIn(): boolean {
 export function getUserName() {
     return localStorage.getItem("journal-username") ?? "User";
 }
+
+export function createAccount(email: string, username: string, password: string) {
+    //
+}

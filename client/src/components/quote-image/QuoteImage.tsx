@@ -11,7 +11,7 @@ import { eventTarget, QuoteImageOpenEvent } from "../../util/events";
 import { getRouteApi } from "@tanstack/react-router";
 import { MONTH_NAMES } from "../../util/time";
 import { AnimatePresence, motion } from "framer-motion";
-import { getUserName } from "../../util/account";
+import { getUserName } from "../../settings/util/account";
 
 type QuoteImageParams = {
     content?: string;

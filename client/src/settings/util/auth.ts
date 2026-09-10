@@ -7,7 +7,7 @@ import {
 import { useSettings } from "./state";
 import { errorToast, successToast } from "../../util/toast";
 import { startRegistration } from "@simplewebauthn/browser";
-import { getUserName } from "../../util/account";
+import { getUserName } from "./account";
 
 export async function setCodeword(codeword: string) {
     const encoder = new TextEncoder();

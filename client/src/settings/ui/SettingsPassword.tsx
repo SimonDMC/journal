@@ -5,8 +5,8 @@ import "../Settings.css";
 export default function SettingsPassword(props: {
     label: string;
     desc?: string;
-    mainPlaceholder: string;
-    confirmPlaceholder: string;
+    mainPlaceholder?: string;
+    confirmPlaceholder?: string;
     actionLabel: string;
     action: (password: string) => void;
     actionFail: () => void;
