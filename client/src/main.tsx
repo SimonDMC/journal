@@ -15,6 +15,7 @@ import { useSettings } from "./settings/util/state";
 import { injectAppropriateManifest } from "./util/pwa";
 import { getCurrentVersion } from "./util/update";
 import { NotFound } from "./routes/-not-found";
+import { isLoggedIn } from "./settings/util/account";
 
 // Create a new router instance
 export const router = createRouter({
@@ -34,10 +35,12 @@ declare module "@tanstack/react-router" {
 // Figure out if we need a bottom mobile PWA margin
 const bottomMarginVisible = window.matchMedia("(display-mode: standalone)").matches ? true : false;
 
-// Sync database at the beginning of the session
 if (!sessionStorage.getItem("journal-synced")) {
-    // and then run potential migrations
-    syncDatabase().then(() => runMigrations());
+    // Sync database at the beginning of the session (if logged in) and then run potential
+    // migrations
+    if (isLoggedIn()) syncDatabase().then(() => runMigrations());
+    else runMigrations();
+
     sessionStorage.setItem("journal-synced", "true");
 }
 

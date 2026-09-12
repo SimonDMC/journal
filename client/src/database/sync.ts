@@ -2,10 +2,10 @@ import { db } from "./db";
 import { decryptEntry, encryptEntry } from "../util/crypto";
 import { warningToast } from "../util/toast";
 import { eventTarget, OfflineModeEvent } from "../util/events";
-import { logoutImperatively } from "../util/auth";
 import type { EncryptedEntry } from "../types/entry";
 import { calculateWords } from "../util/words";
 import { postAPI } from "../services/api";
+import { useSettings } from "../settings/util/state";
 
 interface ClientSyncBody {
     // deleted entries have a null hash
@@ -42,8 +42,10 @@ export async function syncDatabase() {
         clientSyncResponse = await postAPI("/client-sync", entries);
 
         if (clientSyncResponse.status == 401) {
-            // unauthorized! log out
-            logoutImperatively();
+            // client thinks we're logged in but server thinks we aren't -- flag that to the user
+            // and add "login again" section to account management screen
+            warningToast("Session expired, please log in again in Settings > Account.");
+            useSettings.getState().setSetting("data.login_required", true);
         } else if (!clientSyncResponse.ok) {
             throw new Error();
         }
@@ -167,7 +169,7 @@ export async function syncDatabase() {
     }
 }
 
-export async function syncEntry(date: string): Promise<boolean> {
+export async function saveEntryOnServer(date: string): Promise<boolean> {
     const entry = await db.entries.get(date);
     if (!entry) return false;
 

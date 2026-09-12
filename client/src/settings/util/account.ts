@@ -51,9 +51,23 @@ export async function createAccount(email: string, username: string, password: s
             syncDatabase();
             return true;
         }
-    } catch {
-        errorToast("Error while creating account. Are you connected to the internet?");
+
+        errorToast("Unexpected error while creating account. Try again later.");
+    } catch (e) {
+        console.error(e);
+        errorToast("Couldn't reach server. Are you connected to the internet?");
     }
 
     return false;
+}
+
+async function unlinkAccount() {
+    try {
+        await postAPI("/logout", {});
+    } catch (e) {
+        console.error(e);
+        errorToast("Couldn't reach server. Are you connected to the internet?");
+        return;
+    }
+    localStorage.removeItem("journal-username");
 }

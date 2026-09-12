@@ -26,13 +26,6 @@ export class QuoteImageOpenEvent extends CustomEvent<QuoteImageOpenDetail> {
     }
 }
 
-export class KeyCreateEvent extends Event {
-    static eventId = "key-create";
-    constructor() {
-        super(KeyCreateEvent.eventId);
-    }
-}
-
 export class OfflineModeEvent extends Event {
     static eventId = "offline-mode";
     constructor() {

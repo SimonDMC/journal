@@ -1,6 +1,5 @@
 import { syncDatabase } from "../../database/sync";
 import { generateKey, hashKey } from "../../util/crypto";
-import { eventTarget, KeyCreateEvent } from "../../util/events";
 import { successToast, errorToast } from "../../util/toast";
 
 export async function generateAndSaveKey() {
@@ -43,8 +42,6 @@ export function uploadKey() {
             // save key into storage
             localStorage.setItem("journal-key", JSON.stringify(Array.from(imported)));
             successToast("Key imported successfully!");
-            // let overview know key has been imported to hide warning and show stats
-            eventTarget.dispatchEvent(new KeyCreateEvent());
             // immediately download all entries
             syncDatabase();
         };

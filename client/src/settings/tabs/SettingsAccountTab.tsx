@@ -1,7 +1,7 @@
 import "../Settings.css";
 import { useState } from "react";
 import SettingsContent from "../ui/SettingsContent";
-import { isLoggedIn } from "../util/account";
+import { createAccount, isLoggedIn } from "../util/account";
 import { faArrowLeft, faArrowRightToBracket, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import SettingsCard from "../ui/SettingsCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,7 +17,7 @@ enum AccountScreen {
 
 export default function SettingsGeneralTab() {
     const [accountScreen, setAccountScreen] = useState(
-        isLoggedIn() && false ? AccountScreen.MANAGEMENT : AccountScreen.CREATE_OR_LOGIN,
+        isLoggedIn() ? AccountScreen.MANAGEMENT : AccountScreen.CREATE_OR_LOGIN,
     );
 
     const [email, setEmail] = useState("");
@@ -25,7 +25,7 @@ export default function SettingsGeneralTab() {
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
 
-    function attemptLogin() {
+    async function attemptCreateAccount() {
         if (!email || !username || !password) {
             errorToast("All fields are mandatory.");
         }
@@ -34,6 +34,9 @@ export default function SettingsGeneralTab() {
             errorToast("Passwords do not match.");
             return;
         }
+
+        const success = await createAccount(email, username, password);
+        if (success) setAccountScreen(AccountScreen.MANAGEMENT);
     }
 
     if (accountScreen == AccountScreen.CREATE_OR_LOGIN) {
@@ -75,10 +78,11 @@ export default function SettingsGeneralTab() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 onKeyDown={(e) => {
-                                    if (e.key == "Enter")
+                                    if (e.key == "Enter") {
                                         (
                                             (e.target as HTMLElement).nextSibling as HTMLElement
                                         ).focus();
+                                    }
                                 }}
                             />
                         </div>
@@ -104,7 +108,7 @@ export default function SettingsGeneralTab() {
                         <div className="right">
                             <input
                                 type="password"
-                                className="settings-multi-input"
+                                className="settings-multi-input collapse"
                                 value={password}
                                 placeholder="Password"
                                 onChange={(e) => setPassword(e.target.value)}
@@ -128,7 +132,7 @@ export default function SettingsGeneralTab() {
                                 onChange={(e) => setPasswordConfirm(e.target.value)}
                                 onKeyDown={(e) => {
                                     if (e.key == "Enter") {
-                                        attemptLogin();
+                                        attemptCreateAccount();
                                     }
                                 }}
                             />
@@ -136,7 +140,7 @@ export default function SettingsGeneralTab() {
                     </div>
                     <div className="settings-multi-input-row">
                         <div></div>
-                        <button className="settings-button" onClick={() => attemptLogin()}>
+                        <button className="settings-button" onClick={() => attemptCreateAccount()}>
                             Create Account
                         </button>
                     </div>

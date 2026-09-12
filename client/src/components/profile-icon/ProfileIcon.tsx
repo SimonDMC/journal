@@ -6,8 +6,6 @@ import DropdownItem from "../dropdown/DropdownItem";
 import DropdownSeparator from "../dropdown/DropdownSeparator";
 import DropdownText from "../dropdown/DropdownText";
 import { useEffect, useRef, useState } from "react";
-import { logout } from "../../util/auth";
-import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence } from "framer-motion";
 import { useSettings } from "../../settings/util/state";
 import { exportEntries } from "../../settings/util/entries";
@@ -15,7 +13,6 @@ import { getUserName } from "../../settings/util/account";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-    const navigate = useNavigate();
     const username = useRef("User");
 
     useEffect(() => {
@@ -52,7 +49,6 @@ export default function ProfileIcon() {
                             }}
                         />
                         <DropdownItem label="Export Entries" onClick={exportEntries} />
-                        <DropdownItem label="Log Out" onClick={() => logout(navigate)} />
                     </Dropdown>
                 )}
             </AnimatePresence>

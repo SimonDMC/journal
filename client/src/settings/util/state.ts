@@ -4,6 +4,7 @@ import { persist } from "zustand/middleware";
 const DEFAULTS: Record<string, unknown> = {
     "general.show_mood": true,
     "general.show_stats": true,
+    "general.show_today": true,
     "general.show_one_year_ago": true,
     "general.update_policy": "confirm",
     "security.secondary_auth": "none",
@@ -32,11 +33,11 @@ export const useSettings = create<SettingsState>()(
             },
 
             getBoolean: (key) => {
-                return get().getSetting(key) as boolean;
+                return (get().getSetting(key) ?? false) as boolean;
             },
 
             getString: (key) => {
-                return get().getSetting(key) as string;
+                return (get().getSetting(key) ?? "") as string;
             },
 
             setSetting: (key, value) => {

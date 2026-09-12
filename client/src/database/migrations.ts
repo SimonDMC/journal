@@ -5,6 +5,7 @@ import { successToast, warningToast } from "../util/toast";
 import { calculateWords } from "../util/words";
 import type { EncryptedEntry, EntryExtras } from "../types/entry";
 import { postAPI } from "../services/api";
+import { isLoggedIn } from "../settings/util/account";
 
 const migrationMap = new Map<string, () => Promise<MigrationResponse>>([
     ["0.0.8", v0_0_8_fixWordCount],
@@ -79,7 +80,8 @@ async function v0_0_8_fixWordCount(): Promise<MigrationResponse> {
         }
     }
 
-    // do nothing if there are no miscalculated entries
+    // our job is done if we're not logged in or there are no miscalculated entries
+    if (!isLoggedIn()) return { success: true };
     if (miscalculatedEntries.length == 0) {
         return { success: true };
     }
@@ -180,6 +182,8 @@ interface Entry_v1 {
 }
 // migrate all entries in remote database from v1 to v2 format
 async function v0_0_28_migrateEntries(): Promise<MigrationResponse> {
+    if (!isLoggedIn()) return { success: true };
+
     try {
         const pullRes = await postAPI("/migrate/entries-v2-pull", {});
         const dbEntries = (await pullRes.json()) as Entry_v1[];

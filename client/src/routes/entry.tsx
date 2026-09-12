@@ -2,7 +2,7 @@ import "../styles/entry.css";
 import { type RefObject, useEffect, useRef, useState } from "react";
 import EditorBubble from "../components/editor-bubble/EditorBubble.tsx";
 import { db } from "../database/db.ts";
-import { syncEntry } from "../database/sync.ts";
+import { saveEntryOnServer } from "../database/sync.ts";
 import { moveCursorToEnd } from "../util/selection.ts";
 import { enforceAuth, RouteType } from "../util/auth.ts";
 import QuoteImage from "../components/quote-image/QuoteImage.tsx";
@@ -16,6 +16,7 @@ import { eventTarget, QuoteImageOpenEvent } from "../util/events.ts";
 import BackArrow from "../components/back-arrow/BackArrow.tsx";
 import type { Entry, EntryExtras } from "../types/entry.ts";
 import { hashEntry } from "../util/crypto.ts";
+import { isLoggedIn } from "../settings/util/account.ts";
 
 export type EntrySearchParams = {
     date: string;
@@ -49,7 +50,7 @@ function Entry() {
     const [mood, setMood] = useState<number | null>(null);
 
     useEffect(() => {
-        enforceAuth(navigate, RouteType.Authed);
+        enforceAuth(navigate, RouteType.App);
 
         // load entry
         db.entries.get(date).then(async (data) => {
@@ -126,7 +127,7 @@ function Entry() {
                 event.preventDefault();
 
                 // save the entry
-                saveRemotely();
+                saveOnClientAndServer();
             }
         };
         document.addEventListener("keydown", keyDown);
@@ -191,7 +192,7 @@ function Entry() {
         }
     }
 
-    async function saveRemotely() {
+    async function saveOnClientAndServer() {
         await saveLocally();
         const saveButton = document.getElementById("save-button") as HTMLButtonElement;
         saveButton.innerText = "Saved!";
@@ -199,9 +200,9 @@ function Entry() {
             saveButton.innerText = "Save";
         }, 1000);
 
-        // this returns a boolean but we do nothing with it (?) might be better to show
-        // it was only saved locally
-        syncEntry(date);
+        // TODO: this returns a boolean but we do nothing with it (?) might be better to show it was
+        // only saved locally
+        if (isLoggedIn()) saveEntryOnServer(date);
     }
 
     return (
@@ -221,7 +222,7 @@ function Entry() {
             <div className="date">{formatDate(date)}</div>
             <BackArrow />
             <EditorBubble
-                saveEntry={saveRemotely}
+                saveEntry={saveOnClientAndServer}
                 saveLocally={saveLocally}
                 mood={mood}
                 setMood={setMood}

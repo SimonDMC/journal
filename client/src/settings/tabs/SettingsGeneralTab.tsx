@@ -20,9 +20,14 @@ export default function SettingsGeneralTab() {
                 desc="Show entry count and total word count stats on the overview page"
             />
             <SettingsToggle
+                label="Show Today Button"
+                settingKey="general.show_today"
+                desc="Show the Today button below the calendar"
+            />
+            <SettingsToggle
                 label="Show One Year Ago"
                 settingKey="general.show_one_year_ago"
-                desc="Show the One Year Ago button below the calendar"
+                desc="Show the One Year Ago button below the calendar (if an entry from a year ago exists)"
             />
             <SettingsSeparator />
             <SettingsButton

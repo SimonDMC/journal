@@ -56,7 +56,7 @@ function Search() {
     });
 
     useEffect(() => {
-        enforceAuth(navigate, RouteType.Authed);
+        enforceAuth(navigate, RouteType.App);
 
         // load search state from query params + cache, if navigated back from a previous search
         if (initialParams.query) {
