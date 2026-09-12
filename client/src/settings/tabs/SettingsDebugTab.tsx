@@ -9,14 +9,15 @@ import SettingsContent from "../ui/SettingsContent";
 import SettingsInput from "../ui/SettingsInput";
 import SettingsSeparator from "../ui/SettingsSeparator";
 import { generateAndSaveKey, showKeyHash, uploadKey } from "../util/key";
+import SettingsWarn from "../ui/SettingsWarn";
 
 export default function SettingsDebugTab() {
     return (
         <SettingsContent>
-            <div className="settings-text debug-disclaimer">
+            <SettingsWarn>
                 These actions are for testing, debugging and diagnosing. I would advise against
                 using them unless you know what you're doing.
-            </div>
+            </SettingsWarn>
             <SettingsSeparator />
             <SettingsButton
                 label="Invoke Sync"

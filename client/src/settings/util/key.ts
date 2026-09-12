@@ -1,6 +1,7 @@
 import { syncDatabase } from "../../database/sync";
 import { generateKey, hashKey } from "../../util/crypto";
 import { successToast, errorToast } from "../../util/toast";
+import { useSettings } from "./state";
 
 export async function generateAndSaveKey() {
     if (localStorage.getItem("journal-key")) {
@@ -63,4 +64,7 @@ export function downloadKey() {
     a.href = url;
     a.download = "JOURNAL_SECRET.key";
     a.click();
+
+    // dismiss key download alert
+    useSettings.getState().setSetting("alert.key_irrecoverability", false);
 }

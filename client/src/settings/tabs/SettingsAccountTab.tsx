@@ -1,11 +1,18 @@
 import "../Settings.css";
 import { useState } from "react";
 import SettingsContent from "../ui/SettingsContent";
-import { createAccount, isLoggedIn } from "../util/account";
+import { createAccount, getUserName, isLoggedIn } from "../util/account";
 import { faArrowLeft, faArrowRightToBracket, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import SettingsCard from "../ui/SettingsCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { errorToast } from "../../util/toast";
+import SettingsSeparator from "../ui/SettingsSeparator";
+import { downloadKey } from "../util/key";
+import SettingsButton from "../ui/SettingsButton";
+import SettingsWarn from "../ui/SettingsWarn";
+import { useSettings } from "../util/state";
+import SettingsPassword from "../ui/SettingsPassword";
+import { changePassword, changePasswordMismatched } from "../util/password";
 
 enum AccountScreen {
     CREATE_OR_LOGIN,
@@ -24,6 +31,8 @@ export default function SettingsGeneralTab() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
+
+    const settingsState = useSettings();
 
     async function attemptCreateAccount() {
         if (!email || !username || !password) {
@@ -145,6 +154,45 @@ export default function SettingsGeneralTab() {
                         </button>
                     </div>
                 </div>
+            </SettingsContent>
+        );
+    }
+
+    if (accountScreen == AccountScreen.MANAGEMENT) {
+        return (
+            <SettingsContent>
+                <div className="settings-text">
+                    Logged in as: <b>{getUserName()}</b>
+                </div>
+                <SettingsSeparator />
+                {settingsState.getBoolean("alert.key_irrecoverability") && (
+                    <SettingsWarn>
+                        By design, your encryption is key never shared with the server and thus{" "}
+                        <b>cannot be recovered</b>. It is strongly recommended to make a local
+                        backup by clicking "Download Key."
+                    </SettingsWarn>
+                )}
+                <SettingsButton
+                    label="Download Key"
+                    desc="Download your encryption key. Useful for backing it up or adding a new device to your Journal."
+                    actionLabel="Download"
+                    action={downloadKey}
+                />
+                <SettingsButton
+                    label="Show QR Code"
+                    desc="Show a QR code with your encryption key embedded in it, for adding a new device to your Journal. Do not share this with anyone!"
+                    actionLabel="Show"
+                    action={downloadKey}
+                />
+                <SettingsSeparator />
+                <SettingsPassword
+                    label="Change Password"
+                    mainPlaceholder="New Password"
+                    confirmPlaceholder="Confirm Password"
+                    actionLabel="Change"
+                    action={changePassword}
+                    actionFail={changePasswordMismatched}
+                />
             </SettingsContent>
         );
     }

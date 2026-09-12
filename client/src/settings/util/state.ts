@@ -8,6 +8,8 @@ const DEFAULTS: Record<string, unknown> = {
     "general.show_one_year_ago": true,
     "general.update_policy": "confirm",
     "security.secondary_auth": "none",
+
+    "alert.key_irrecoverability": true,
 };
 
 type SettingsState = {

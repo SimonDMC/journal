@@ -228,6 +228,23 @@
 .settings-text {
     color: #ccc;
     line-height: 1.35em;
+
+    &.small {
+        font-size: 0.85em;
+    }
+
+    .cross {
+        display: inline-block;
+        color: #bb0000;
+        scale: 1.3;
+        margin-left: 0.2em;
+    }
+
+    .check {
+        display: inline-block;
+        color: #00bb00;
+        translate: 0 0.05em;
+    }
 }
 
 .build-info {
@@ -298,6 +315,25 @@
     font-size: 1.2em;
     border: none;
     margin-bottom: 0.3em;
+}
+
+.settings-warn {
+    border: 2px solid #ffff0066;
+    background-color: #ffff0018;
+    border-radius: 0.3em;
+    padding: 0.8em;
+    display: flex;
+    gap: 0.7em;
+
+    .left {
+        color: #ffff00;
+        font-size: 1.5em;
+    }
+
+    .right {
+        font-size: 0.85em;
+        line-height: 1.2;
+    }
 }
 
 @media (max-width: 600px) {
