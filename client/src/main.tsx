@@ -16,6 +16,7 @@ import { injectAppropriateManifest } from "./util/pwa";
 import { getCurrentVersion } from "./util/update";
 import { NotFound } from "./routes/-not-found";
 import { isLoggedIn } from "./settings/util/account";
+import { eventTarget, CloseOpenPopupEvent } from "./util/events";
 
 // Create a new router instance
 export const router = createRouter({
@@ -56,6 +57,7 @@ document.addEventListener("keydown", (e) => {
     const isModifierPressed = e.ctrlKey || (isMac && e.metaKey);
     if (e.key == "," && isModifierPressed) {
         e.preventDefault();
+        eventTarget.dispatchEvent(new CloseOpenPopupEvent());
         openSettings();
     }
     if (settingsOpen) {

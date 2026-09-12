@@ -10,6 +10,7 @@ import { AnimatePresence } from "framer-motion";
 import { useSettings } from "../../settings/util/state";
 import { exportEntries } from "../../settings/util/entries";
 import { getUserName } from "../../settings/util/account";
+import { eventTarget, CloseOpenPopupEvent } from "../../util/events";
 
 export default function ProfileIcon() {
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -44,6 +45,7 @@ export default function ProfileIcon() {
                         <DropdownItem
                             label="Settings"
                             onClick={() => {
+                                eventTarget.dispatchEvent(new CloseOpenPopupEvent());
                                 useSettings.getState().openSettings();
                                 setProfileDropdownOpen(false);
                             }}

@@ -1,5 +1,5 @@
 import "./Settings.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SettingsTab from "./ui/SettingsTab";
 import { AnimatePresence, motion } from "framer-motion";
 import { useSettings } from "./util/state";
@@ -7,10 +7,20 @@ import SettingsGeneralTab from "./tabs/SettingsGeneralTab";
 import SettingsSecurityTab from "./tabs/SettingsSecurityTab";
 import SettingsDebugTab from "./tabs/SettingsDebugTab";
 import SettingsAccountTab from "./tabs/SettingsAccountTab";
+import { eventTarget, CloseOpenPopupEvent } from "../util/events";
 
 export default function SettingsPopup() {
     const [selected, setSelected] = useState("general");
     const settingsState = useSettings();
+
+    useEffect(() => {
+        const closeOpenPopupHandler = () => useSettings.getState().closeSettings();
+        eventTarget.addEventListener(CloseOpenPopupEvent.eventId, closeOpenPopupHandler);
+
+        // remove event listener on unmount
+        return () =>
+            eventTarget.removeEventListener(CloseOpenPopupEvent.eventId, closeOpenPopupHandler);
+    });
 
     function closePopup(event: React.MouseEvent) {
         if (event.target !== event.currentTarget) return;

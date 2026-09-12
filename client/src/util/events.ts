@@ -1,5 +1,4 @@
 // you can bind whatever events and listeners to this guy!
-// EVENTUALLY MIGRATE TO USE ZUSTAND
 export const eventTarget = new EventTarget();
 
 type UpdateReadyDetail = {
@@ -30,5 +29,12 @@ export class OfflineModeEvent extends Event {
     static eventId = "offline-mode";
     constructor() {
         super(OfflineModeEvent.eventId);
+    }
+}
+
+export class CloseOpenPopupEvent extends Event {
+    static eventId = "close-open-popup";
+    constructor() {
+        super(CloseOpenPopupEvent.eventId);
     }
 }

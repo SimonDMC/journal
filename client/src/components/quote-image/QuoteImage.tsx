@@ -7,7 +7,7 @@ import { CopyIcon } from "../icons/CopyIcon";
 import { CheckmarkIcon } from "../icons/CheckmarkIcon";
 import { QuoteStartIcon } from "../icons/QuoteStartIcon";
 import { QuoteEndIcon } from "../icons/QuoteEndIcon";
-import { eventTarget, QuoteImageOpenEvent } from "../../util/events";
+import { CloseOpenPopupEvent, eventTarget, QuoteImageOpenEvent } from "../../util/events";
 import { getRouteApi } from "@tanstack/react-router";
 import { MONTH_NAMES } from "../../util/time";
 import { AnimatePresence, motion } from "framer-motion";
@@ -42,9 +42,13 @@ export default function QuoteImage(params: { open: boolean; setOpen: (open: bool
         };
         eventTarget.addEventListener(QuoteImageOpenEvent.eventId, quoteImageOpenHandler);
 
+        const closeOpenPopupHandler = () => params.setOpen(false);
+        eventTarget.addEventListener(CloseOpenPopupEvent.eventId, closeOpenPopupHandler);
+
         // remove listener on unmount
         return () => {
             eventTarget.removeEventListener(QuoteImageOpenEvent.eventId, quoteImageOpenHandler);
+            eventTarget.removeEventListener(CloseOpenPopupEvent.eventId, closeOpenPopupHandler);
         };
     }, []);
 

@@ -70,6 +70,7 @@
     width: 10em;
     margin-bottom: 0.3em;
     padding: 0 0.3em;
+    font-size: 0.9em;
 }
 
 .settings-content input.collapse {
@@ -192,13 +193,6 @@
     background-color: #111;
 }
 
-.settings-password {
-    font-size: 0.9em;
-    width: 10em;
-    padding-left: 0.3em;
-    border-radius: 0.3em;
-}
-
 .settings-password-row {
     align-items: flex-start;
 }
@@ -244,6 +238,12 @@
         display: inline-block;
         color: #00bb00;
         translate: 0 0.05em;
+    }
+
+    &.danger {
+        line-height: 1.2;
+        color: #dd0000;
+        text-align: right;
     }
 }
 
@@ -307,7 +307,7 @@
 }
 
 .settings-content .settings-multi-input {
-    width: 12em;
+    width: 13.5em;
 }
 
 .settings-back-button {

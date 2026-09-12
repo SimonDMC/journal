@@ -13,6 +13,7 @@ import SettingsWarn from "../ui/SettingsWarn";
 import { useSettings } from "../util/state";
 import SettingsPassword from "../ui/SettingsPassword";
 import { changePassword, changePasswordMismatched } from "../util/password";
+import SettingsInput from "../ui/SettingsInput";
 
 enum AccountScreen {
     CREATE_OR_LOGIN,
@@ -178,12 +179,16 @@ export default function SettingsGeneralTab() {
                     actionLabel="Download"
                     action={downloadKey}
                 />
-                <SettingsButton
-                    label="Show QR Code"
-                    desc="Show a QR code with your encryption key embedded in it, for adding a new device to your Journal. Do not share this with anyone!"
-                    actionLabel="Show"
+                <SettingsInput
+                    label="Transfer Key"
+                    desc="Transfer your encryption key to a new device by inputting its one-time code"
+                    placeholder="One-Time Code"
+                    actionLabel="Transfer"
                     action={downloadKey}
                 />
+                <div className="settings-text danger">
+                    Never input the one-time code of a device you don't trust/own!
+                </div>
                 <SettingsSeparator />
                 <SettingsPassword
                     label="Change Password"
