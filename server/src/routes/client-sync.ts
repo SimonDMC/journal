@@ -1,4 +1,4 @@
-import { auth } from "../auth";
+import { auth, revalidateCookieHeader } from "../auth";
 import type { Entry } from "../types";
 import { olderThan } from "../version";
 
@@ -62,5 +62,9 @@ export const clientSyncHandle = async (request: Request, env: Env): Promise<Resp
             differing: differingEntries,
             excess: excessEntries,
         }),
+        {
+            // ensure session cookie stays set in perpetuity
+            headers: revalidateCookieHeader(request),
+        },
     );
 };

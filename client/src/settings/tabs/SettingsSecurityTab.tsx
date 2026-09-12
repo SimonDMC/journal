@@ -1,5 +1,5 @@
 import { setCodeword, setCodewordMismatched, setupPasskey } from "../util/auth";
-import { generateKey, uploadKey, downloadKey } from "../util/key";
+import { downloadKey } from "../util/key";
 import { changePassword, changePasswordMismatched } from "../util/password";
 import { useSettings } from "../util/state";
 import SettingsButton from "../ui/SettingsButton";
@@ -22,18 +22,6 @@ export default function SettingsSecurityTab() {
                 actionFail={changePasswordMismatched}
             />
             <SettingsSeparator />
-            <SettingsButton
-                label="Generate Key"
-                desc="Generate a new key used to encrypt and decrypt entries when talking to the server"
-                actionLabel="Generate"
-                action={generateKey}
-            />
-            <SettingsButton
-                label="Import Key"
-                desc="Import a key, used to encrypt and decrypt entries when talking to the server, from a .KEY file"
-                actionLabel="Upload"
-                action={uploadKey}
-            />
             <SettingsButton label="Download Key" actionLabel="Download" action={downloadKey} />
             <SettingsSeparator />
             <SettingsSelect

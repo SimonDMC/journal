@@ -43,7 +43,7 @@ export default function SettingsGeneralTab() {
                     <SettingsCard
                         icon={faUserPlus}
                         title="Create Account"
-                        desc="Create a new account to sync entries between devices"
+                        desc="Create a new account to sync your entries between devices"
                         onClick={() => setAccountScreen(AccountScreen.CREATE)}
                     />
                     <SettingsCard

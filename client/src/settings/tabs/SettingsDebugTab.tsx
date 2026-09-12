@@ -1,13 +1,14 @@
 import { syncDatabase } from "../../database/sync";
 import { wipeLocalDatabase } from "../util/debug";
 import { uploadEntries } from "../util/entries";
-import { showKeyHash, decryptTextAndLog } from "../../util/crypto";
+import { decryptTextAndLog } from "../../util/crypto";
 import { formatTimestampShort, getYear } from "../../util/time";
 import { forceReload, getCurrentVersion } from "../../util/update";
 import SettingsButton from "../ui/SettingsButton";
 import SettingsContent from "../ui/SettingsContent";
 import SettingsInput from "../ui/SettingsInput";
 import SettingsSeparator from "../ui/SettingsSeparator";
+import { generateAndSaveKey, showKeyHash, uploadKey } from "../util/key";
 
 export default function SettingsDebugTab() {
     return (
@@ -40,6 +41,18 @@ export default function SettingsDebugTab() {
                 desc="Delete all app cache and redownload all assets"
                 actionLabel="Reload"
                 action={forceReload}
+            />
+            <SettingsButton
+                label="Generate Key"
+                desc="Generate a new key used to encrypt and decrypt entries when talking to the server"
+                actionLabel="Generate"
+                action={generateAndSaveKey}
+            />
+            <SettingsButton
+                label="Import Key"
+                desc="Import a key, used to encrypt and decrypt entries when talking to the server, from a .KEY file"
+                actionLabel="Upload"
+                action={uploadKey}
             />
             <SettingsButton
                 label="View Key Hash"

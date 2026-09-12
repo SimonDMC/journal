@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { constructCookieHeader } from "../auth";
 
 type RequestContent = {
     username: string;
@@ -33,25 +34,18 @@ export const loginHandle = async (request: Request, env: Env): Promise<Response>
         return new Response("Unauthorized", { status: 401 });
     }
 
-    // get user_id from user query
-    const user_id = user.results[0].id;
+    // get userId from user query
+    const userId = user.results[0].id;
 
     // generate session token
     const token = crypto.randomUUID().toString();
 
     // insert session into database
     await env.DB.prepare("INSERT INTO sessions (user_id, token) VALUES (?, ?);")
-        .bind(user_id, token)
+        .bind(userId, token)
         .run();
 
-    // don't force secure cookie if on localhost (safari cares)
-    const host = new URL(request.url).host;
-    const isLocalhost =
-        host.includes("localhost") || host.includes("127.0.0.1") || host.includes("[::1]");
-
     return new Response("OK", {
-        headers: {
-            "Set-Cookie": `session=${token}; Path=/; HttpOnly; SameSite=Strict; ${isLocalhost ? "" : "Secure;"} Max-Age=${60 * 60 * 24 * 365}`,
-        },
+        headers: constructCookieHeader(request, token),
     });
 };

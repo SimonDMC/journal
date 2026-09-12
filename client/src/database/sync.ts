@@ -18,6 +18,9 @@ interface ClientSyncResponse {
     excess: string[];
 }
 
+/**
+ * Fires off the sync procedure
+ */
 export async function syncDatabase() {
     // don't sync if no key is set
     if (!localStorage.getItem("journal-key")) return;

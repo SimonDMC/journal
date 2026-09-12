@@ -2,7 +2,7 @@ import type { EncryptedEntryData, Entry, HashedEntryData } from "../types/entry"
 import { KEY_GENERATOR } from "./config";
 
 let cryptoKey: CryptoKey | undefined;
-async function getKey(): Promise<CryptoKey | null> {
+export async function getKey(): Promise<CryptoKey | null> {
     if (cryptoKey) return cryptoKey;
 
     const storedKey = localStorage.getItem("journal-key");
@@ -16,19 +16,17 @@ async function getKey(): Promise<CryptoKey | null> {
     return key;
 }
 
-export async function showKeyHash() {
-    const storedKey = localStorage.getItem("journal-key");
-    if (!storedKey) {
-        alert("No key saved.");
-        return;
-    }
+export async function generateKey(): Promise<Uint8Array<ArrayBuffer>> {
+    const key = await window.crypto.subtle.generateKey(KEY_GENERATOR, true, ["encrypt", "decrypt"]);
+    const exported = await window.crypto.subtle.exportKey("raw", key);
+    const buffer = new Uint8Array(exported);
+    return buffer;
+}
 
-    const keyBuffer = new Uint8Array(JSON.parse(storedKey));
-    const hashBuffer = await crypto.subtle.digest("SHA-256", keyBuffer);
+export async function hashKey(key: Uint8Array<ArrayBuffer>): Promise<string> {
+    const hashBuffer = await crypto.subtle.digest("SHA-256", key);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    alert(
-        `Your key hash: ${hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")}\nThis is safe to share.`,
-    );
+    return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 export async function encryptEntry(entry: Entry): Promise<string> {
