@@ -1,7 +1,7 @@
 import "../Settings.css";
 import { useState } from "react";
 import SettingsContent from "../ui/SettingsContent";
-import { createAccount, getUserName, isLoggedIn } from "../util/account";
+import { createAccount, getUserName, isLoggedIn, login, unlinkAccount } from "../util/account";
 import { faArrowLeft, faArrowRightToBracket, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import SettingsCard from "../ui/SettingsCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -13,7 +13,6 @@ import SettingsWarn from "../ui/SettingsWarn";
 import { useSettings } from "../util/state";
 import SettingsPassword from "../ui/SettingsPassword";
 import { changePassword, changePasswordMismatched } from "../util/password";
-import SettingsInput from "../ui/SettingsInput";
 
 enum AccountScreen {
     CREATE_OR_LOGIN,
@@ -38,6 +37,7 @@ export default function SettingsGeneralTab() {
     async function attemptCreateAccount() {
         if (!email || !username || !password) {
             errorToast("All fields are mandatory.");
+            return;
         }
 
         if (password != passwordConfirm) {
@@ -47,6 +47,16 @@ export default function SettingsGeneralTab() {
 
         const success = await createAccount(email, username, password);
         if (success) setAccountScreen(AccountScreen.MANAGEMENT);
+    }
+
+    async function attemptLogin() {
+        if (!username || !password) {
+            errorToast("All fields are mandatory.");
+            return;
+        }
+
+        const success = await login(username, password);
+        if (success) useSettings.getState().setSetting("alert.login_required", false);
     }
 
     if (accountScreen == AccountScreen.CREATE_OR_LOGIN) {
@@ -166,6 +176,56 @@ export default function SettingsGeneralTab() {
                     Logged in as: <b>{getUserName()}</b>
                 </div>
                 <SettingsSeparator />
+                {settingsState.getBoolean("alert.login_required") && (
+                    <>
+                        <SettingsWarn>
+                            Your login session has expired. <br />
+                            Login again to resume syncing.
+                        </SettingsWarn>
+                        <div className="settings-multi-input-container">
+                            <div className="settings-multi-input-row">
+                                <div className="left">Login Again</div>
+                                <div className="right">
+                                    <input
+                                        className="settings-multi-input"
+                                        value={username}
+                                        placeholder="Username"
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key == "Enter")
+                                                (
+                                                    (e.target as HTMLElement)
+                                                        .nextSibling as HTMLElement
+                                                ).focus();
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div className="settings-multi-input-row">
+                                <div className="left"></div>
+                                <div className="right">
+                                    <input
+                                        type="password"
+                                        className="settings-multi-input"
+                                        value={password}
+                                        placeholder="Password"
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key == "Enter") attemptLogin();
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div className="settings-multi-input-row">
+                                <div></div>
+                                <button className="settings-button" onClick={() => attemptLogin()}>
+                                    Login
+                                </button>
+                            </div>
+                        </div>
+                        <SettingsSeparator />
+                    </>
+                )}
                 {settingsState.getBoolean("alert.key_irrecoverability") && (
                     <SettingsWarn>
                         By design, your encryption is key never shared with the server and thus{" "}
@@ -179,16 +239,12 @@ export default function SettingsGeneralTab() {
                     actionLabel="Download"
                     action={downloadKey}
                 />
-                <SettingsInput
-                    label="Transfer Key"
-                    desc="Transfer your encryption key to a new device by inputting its one-time code"
-                    placeholder="One-Time Code"
-                    actionLabel="Transfer"
+                <SettingsButton
+                    label="Show QR Code"
+                    desc="Show a QR code with your encryption key embedded in it, for adding a new device to your Journal. Do not share this with anyone!"
+                    actionLabel="Show"
                     action={downloadKey}
                 />
-                <div className="settings-text danger">
-                    Never input the one-time code of a device you don't trust/own!
-                </div>
                 <SettingsSeparator />
                 <SettingsPassword
                     label="Change Password"
@@ -197,6 +253,12 @@ export default function SettingsGeneralTab() {
                     actionLabel="Change"
                     action={changePassword}
                     actionFail={changePasswordMismatched}
+                />
+                <SettingsButton
+                    label="Unlink Account"
+                    desc="Remove the account from this device. You will keep your entries locally, but they will no longer be synced with your other devices."
+                    actionLabel="Unlink"
+                    action={unlinkAccount}
                 />
             </SettingsContent>
         );

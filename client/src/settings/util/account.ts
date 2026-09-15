@@ -61,7 +61,31 @@ export async function createAccount(email: string, username: string, password: s
     return false;
 }
 
-async function unlinkAccount() {
+export async function login(username: string, password: string) {
+    try {
+        const res = await postAPI("/login", {
+            username,
+            password,
+        });
+
+        if (res.status == 401) {
+            errorToast("Invalid credentials.");
+        }
+
+        if (res.ok) {
+            successToast("Re-logged in successfully!");
+            syncDatabase();
+            return true;
+        }
+
+        errorToast("Unexpected error while logging in. Try again later.");
+    } catch (e) {
+        console.error(e);
+        errorToast("Couldn't reach server. Are you connected to the internet?");
+    }
+}
+
+export async function unlinkAccount() {
     try {
         await postAPI("/logout", {});
     } catch (e) {
@@ -70,4 +94,5 @@ async function unlinkAccount() {
         return;
     }
     localStorage.removeItem("journal-username");
+    localStorage.removeItem("journal-key");
 }

@@ -45,7 +45,7 @@ export async function syncDatabase() {
             // client thinks we're logged in but server thinks we aren't -- flag that to the user
             // and add "login again" section to account management screen
             warningToast("Session expired, please log in again in Settings > Account.");
-            useSettings.getState().setSetting("data.login_required", true);
+            useSettings.getState().setSetting("alert.login_required", true);
         } else if (!clientSyncResponse.ok) {
             throw new Error();
         }
