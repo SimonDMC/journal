@@ -42,7 +42,7 @@ function Entry() {
     const router = useRouter();
     const contentRef = useRef("");
     const moodSelectRef: RefObject<SelectInstance | null> = useRef(null);
-    const { date } = Route.useSearch();
+    const { date, query, index } = Route.useSearch();
 
     const [initialContent, setInitialContent] = useState("");
     const [quoteImageOpen, setQuoteImageOpen] = useState(false);
@@ -206,7 +206,8 @@ function Entry() {
     }
 
     return (
-        <main className="entry">
+        // hide balloon toolbar if linked from search with a highlighted query
+        <main className={query && index ? "entry hideToolbar" : "entry"}>
             {editorLoaded || <div id="loadingEntry">Loading...</div>}
             <div className="content">
                 {editorLoaded && <div className="line"></div>}

@@ -42,6 +42,10 @@ main.entry .date {
     text-align: center;
 }
 
+body:has(#root > main.entry.hideToolbar) .ck-balloon-panel {
+    display: none;
+}
+
 @media (max-width: 1350px) {
     main.entry {
         justify-content: flex-start;
