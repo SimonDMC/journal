@@ -1,6 +1,6 @@
 import { db } from "./db";
 import { useSettings } from "../settings/util/state";
-import { decryptText, encryptEntry, hashEntry } from "../util/crypto";
+import { decryptText, encryptEntry, hashEntry, hashKey } from "../util/crypto";
 import { successToast, warningToast } from "../util/toast";
 import { calculateWords } from "../util/words";
 import type { EncryptedEntry, EntryExtras } from "../types/entry";
@@ -12,6 +12,7 @@ const migrationMap = new Map<string, () => Promise<MigrationResponse>>([
     ["0.0.13", v0_0_13_fixLocalStorageKeys],
     ["0.0.17", v0_0_17_migrateSettings],
     ["0.0.28", v0_0_28_migrateEntries],
+    ["1.0.0", v1_0_0_registerKeyHash],
 ]);
 
 type MigrationResponse = {
@@ -221,5 +222,29 @@ async function v0_0_28_migrateEntries(): Promise<MigrationResponse> {
     } catch (e) {
         console.error(e);
         return { success: false, message: "Couldn't upgrade database entries to v2." };
+    }
+}
+
+// register key hash, to check against when adding a new device
+async function v1_0_0_registerKeyHash(): Promise<MigrationResponse> {
+    if (!isLoggedIn()) return { success: true };
+
+    try {
+        const key = localStorage.getItem("journal-key");
+        // if we have no key, ignore
+        if (!key) return { success: true };
+
+        const res = await postAPI("/migrate/set-key-hash", {
+            keyHash: await hashKey(new Uint8Array(JSON.parse(key))),
+        });
+
+        if (res.ok) {
+            return { success: true };
+        }
+
+        return { success: false, message: "Something went wrong registering your key hash." };
+    } catch (e) {
+        console.error(e);
+        return { success: false, message: "Something went wrong registering your key hash." };
     }
 }

@@ -1,6 +1,6 @@
 import { syncDatabase } from "../../database/sync";
 import { getAPI, postAPI } from "../../services/api";
-import { KEY_GENERATOR } from "../../util/config";
+import { QR_KEY_GENERATOR } from "../../util/config";
 import { generateKey, hashKey } from "../../util/crypto";
 import { CloseOpenPopupEvent, eventTarget, QRCodeOpenEvent } from "../../util/events";
 import { errorToast, successToast } from "../../util/toast";
@@ -10,7 +10,10 @@ import QRCode from "QRCode";
  * Get whether a user is logged in or not
  */
 export function isLoggedIn(): boolean {
-    return localStorage.getItem("journal-username") != undefined;
+    return (
+        localStorage.getItem("journal-username") != undefined &&
+        localStorage.getItem("journal-key") != undefined
+    );
 }
 
 /**
@@ -75,11 +78,7 @@ export async function login(username: string, password: string) {
             errorToast("Invalid credentials.");
         }
 
-        if (res.ok) {
-            successToast("Re-logged in successfully!");
-            syncDatabase();
-            return true;
-        }
+        if (res.ok) return true;
 
         errorToast("Unexpected error while logging in. Try again later.");
     } catch (e) {
@@ -102,7 +101,7 @@ export async function unlinkAccount() {
 
 export async function showQRCode() {
     const timestamp = Date.now();
-    const keyHashRes = await getAPI(`/key-share-hash?t=${timestamp}`);
+    const keyHashRes = await getAPI(`/qr-hash?t=${timestamp}`);
 
     if (keyHashRes.status == 401) {
         errorToast("The QR code couldn't be generated. Are you logged in?");
@@ -116,7 +115,7 @@ export async function showQRCode() {
 
     const keyHashEncoded = await keyHashRes.text();
     const keyHash = Uint8Array.fromBase64(keyHashEncoded);
-    const qrKey = await crypto.subtle.importKey("raw", keyHash, KEY_GENERATOR, true, [
+    const qrKey = await crypto.subtle.importKey("raw", keyHash, QR_KEY_GENERATOR, true, [
         "encrypt",
         "decrypt",
     ]);
@@ -126,8 +125,8 @@ export async function showQRCode() {
 
     const data = new Uint8Array(JSON.parse(keyString));
 
-    const iv = crypto.getRandomValues(new Uint8Array(16));
-    const encrypted = await crypto.subtle.encrypt({ name: "AES-CBC", iv }, qrKey, data);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, qrKey, data);
 
     const buffer = new Uint8Array(encrypted);
     const result = new Uint8Array(iv.length + buffer.length);

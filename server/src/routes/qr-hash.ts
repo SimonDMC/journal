@@ -1,6 +1,6 @@
 import { auth } from "../auth";
 
-export const keyShareHashHandle = async (request: Request, env: Env): Promise<Response> => {
+export const qrHashHandle = async (request: Request, env: Env): Promise<Response> => {
     // auth
     const user_id = await auth(request, env);
     if (!user_id) return new Response("Unauthorized", { status: 401 });
@@ -12,8 +12,8 @@ export const keyShareHashHandle = async (request: Request, env: Env): Promise<Re
 
     const actualTimestamp = Date.now();
 
-    // don't serve future timestamps
-    if (actualTimestamp - timestamp < 0) {
+    // don't serve future timestamps (tolerance of a couple seconds ahead)
+    if (actualTimestamp - timestamp < 3 * 1000) {
         return new Response("Ahead", { status: 406 });
     }
 
@@ -24,13 +24,23 @@ export const keyShareHashHandle = async (request: Request, env: Env): Promise<Re
     }
 
     const base = env.KEY_SHARE_BASE;
+    const key = await crypto.subtle.importKey(
+        "raw",
+        Uint8Array.fromBase64(base),
+        {
+            name: "HMAC",
+            hash: "SHA-256",
+        },
+        false,
+        ["sign"],
+    );
 
-    // composite hash payload from the secret base, the current timestamp and the unique user id
-    const toHash = `${base}-${timestamp}-${user_id}`;
+    // composite hash payload from the current timestamp and the unique user id
+    const toHash = `${timestamp}-${user_id}`;
 
     const encoder = new TextEncoder();
     const data = encoder.encode(toHash);
-    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashBuffer = await crypto.subtle.sign("HMAC", key, data);
     const hash = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
 
     return new Response(hash);

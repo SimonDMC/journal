@@ -1,4 +1,5 @@
 import { syncDatabase } from "../../database/sync";
+import { getAPI } from "../../services/api";
 import { generateKey, hashKey } from "../../util/crypto";
 import { successToast, errorToast } from "../../util/toast";
 import { useSettings } from "./state";
@@ -27,7 +28,7 @@ export async function showKeyHash() {
     alert(`Your key hash: ${hashKey(keyBuffer)}\nThis is safe to share.`);
 }
 
-export function uploadKey() {
+export function forceUploadKey() {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".key";
@@ -49,6 +50,45 @@ export function uploadKey() {
         reader.readAsArrayBuffer(file);
     };
     input.click();
+}
+
+export function uploadKey() {
+    return new Promise((resolve) => {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".key";
+        input.onchange = async () => {
+            const file = input.files?.[0];
+            if (!file) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async () => {
+                const imported = new Uint8Array(reader.result as ArrayBuffer);
+                const uploadedKeyHash = await hashKey(imported);
+                const expectedKeyRes = await getAPI("/key-hash");
+                const expectedKeyHash = await expectedKeyRes.text();
+
+                if (uploadedKeyHash != expectedKeyHash) {
+                    errorToast(
+                        "Your imported key didn't match the expected key hash. Did you select the right file?",
+                    );
+                    resolve(false);
+                    return;
+                }
+
+                // save key into storage
+                localStorage.setItem("journal-key", JSON.stringify(Array.from(imported)));
+                successToast("Key imported successfully!");
+                // immediately download all entries
+                syncDatabase();
+                resolve(true);
+            };
+            reader.readAsArrayBuffer(file);
+        };
+        input.click();
+    });
 }
 
 export function downloadKey() {

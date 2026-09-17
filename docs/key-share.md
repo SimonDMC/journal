@@ -1,4 +1,4 @@
-# Key transferring between devices
+# Key sharing between devices
 
 ### Motivation
 
@@ -28,17 +28,18 @@ and decrypts the QR code payload with it, obtaining the encryption key.
 The process works as follows:
 
 1. Alice asks the server for the time-based hash. She hits `GET
-/api/key-share-hash?t=[current_timestamp_in_ms]`, which returns a unique hash comprised of a secret
-   key only the server knows, the timestamp of the request, and a unique user id. The user id, derived
+/api/qr-hash?t=[current_timestamp_in_ms]`, which returns a unique hash comprised of a secret key
+   only the server knows, the timestamp of the request, and a unique user id. The user id, derived
    from the session cookie, ensures only a client logged into the app can retrieve the hash used for
-   key encryption.
+   key encryption. Specifically, the hash is computed as `HMAC-SHA256([serverKey],
+[timestamp]-[userId])`.
 
-2. Alice encrypts the account encryption key with the hash obtained from the server. This results in
-   a 64-byte Uint8Array.
+2. Alice encrypts the account encryption key with the hash obtained from the server. That is, the
+   hash is used as a 256-bit AES-GCM key. This results in a 60-byte Uint8Array ciphertext.
 
 3. Alice prepends a header, consisting of the ASCII characters "JRNL" identifying the QR code as a
    Journal encryption key. After the identification header, the timestamp of the server hash is
-   placed as a 6-byte number, from least significant to the most significant bytes. This 74-byte
+   placed as a 6-byte number, from least significant to the most significant bytes. This 70-byte
    payload is used to construct the resulting QR code.
 
 4. After logging in, Bob selects to import the key by scanning a QR code. He scans the QR code from

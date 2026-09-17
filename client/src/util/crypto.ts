@@ -1,5 +1,5 @@
 import type { EncryptedEntryData, Entry, HashedEntryData } from "../types/entry";
-import { KEY_GENERATOR } from "./config";
+import { ENCRYPTION_KEY_GENERATOR } from "./config";
 
 let cryptoKey: CryptoKey | undefined;
 export async function getKey(): Promise<CryptoKey | null> {
@@ -9,7 +9,7 @@ export async function getKey(): Promise<CryptoKey | null> {
     if (!storedKey) return null;
 
     const keyBuffer = new Uint8Array(JSON.parse(storedKey));
-    const key = await crypto.subtle.importKey("raw", keyBuffer, KEY_GENERATOR, true, [
+    const key = await crypto.subtle.importKey("raw", keyBuffer, ENCRYPTION_KEY_GENERATOR, true, [
         "encrypt",
         "decrypt",
     ]);
@@ -17,7 +17,10 @@ export async function getKey(): Promise<CryptoKey | null> {
 }
 
 export async function generateKey(): Promise<Uint8Array<ArrayBuffer>> {
-    const key = await window.crypto.subtle.generateKey(KEY_GENERATOR, true, ["encrypt", "decrypt"]);
+    const key = await window.crypto.subtle.generateKey(ENCRYPTION_KEY_GENERATOR, true, [
+        "encrypt",
+        "decrypt",
+    ]);
     const exported = await window.crypto.subtle.exportKey("raw", key);
     const buffer = new Uint8Array(exported);
     return buffer;

@@ -8,7 +8,7 @@ import SettingsButton from "../ui/SettingsButton";
 import SettingsContent from "../ui/SettingsContent";
 import SettingsInput from "../ui/SettingsInput";
 import SettingsSeparator from "../ui/SettingsSeparator";
-import { generateAndSaveKey, showKeyHash, uploadKey } from "../util/key";
+import { generateAndSaveKey, showKeyHash, forceUploadKey } from "../util/key";
 import SettingsWarn from "../ui/SettingsWarn";
 
 export default function SettingsDebugTab() {
@@ -53,7 +53,7 @@ export default function SettingsDebugTab() {
                 label="Import Key"
                 desc="Import a key, used to encrypt and decrypt entries when talking to the server, from a .KEY file"
                 actionLabel="Upload"
-                action={uploadKey}
+                action={forceUploadKey}
             />
             <SettingsButton
                 label="View Key Hash"
