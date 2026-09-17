@@ -1,7 +1,14 @@
 import "../Settings.css";
 import { useState } from "react";
 import SettingsContent from "../ui/SettingsContent";
-import { createAccount, getUserName, isLoggedIn, login, unlinkAccount } from "../util/account";
+import {
+    createAccount,
+    getUserName,
+    isLoggedIn,
+    login,
+    showQRCode,
+    unlinkAccount,
+} from "../util/account";
 import { faArrowLeft, faArrowRightToBracket, faUserPlus } from "@fortawesome/free-solid-svg-icons";
 import SettingsCard from "../ui/SettingsCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -243,7 +250,7 @@ export default function SettingsGeneralTab() {
                     label="Show QR Code"
                     desc="Show a QR code with your encryption key embedded in it, for adding a new device to your Journal. Do not share this with anyone!"
                     actionLabel="Show"
-                    action={downloadKey}
+                    action={showQRCode}
                 />
                 <SettingsSeparator />
                 <SettingsPassword

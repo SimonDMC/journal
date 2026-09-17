@@ -7,16 +7,15 @@ import { routeTree } from "./routeTree.gen";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import BottomMargin from "./components/bottom-margin/BottomMargin";
-import UpdatePopup from "./components/update-popup/UpdatePopup";
 import { syncDatabase } from "./database/sync";
 import { runMigrations } from "./database/migrations";
-import SettingsPopup from "./settings/SettingsPopup";
 import { useSettings } from "./settings/util/state";
 import { injectAppropriateManifest } from "./util/pwa";
 import { getCurrentVersion } from "./util/update";
 import { NotFound } from "./routes/-not-found";
 import { isLoggedIn } from "./settings/util/account";
 import { eventTarget, CloseOpenPopupEvent } from "./util/events";
+import Popups from "./components/Popups";
 
 // Create a new router instance
 export const router = createRouter({
@@ -82,8 +81,7 @@ if (!rootElement.innerHTML) {
             <BottomMargin visible={bottomMarginVisible} />
             <RouterProvider router={router} />
             <ToastContainer transition={Slide} />
-            <UpdatePopup />
-            <SettingsPopup />
+            <Popups />
         </StrictMode>,
     );
 }

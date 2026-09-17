@@ -38,3 +38,14 @@ export class CloseOpenPopupEvent extends Event {
         super(CloseOpenPopupEvent.eventId);
     }
 }
+
+type QRCodeOpenDetail = {
+    url: string;
+};
+
+export class QRCodeOpenEvent extends CustomEvent<QRCodeOpenDetail> {
+    static eventId = "qr-code-open";
+    constructor(detail: QRCodeOpenDetail) {
+        super(QRCodeOpenEvent.eventId, { detail });
+    }
+}
