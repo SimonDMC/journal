@@ -11,7 +11,7 @@ import { syncDatabase } from "./database/sync";
 import { runMigrations } from "./database/migrations";
 import { useSettings } from "./settings/util/state";
 import { injectAppropriateManifest } from "./util/pwa";
-import { getCurrentVersion } from "./util/update";
+import { getCurrentVersion, installApp } from "./util/update";
 import { NotFound } from "./routes/-not-found";
 import { isLoggedIn } from "./settings/util/account";
 import { eventTarget, CloseOpenPopupEvent } from "./util/events";
@@ -30,6 +30,11 @@ declare module "@tanstack/react-router" {
     interface Register {
         router: typeof router;
     }
+}
+
+// Download app if it's the user's first time opening it
+if (!getCurrentVersion()) {
+    installApp(__BUILD_INFO__.version);
 }
 
 // Figure out if we need a bottom mobile PWA margin

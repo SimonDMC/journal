@@ -13,7 +13,7 @@ export const qrHashHandle = async (request: Request, env: Env): Promise<Response
     const actualTimestamp = Date.now();
 
     // don't serve future timestamps (tolerance of a couple seconds ahead)
-    if (actualTimestamp - timestamp < 3 * 1000) {
+    if (actualTimestamp - timestamp < -3 * 1000) {
         return new Response("Ahead", { status: 406 });
     }
 

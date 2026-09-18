@@ -1,23 +1,25 @@
 import { useState } from "react";
 import SettingsContent from "../../ui/SettingsContent";
 import { syncDatabase } from "../../../database/sync";
-import { errorToast, successToast } from "../../../util/toast";
+import { successToast } from "../../../util/toast";
 import SettingsButton from "../../ui/SettingsButton";
 import SettingsPassword from "../../ui/SettingsPassword";
 import SettingsSeparator from "../../ui/SettingsSeparator";
 import SettingsWarn from "../../ui/SettingsWarn";
-import { login, getUserName, showQRCode, unlinkAccount } from "../../util/account";
-import { downloadKey } from "../../util/key";
+import { login, getUserName, unlinkAccount } from "../../util/account";
+import { downloadKey, showQRCode } from "../../util/key";
 import { changePassword, changePasswordMismatched } from "../../util/password";
 import { useSettings } from "../../util/state";
+import { AccountScreen } from "../../../types/settings";
 
-export default function AccountManagement() {
+export default function AccountManagement(props: {
+    setAccountScreen: React.Dispatch<React.SetStateAction<AccountScreen>>;
+}) {
     const [password, setPassword] = useState("");
     const settingsState = useSettings();
 
     async function attemptReLogin() {
         if (!password) {
-            errorToast("All fields are mandatory.");
             return;
         }
 
@@ -27,6 +29,11 @@ export default function AccountManagement() {
             successToast("Re-logged in successfully!");
             syncDatabase();
         }
+    }
+
+    async function unlinkAndLogout() {
+        await unlinkAccount();
+        props.setAccountScreen(AccountScreen.CREATE_OR_LOGIN);
     }
 
     return (
@@ -99,7 +106,7 @@ export default function AccountManagement() {
                 label="Unlink Account"
                 desc="Remove the account from this device. You will keep your entries locally, but they will no longer be synced with your other devices."
                 actionLabel="Unlink"
-                action={unlinkAccount}
+                action={unlinkAndLogout}
             />
         </SettingsContent>
     );

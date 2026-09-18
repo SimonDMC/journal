@@ -10,6 +10,7 @@ import path from "path";
 import chalk from "chalk";
 import { execSync } from "child_process";
 import type { ServerResponse } from "http";
+import { current } from "./versions.json" with { type: "json" };
 
 const STATIC_ASSETS = ["emoji.json", "InterVariable.woff2", "InterVariable-Italic.woff2"];
 
@@ -55,8 +56,9 @@ function generateBuildMeta() {
 function getBuildInfo() {
     const commitHash = execSync("git rev-parse --short HEAD").toString().trim();
     const buildTimestamp = Date.now();
+    const version = current.version;
 
-    return { commitHash, buildTimestamp };
+    return { commitHash, buildTimestamp, version };
 }
 
 // bypass cloudflare plugin breaking SPA behavior on local network addresses
@@ -110,7 +112,13 @@ export default defineConfig({
         }),
     ],
     server: {
+        // Use a non-standard port by default to minimize risk of localStorage exfiltration
+        port: 10008,
+        // Allow access from other domains, e.g. *.trycloudflare.com
         allowedHosts: true,
+    },
+    preview: {
+        port: 10009,
     },
     build: {
         // This splits code into separate js/css files for npm each package, but since the app is always

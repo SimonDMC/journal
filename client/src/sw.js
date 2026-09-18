@@ -19,7 +19,7 @@ self.addEventListener("fetch", (event) => {
 
     // Don't cache local requests while developing
     if (
-        url.host == "localhost:5173" ||
+        url.host == "localhost:10008" ||
         url.pathname == "/__scheduled" ||
         url.pathname == "/cdn-cgi/handler/scheduled"
     ) {
@@ -31,7 +31,10 @@ self.addEventListener("fetch", (event) => {
         caches
             .keys()
             // The version to use is the oldest available, since on install it wipes the old ones
-            .then((names) => caches.open(names[0]))
+            .then((names) => {
+                if (names.length == 0) throw new Error("No cache exists.");
+                return caches.open(names[0]);
+            })
             .then(async (cache) => {
                 const cachedResponse = await cache.match(event.request, {
                     ignoreVary: true,
@@ -59,6 +62,9 @@ self.addEventListener("fetch", (event) => {
                     cache.put(event.request, networkResponse.clone());
                 }
                 return networkResponse;
+            })
+            .catch((e) => {
+                return fetch(event.request);
             }),
     );
 });

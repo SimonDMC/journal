@@ -286,10 +286,12 @@
 
 .settings-card-title {
     margin-top: 0.4em;
+    line-height: 1.2;
+    text-align: center;
 }
 
 .settings-card-desc {
-    margin-top: 0em;
+    margin-top: 0.3em;
     font-size: 0.7em;
     text-align: center;
     opacity: 0.5;

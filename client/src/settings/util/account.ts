@@ -1,10 +1,7 @@
 import { syncDatabase } from "../../database/sync";
-import { getAPI, postAPI } from "../../services/api";
-import { QR_KEY_GENERATOR } from "../../util/config";
+import { postAPI } from "../../services/api";
 import { generateKey, hashKey } from "../../util/crypto";
-import { CloseOpenPopupEvent, eventTarget, QRCodeOpenEvent } from "../../util/events";
 import { errorToast, successToast } from "../../util/toast";
-import QRCode from "QRCode";
 
 /**
  * Get whether a user is logged in or not
@@ -97,61 +94,4 @@ export async function unlinkAccount() {
     }
     localStorage.removeItem("journal-username");
     localStorage.removeItem("journal-key");
-}
-
-export async function showQRCode() {
-    const timestamp = Date.now();
-    const keyHashRes = await getAPI(`/qr-hash?t=${timestamp}`);
-
-    if (keyHashRes.status == 401) {
-        errorToast("The QR code couldn't be generated. Are you logged in?");
-    }
-
-    if (keyHashRes.status == 406) {
-        errorToast("The QR code couldn't be generated. Check if your system clock is sync.");
-    }
-
-    if (!keyHashRes.ok) return;
-
-    const keyHashEncoded = await keyHashRes.text();
-    const keyHash = Uint8Array.fromBase64(keyHashEncoded);
-    const qrKey = await crypto.subtle.importKey("raw", keyHash, QR_KEY_GENERATOR, true, [
-        "encrypt",
-        "decrypt",
-    ]);
-
-    const keyString = localStorage.getItem("journal-key");
-    if (!keyString) return;
-
-    const data = new Uint8Array(JSON.parse(keyString));
-
-    const iv = crypto.getRandomValues(new Uint8Array(12));
-    const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, qrKey, data);
-
-    const buffer = new Uint8Array(encrypted);
-    const result = new Uint8Array(iv.length + buffer.length);
-    result.set(iv, 0);
-    result.set(buffer, iv.length);
-
-    const header = new Uint8Array([
-        // JRNL identifier header
-        0x4a,
-        0x52,
-        0x4e,
-        0x4c,
-        // timestamp used as server key id, decomposed into bytes
-        timestamp % 256,
-        Math.floor(timestamp / 256) % 256,
-        Math.floor(timestamp / Math.pow(256, 2)) % 256,
-        Math.floor(timestamp / Math.pow(256, 3)) % 256,
-        Math.floor(timestamp / Math.pow(256, 4)) % 256,
-        Math.floor(timestamp / Math.pow(256, 5)) % 256,
-    ]);
-
-    const payload = new Uint8Array([...header, ...result]);
-    const canvas = document.createElement("canvas");
-    QRCode.toDataURL(canvas, [{ mode: "byte", data: payload }], (err, url) => {
-        eventTarget.dispatchEvent(new CloseOpenPopupEvent());
-        eventTarget.dispatchEvent(new QRCodeOpenEvent({ url }));
-    });
 }

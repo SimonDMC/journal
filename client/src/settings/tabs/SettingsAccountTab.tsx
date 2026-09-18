@@ -11,7 +11,11 @@ import AccountImportKey from "./account/AccountImportKey";
 
 export default function SettingsGeneralTab() {
     const [accountScreen, setAccountScreen] = useState(
-        isLoggedIn() ? AccountScreen.MANAGEMENT : AccountScreen.IMPORT_KEY,
+        isLoggedIn()
+            ? AccountScreen.MANAGEMENT
+            : localStorage.getItem("journal-username")
+              ? AccountScreen.IMPORT_KEY
+              : AccountScreen.CREATE_OR_LOGIN,
     );
 
     if (accountScreen == AccountScreen.CREATE_OR_LOGIN) {
@@ -31,7 +35,7 @@ export default function SettingsGeneralTab() {
     }
 
     if (accountScreen == AccountScreen.MANAGEMENT) {
-        return <AccountManagement />;
+        return <AccountManagement setAccountScreen={setAccountScreen} />;
     }
 
     return <SettingsContent>{accountScreen}</SettingsContent>;

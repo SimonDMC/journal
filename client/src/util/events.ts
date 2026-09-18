@@ -49,3 +49,10 @@ export class QRCodeOpenEvent extends CustomEvent<QRCodeOpenDetail> {
         super(QRCodeOpenEvent.eventId, { detail });
     }
 }
+
+export class QRCodeScanOpenEvent extends Event {
+    static eventId = "qr-code-scan-open";
+    constructor() {
+        super(QRCodeScanOpenEvent.eventId);
+    }
+}

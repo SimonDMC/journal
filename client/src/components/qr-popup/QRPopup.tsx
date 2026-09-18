@@ -10,12 +10,12 @@ export default function QRPopup() {
 
     useEffect(() => {
         // initialize popup data and open whenever show qr code is pressed
-        const updateReadyHandler = (e: Event) => {
+        const qrOpenHandler = (e: Event) => {
             const { url } = (e as QRCodeOpenEvent).detail;
             setQrCodeUrl(url);
             setOpen(true);
         };
-        eventTarget.addEventListener(QRCodeOpenEvent.eventId, updateReadyHandler);
+        eventTarget.addEventListener(QRCodeOpenEvent.eventId, qrOpenHandler);
 
         const closeOpenPopupHandler = () => setOpen(false);
         eventTarget.addEventListener(CloseOpenPopupEvent.eventId, closeOpenPopupHandler);
@@ -33,7 +33,7 @@ export default function QRPopup() {
 
         // remove listeners on unmount
         return () => {
-            eventTarget.removeEventListener(QRCodeOpenEvent.eventId, updateReadyHandler);
+            eventTarget.removeEventListener(QRCodeOpenEvent.eventId, qrOpenHandler);
             eventTarget.removeEventListener(CloseOpenPopupEvent.eventId, closeOpenPopupHandler);
 
             document.removeEventListener("keydown", keydown, true);
@@ -54,7 +54,9 @@ export default function QRPopup() {
                     exit={{ opacity: 0, y: 5 }}
                     transition={{ duration: 0.2 }}
                     id="qr-bg"
-                    onClick={() => dismissPopup()}
+                    onClick={(e) => {
+                        if ((e.target as HTMLElement).id == "qr-bg") dismissPopup();
+                    }}
                 >
                     <div className="qr-body">
                         <img src={qrCodeUrl} alt="Encryption Key QR Code" />
