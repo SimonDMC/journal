@@ -190,6 +190,11 @@ function Entry() {
             // create new entry
             await db.entries.add({ date: date, ...entryJson });
         }
+
+        // try get persistent storage perms, if we don't have them yet
+        const persistent = await navigator.storage.persisted();
+        if (persistent) return;
+        await navigator.storage.persist();
     }
 
     async function saveOnClientAndServer() {

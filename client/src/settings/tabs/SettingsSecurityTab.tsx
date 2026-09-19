@@ -4,6 +4,7 @@ import SettingsButton from "../ui/SettingsButton";
 import SettingsContent from "../ui/SettingsContent";
 import SettingsPassword from "../ui/SettingsPassword";
 import SettingsSelect from "../ui/SettingsSelect";
+import SettingsStatus from "../ui/SettingsStatus";
 
 export default function SettingsSecurityTab() {
     const settingsState = useSettings();
@@ -32,19 +33,9 @@ export default function SettingsSecurityTab() {
                         actionFail={setCodewordMismatched}
                     />
                     {settingsState.getSetting("data.codeword_hash") ? (
-                        <div className="settings-row">
-                            <div className=""></div>
-                            <div className="settings-text small">
-                                Codeword active <span className="check">✓</span>
-                            </div>
-                        </div>
+                        <SettingsStatus text="Codeword active" success={true} />
                     ) : (
-                        <div className="settings-row">
-                            <div className=""></div>
-                            <div className="settings-text small">
-                                Codeword not set yet <span className="cross">&times;</span>
-                            </div>
-                        </div>
+                        <SettingsStatus text="Codeword not set yet" success={false} />
                     )}
                 </>
             )}
@@ -61,19 +52,9 @@ export default function SettingsSecurityTab() {
                         action={setupPasskey}
                     />
                     {settingsState.getSetting("data.passkey") ? (
-                        <div className="settings-row">
-                            <div className=""></div>
-                            <div className="settings-text small">
-                                Passkey active <span className="check">✓</span>
-                            </div>
-                        </div>
+                        <SettingsStatus text="Passkey active" success={true} />
                     ) : (
-                        <div className="settings-row">
-                            <div className=""></div>
-                            <div className="settings-text small">
-                                Passkey not set up yet <span className="cross">&times;</span>
-                            </div>
-                        </div>
+                        <SettingsStatus text="Passkey not set up yet" success={false} />
                     )}
                 </>
             )}

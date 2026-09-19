@@ -10,8 +10,16 @@ import SettingsInput from "../ui/SettingsInput";
 import SettingsSeparator from "../ui/SettingsSeparator";
 import { generateAndSaveKey, showKeyHash, forceUploadKey } from "../util/key";
 import SettingsWarn from "../ui/SettingsWarn";
+import { useEffect, useState } from "react";
+import SettingsStatus from "../ui/SettingsStatus";
 
 export default function SettingsDebugTab() {
+    const [persisted, setPersisted] = useState(false);
+
+    useEffect(() => {
+        navigator.storage.persisted().then((persistent) => setPersisted(persistent));
+    }, []);
+
     return (
         <SettingsContent>
             <SettingsWarn>
@@ -19,6 +27,11 @@ export default function SettingsDebugTab() {
                 using them unless you know what you're doing.
             </SettingsWarn>
             <SettingsSeparator />
+            {persisted ? (
+                <SettingsStatus text="Entry storage persistent" success={true} />
+            ) : (
+                <SettingsStatus text="Entry storage not persistent" success={false} />
+            )}
             <SettingsButton
                 label="Invoke Sync"
                 desc="Force a server sync, uploading outstanding entries and downloading missing ones"
