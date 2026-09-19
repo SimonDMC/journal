@@ -5,7 +5,7 @@ import { generateKey, hashKey } from "../../util/crypto";
 import { eventTarget, CloseOpenPopupEvent, QRCodeOpenEvent } from "../../util/events";
 import { successToast, errorToast } from "../../util/toast";
 import { useSettings } from "./state";
-import QRCode from "QRCode";
+import QRCode from "qrcode";
 
 export async function generateAndSaveKey() {
     if (localStorage.getItem("journal-key")) {
