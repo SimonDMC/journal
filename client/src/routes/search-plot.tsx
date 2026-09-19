@@ -2,7 +2,16 @@ import "../styles/search-plot.css";
 import { db } from "../database/db";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
-import { Chart, LinearScale, CategoryScale, PointElement, BarElement, Tooltip, type ChartOptions, defaults } from "chart.js";
+import {
+    Chart,
+    LinearScale,
+    CategoryScale,
+    PointElement,
+    BarElement,
+    Tooltip,
+    type ChartOptions,
+    defaults,
+} from "chart.js";
 import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { MONTH_NAMES } from "../util/time";
@@ -36,7 +45,7 @@ function SearchPlot() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        enforceAuth(navigate, RouteType.Authed);
+        enforceAuth(navigate, RouteType.App);
 
         if (!query) {
             navigate({ to: "/overview" });
@@ -60,7 +69,9 @@ function SearchPlot() {
                 // loop through days in the month
                 // we can just assume it's 31 and ignore invalid (missing) days
                 for (let day = 0; day <= 31; day++) {
-                    const entry = await db.entries.get(`${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`);
+                    const entry = await db.entries.get(
+                        `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`,
+                    );
                     if (!entry || entry.content == null) continue;
 
                     let found = false;

@@ -1,4 +1,4 @@
-import "./Settings.css";
+import "../Settings.css";
 
 export default function SettingsContent(props: { children?: React.ReactNode }) {
     function setScrollProperty(e: React.UIEvent) {

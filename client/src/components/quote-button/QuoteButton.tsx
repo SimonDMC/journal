@@ -1,7 +1,7 @@
 import { Plugin, ButtonView } from "ckeditor5";
 import { QuoteStartIcon } from "../icons/QuoteStartIcon";
 import { renderToString } from "react-dom/server";
-import { eventTarget, QuoteImageOpenEvent } from "../../util/events";
+import { CloseOpenPopupEvent, eventTarget, QuoteImageOpenEvent } from "../../util/events";
 
 export class QuoteButton extends Plugin {
     init() {
@@ -14,15 +14,21 @@ export class QuoteButton extends Plugin {
 
             button.set({
                 // super cursed usage of a server-only API but who cares. it works and deduplicates code!
-                icon: renderToString(<QuoteStartIcon />).replace(`viewBox="0 0 32 32"`, `viewBox="0 0 24 24"`),
+                icon: renderToString(<QuoteStartIcon />).replace(
+                    `viewBox="0 0 32 32"`,
+                    `viewBox="0 0 24 24"`,
+                ),
                 tooltip: "Generate quote image",
             });
 
             button.on("execute", () => {
+                eventTarget.dispatchEvent(new CloseOpenPopupEvent());
                 eventTarget.dispatchEvent(
                     new QuoteImageOpenEvent({
-                        content: editor.data.stringify(editor.model.getSelectedContent(editor.model.document.selection)),
-                    })
+                        content: editor.data.stringify(
+                            editor.model.getSelectedContent(editor.model.document.selection),
+                        ),
+                    }),
                 );
 
                 document.getSelection()?.removeAllRanges();

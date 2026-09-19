@@ -17,9 +17,11 @@ export function setCursorAfterNthOccurrence(container: Node, searchText: string,
                     const range = document.createRange();
 
                     // for selecting it
-                    // range.setStart(node, index);
+                    range.setStart(node, index);
 
-                    range.setStart(node, index + searchText.length);
+                    // for jumping after it
+                    //range.setStart(node, index + searchText.length);
+
                     range.setEnd(node, index + searchText.length);
 
                     const selection = window.getSelection();

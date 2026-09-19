@@ -9,8 +9,8 @@ import { db } from "../database/db";
 import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { dayAdjustedTime, today } from "../util/time";
-import { eventTarget, KeyCreateEvent, OfflineModeEvent } from "../util/events";
-import { useSettings } from "../state/settings";
+import { eventTarget, OfflineModeEvent } from "../util/events";
+import { useSettings } from "../settings/util/state";
 import { checkForUpdateIfDesired, getCurrentVersion } from "../util/update";
 import { infoToast } from "../util/toast";
 
@@ -21,9 +21,8 @@ export const Route = createFileRoute("/overview")({
 function Overview() {
     const navigate = useNavigate();
     const [oneYearAgo, setOneYearAgo] = useState("");
-    const [oneYearAgoExists, setOneYearAgoExists] = useState(false);
+    const showTodayEnabled = useSettings((s) => s.getBoolean("general.show_today"));
     const showOneYearAgoEnabled = useSettings((s) => s.getBoolean("general.show_one_year_ago"));
-    const [keyExists, setKeyExists] = useState(true);
     const showStatsEnabled = useSettings((s) => s.getBoolean("general.show_stats"));
     const [offline, setOffline] = useState(false);
 
@@ -32,10 +31,11 @@ function Overview() {
         .filter((entry) => entry.content !== null)
         .map((entry) => entry.date);
     const wordCount = entriesFull.reduce((acc, cur) => (acc += cur.word_count), 0);
+    const [oneYearAgoExists, setOneYearAgoExists] = useState(false);
 
     useEffect(() => {
         // if this route is inaccessible, don't check for update or do any of the other stuff
-        if (!enforceAuth(navigate, RouteType.Authed)) return;
+        if (!enforceAuth(navigate, RouteType.App)) return;
         checkForUpdateIfDesired();
 
         // Show popup if we auto-updated
@@ -44,9 +44,6 @@ function Overview() {
             infoToast(`Updated Journal to ${getCurrentVersion()}!`);
             sessionStorage.removeItem("journal-updated-automatically");
         }
-
-        // check key status
-        if (!localStorage.getItem("journal-key")) setKeyExists(false);
 
         // keybinds
         const keydown = (e: KeyboardEvent) => {
@@ -72,10 +69,6 @@ function Overview() {
         };
         document.addEventListener("keydown", keydown);
 
-        // remove "missing key" warning when it's uploaded/generated
-        const keyCreateHandler = () => setKeyExists(true);
-        eventTarget.addEventListener(KeyCreateEvent.eventId, keyCreateHandler);
-
         // show offline mode badge on network request fail
         const offlineModeHandler = () => setOffline(true);
         eventTarget.addEventListener(OfflineModeEvent.eventId, offlineModeHandler);
@@ -83,7 +76,6 @@ function Overview() {
         // remove listeners on unmount
         return () => {
             document.removeEventListener("keydown", keydown);
-            eventTarget.removeEventListener(KeyCreateEvent.eventId, keyCreateHandler);
             eventTarget.removeEventListener(OfflineModeEvent.eventId, offlineModeHandler);
         };
     }, [navigate, oneYearAgoExists]);
@@ -93,7 +85,7 @@ function Overview() {
             const lastYear = new Date(dayAdjustedTime);
             lastYear.setFullYear(lastYear.getFullYear() - 1);
             const lastYearString = lastYear.toISOString().substring(0, 10);
-            if (entryDates.find((entry) => entry === lastYearString)) setOneYearAgoExists(true);
+            if (entryDates.find((entry) => entry !== lastYearString)) setOneYearAgoExists(true);
             setOneYearAgo(lastYearString);
         }
     }, [entryDates]);
@@ -103,24 +95,27 @@ function Overview() {
 
     return (
         <main>
-            {keyExists || <div id="keyless-bar">Warning: Missing Key</div>}
             {offline && <div id="offline">Offline Mode</div>}
             <Calendar entries={entryDates} />
-            <Link to="/entry" search={{ date: today }} id="today" className="nav-link">
-                Today
-            </Link>
-            {showOneYearAgoEnabled && (
-                <Link
-                    to="/entry"
-                    search={{ date: oneYearAgo }}
-                    id="lastYear"
-                    className={`nav-link ${oneYearAgoExists || "inactive"}`}
-                >
-                    One Year Ago
+            {showTodayEnabled && (
+                <Link to="/entry" search={{ date: today }} id="today" className="nav-link">
+                    Today
                 </Link>
             )}
+            <div id="one-year-ago-wrapper">
+                {showOneYearAgoEnabled && (
+                    <Link
+                        to="/entry"
+                        search={{ date: oneYearAgo }}
+                        id="one-year-ago"
+                        className={`nav-link ${oneYearAgoExists || "inactive"}`}
+                    >
+                        One Year Ago
+                    </Link>
+                )}
+            </div>
             <ProfileIcon />
-            {keyExists && showStatsEnabled && (
+            {showStatsEnabled && (
                 <div className="stats">
                     <p className="entryCount">Entry Count: {commaFormat(entryDates.length)}</p>
                     <p className="wordCount">Total Words: {commaFormat(wordCount)}</p>

@@ -1,8 +1,12 @@
-import { useSettings } from "../../state/settings";
-import { InfoIcon } from "../icons/InfoIcon";
-import "./Settings.css";
+import { useSettings } from "../util/state";
+import { InfoIcon } from "../../components/icons/InfoIcon";
+import "../Settings.css";
 
-export default function SettingsToggle(props: { label: string; settingKey: string; desc?: string }) {
+export default function SettingsToggle(props: {
+    label: string;
+    settingKey: string;
+    desc?: string;
+}) {
     const value = useSettings((s) => s.getBoolean(props.settingKey));
 
     return (

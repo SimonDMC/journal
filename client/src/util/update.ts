@@ -1,5 +1,5 @@
-import { eventTarget, UpdateReadyEvent } from "./events";
-import { useSettings } from "../state/settings";
+import { CloseOpenPopupEvent, eventTarget, UpdateReadyEvent } from "./events";
+import { useSettings } from "../settings/util/state";
 import { infoToast } from "./toast";
 
 type VersionsFile = {
@@ -44,9 +44,8 @@ export async function checkForUpdateIfDesired() {
 export async function checkForUpdateManually() {
     const versionsFile = await checkForUpdate();
     if (versionsFile) {
-        // to prevent popup stacking, close the settings popup and open the update popup
+        eventTarget.dispatchEvent(new CloseOpenPopupEvent());
         invokeUpdatePopup(versionsFile, "confirm");
-        useSettings.getState().closeSettings();
     } else {
         // inform about no update found
         infoToast("No update available.");

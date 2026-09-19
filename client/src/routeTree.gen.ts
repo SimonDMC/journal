@@ -12,9 +12,9 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CodewordRouteImport } from './routes/codeword'
 import { Route as EntryRouteImport } from './routes/entry'
-import { Route as LoginRouteImport } from './routes/login'
 import { Route as OverviewRouteImport } from './routes/overview'
 import { Route as PasskeyRouteImport } from './routes/passkey'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SearchPlotRouteImport } from './routes/search-plot'
 
@@ -33,11 +33,6 @@ const EntryRoute = EntryRouteImport.update({
   path: '/entry',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const OverviewRoute = OverviewRouteImport.update({
   id: '/overview',
   path: '/overview',
@@ -46,6 +41,11 @@ const OverviewRoute = OverviewRouteImport.update({
 const PasskeyRoute = PasskeyRouteImport.update({
   id: '/passkey',
   path: '/passkey',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -63,9 +63,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/codeword': typeof CodewordRoute
   '/entry': typeof EntryRoute
-  '/login': typeof LoginRoute
   '/overview': typeof OverviewRoute
   '/passkey': typeof PasskeyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/search-plot': typeof SearchPlotRoute
 }
@@ -73,9 +73,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/codeword': typeof CodewordRoute
   '/entry': typeof EntryRoute
-  '/login': typeof LoginRoute
   '/overview': typeof OverviewRoute
   '/passkey': typeof PasskeyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/search-plot': typeof SearchPlotRoute
 }
@@ -84,9 +84,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/codeword': typeof CodewordRoute
   '/entry': typeof EntryRoute
-  '/login': typeof LoginRoute
   '/overview': typeof OverviewRoute
   '/passkey': typeof PasskeyRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/search': typeof SearchRoute
   '/search-plot': typeof SearchPlotRoute
 }
@@ -96,9 +96,9 @@ export interface FileRouteTypes {
     | '/'
     | '/codeword'
     | '/entry'
-    | '/login'
     | '/overview'
     | '/passkey'
+    | '/reset-password'
     | '/search'
     | '/search-plot'
   fileRoutesByTo: FileRoutesByTo
@@ -106,9 +106,9 @@ export interface FileRouteTypes {
     | '/'
     | '/codeword'
     | '/entry'
-    | '/login'
     | '/overview'
     | '/passkey'
+    | '/reset-password'
     | '/search'
     | '/search-plot'
   id:
@@ -116,9 +116,9 @@ export interface FileRouteTypes {
     | '/'
     | '/codeword'
     | '/entry'
-    | '/login'
     | '/overview'
     | '/passkey'
+    | '/reset-password'
     | '/search'
     | '/search-plot'
   fileRoutesById: FileRoutesById
@@ -127,9 +127,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CodewordRoute: typeof CodewordRoute
   EntryRoute: typeof EntryRoute
-  LoginRoute: typeof LoginRoute
   OverviewRoute: typeof OverviewRoute
   PasskeyRoute: typeof PasskeyRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SearchRoute: typeof SearchRoute
   SearchPlotRoute: typeof SearchPlotRoute
 }
@@ -157,13 +157,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EntryRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/overview': {
       id: '/overview'
       path: '/overview'
@@ -176,6 +169,13 @@ declare module '@tanstack/react-router' {
       path: '/passkey'
       fullPath: '/passkey'
       preLoaderRoute: typeof PasskeyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -199,9 +199,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CodewordRoute: CodewordRoute,
   EntryRoute: EntryRoute,
-  LoginRoute: LoginRoute,
   OverviewRoute: OverviewRoute,
   PasskeyRoute: PasskeyRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SearchRoute: SearchRoute,
   SearchPlotRoute: SearchPlotRoute,
 }

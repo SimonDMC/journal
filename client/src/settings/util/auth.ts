@@ -4,9 +4,10 @@ import {
     type AuthenticatorTransportFuture,
     type CredentialDeviceType,
 } from "@simplewebauthn/server";
-import { getUserName, useSettings } from "../state/settings";
-import { errorToast, successToast } from "../util/toast";
+import { useSettings } from "./state";
+import { errorToast, successToast } from "../../util/toast";
 import { startRegistration } from "@simplewebauthn/browser";
+import { getUserName } from "./account";
 
 export async function setCodeword(codeword: string) {
     const encoder = new TextEncoder();

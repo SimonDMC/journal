@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { InfoIcon } from "../icons/InfoIcon";
-import "./Settings.css";
+import { InfoIcon } from "../../components/icons/InfoIcon";
+import "../Settings.css";
 
 export default function SettingsInput(props: {
     label: string;

@@ -21,15 +21,6 @@
     font-family: monospace;
 }
 
-.codeword .logout-icon svg {
-    position: absolute;
-    top: 0.5em;
-    right: 0.5em;
-    font-size: min(2em, 6vw);
-    cursor: pointer;
-    z-index: 5;
-}
-
 @media (max-width: 425px) {
     .codeword {
         justify-content: flex-start;

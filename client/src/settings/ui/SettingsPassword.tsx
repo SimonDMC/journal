@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { InfoIcon } from "../icons/InfoIcon";
-import "./Settings.css";
+import { InfoIcon } from "../../components/icons/InfoIcon";
+import "../Settings.css";
 
 export default function SettingsPassword(props: {
     label: string;
     desc?: string;
-    mainPlaceholder: string;
-    confirmPlaceholder: string;
+    mainPlaceholder?: string;
+    confirmPlaceholder?: string;
     actionLabel: string;
     action: (password: string) => void;
     actionFail: () => void;
@@ -40,7 +40,8 @@ export default function SettingsPassword(props: {
                     value={mainInput}
                     onChange={(e) => setMainInput(e.target.value)}
                     onKeyDown={(e) => {
-                        if (e.key == "Enter") ((e.target as HTMLElement).nextSibling as HTMLElement).focus();
+                        if (e.key == "Enter")
+                            ((e.target as HTMLElement).nextSibling as HTMLElement).focus();
                     }}
                 />
                 <input

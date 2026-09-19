@@ -11,6 +11,11 @@ import {
     upgradeEntriesV2PullHandle,
     upgradeEntriesV2PushHandle,
 } from "./routes/migrations/upgrade-entries-v2";
+import { qrHashHandle } from "./routes/qr-hash";
+import { keyHashHandle } from "./routes/key-hash";
+import { setKeyHashHandle } from "./routes/migrations/set-key-hash";
+import { forgotPasswordHandle } from "./routes/forgot-password";
+import { resetPasswordHandle } from "./routes/reset-password";
 
 type Route = [
     method: string,
@@ -26,10 +31,15 @@ const routes: Route[] = [
     ["POST", /^server-sync$/, serverSyncHandle],
     ["POST", /^logout$/, logoutHandle],
     ["POST", /^change-password$/, changePasswordHandle],
+    ["POST", /^forgot-password$/, forgotPasswordHandle],
+    ["POST", /^reset-password$/, resetPasswordHandle],
     ["POST", /^create-account$/, createAccountHandle],
+    ["GET", /^qr-hash$/, qrHashHandle],
+    ["GET", /^key-hash$/, keyHashHandle],
 
     ["POST", /^migrate\/entries-v2-pull$/, upgradeEntriesV2PullHandle],
     ["POST", /^migrate\/entries-v2-push$/, upgradeEntriesV2PushHandle],
+    ["POST", /^migrate\/set-key-hash$/, setKeyHashHandle],
 ];
 
 export default {

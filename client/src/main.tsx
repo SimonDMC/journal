@@ -7,14 +7,15 @@ import { routeTree } from "./routeTree.gen";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import BottomMargin from "./components/bottom-margin/BottomMargin";
-import UpdatePopup from "./components/update-popup/UpdatePopup";
 import { syncDatabase } from "./database/sync";
 import { runMigrations } from "./database/migrations";
-import SettingsPopup from "./components/settings/SettingsPopup";
-import { useSettings } from "./state/settings";
+import { useSettings } from "./settings/util/state";
 import { injectAppropriateManifest } from "./util/pwa";
-import { getCurrentVersion } from "./util/update";
+import { getCurrentVersion, installApp } from "./util/update";
 import { NotFound } from "./routes/-not-found";
+import { isLoggedIn } from "./settings/util/account";
+import { eventTarget, CloseOpenPopupEvent } from "./util/events";
+import Popups from "./components/Popups";
 
 // Create a new router instance
 export const router = createRouter({
@@ -31,13 +32,20 @@ declare module "@tanstack/react-router" {
     }
 }
 
+// Download app if it's the user's first time opening it
+if (!getCurrentVersion()) {
+    installApp(__BUILD_INFO__.version);
+}
+
 // Figure out if we need a bottom mobile PWA margin
 const bottomMarginVisible = window.matchMedia("(display-mode: standalone)").matches ? true : false;
 
-// Sync database at the beginning of the session
 if (!sessionStorage.getItem("journal-synced")) {
-    // and then run potential migrations
-    syncDatabase().then(() => runMigrations());
+    // Sync database at the beginning of the session (if logged in) and then run potential
+    // migrations
+    if (isLoggedIn()) syncDatabase().then(() => runMigrations());
+    else runMigrations();
+
     sessionStorage.setItem("journal-synced", "true");
 }
 
@@ -53,6 +61,7 @@ document.addEventListener("keydown", (e) => {
     const isModifierPressed = e.ctrlKey || (isMac && e.metaKey);
     if (e.key == "," && isModifierPressed) {
         e.preventDefault();
+        eventTarget.dispatchEvent(new CloseOpenPopupEvent());
         openSettings();
     }
     if (settingsOpen) {
@@ -77,8 +86,7 @@ if (!rootElement.innerHTML) {
             <BottomMargin visible={bottomMarginVisible} />
             <RouterProvider router={router} />
             <ToastContainer transition={Slide} />
-            <UpdatePopup />
-            <SettingsPopup />
+            <Popups />
         </StrictMode>,
     );
 }

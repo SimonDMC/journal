@@ -1,16 +1,14 @@
 import "../styles/bioauth.css";
 import { useEffect, useRef } from "react";
-import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { enforceAuth, logout, RouteType } from "../util/auth";
+import { enforceAuth, RouteType } from "../util/auth";
 import {
     generateAuthenticationOptions,
     verifyAuthenticationResponse,
 } from "@simplewebauthn/server";
 import { startAuthentication } from "@simplewebauthn/browser";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useSettings } from "../state/settings";
-import type { Passkey } from "../settings/auth";
+import { useSettings } from "../settings/util/state";
+import type { Passkey } from "../settings/util/auth";
 
 export const Route = createFileRoute("/passkey")({
     component: Passkey,
@@ -74,11 +72,5 @@ function Passkey() {
         if (!authenticating.current) verify();
     }, [navigate]);
 
-    return (
-        <main className="bioauth">
-            <a onClick={() => logout(navigate)} className="logout-icon">
-                <FontAwesomeIcon icon={faArrowRightFromBracket} />
-            </a>
-        </main>
-    );
+    return <main className="bioauth"></main>;
 }

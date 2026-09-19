@@ -1,4 +1,4 @@
-import { eventTarget, UpdateReadyEvent } from "../../util/events";
+import { CloseOpenPopupEvent, eventTarget, UpdateReadyEvent } from "../../util/events";
 import { getCurrentVersion } from "../../util/update";
 import "./UpdatePopup.css";
 import { useEffect, useState } from "react";
@@ -39,6 +39,9 @@ export default function UpdatePopup() {
         };
         eventTarget.addEventListener(UpdateReadyEvent.eventId, updateReadyHandler);
 
+        const closeOpenPopupHandler = () => setOpen(false);
+        eventTarget.addEventListener(CloseOpenPopupEvent.eventId, closeOpenPopupHandler);
+
         const keydown = async (event: KeyboardEvent) => {
             console.log(open);
 
@@ -62,6 +65,8 @@ export default function UpdatePopup() {
         // remove listeners on unmount
         return () => {
             eventTarget.removeEventListener(UpdateReadyEvent.eventId, updateReadyHandler);
+            eventTarget.removeEventListener(CloseOpenPopupEvent.eventId, closeOpenPopupHandler);
+
             document.removeEventListener("keydown", keydown, true);
         };
     }, [open]);

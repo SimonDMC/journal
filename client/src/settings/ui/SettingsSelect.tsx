@@ -1,8 +1,13 @@
-import { useSettings } from "../../state/settings";
-import { InfoIcon } from "../icons/InfoIcon";
-import "./Settings.css";
+import { useSettings } from "../util/state";
+import { InfoIcon } from "../../components/icons/InfoIcon";
+import "../Settings.css";
 
-export default function SettingsSelect(props: { label: string; settingKey: string; desc?: string; options: { [value: string]: string } }) {
+export default function SettingsSelect(props: {
+    label: string;
+    settingKey: string;
+    desc?: string;
+    options: { [value: string]: string };
+}) {
     const value = useSettings((s) => s.getString(props.settingKey));
 
     return (
