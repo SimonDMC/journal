@@ -115,22 +115,23 @@
     transform: translateX(1.2em);
 }
 
-.settings-row .left {
-    display: flex;
-    align-items: center;
-}
-
 .settings-row .info-wrap {
     position: relative;
     padding: 0 0.2em;
+    padding-bottom: 0.1em;
     height: 1em;
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    vertical-align: middle;
 }
 
 .settings-row .info-icon {
     color: #555;
     width: 0.7em;
+}
+
+.settings-row .unbreakable {
+    white-space: nowrap;
 }
 
 .settings-row .right {
@@ -140,6 +141,7 @@
 }
 
 .settings-tooltip {
+    white-space: normal;
     position: fixed;
     font-size: 0.8em;
     max-width: 25em;
@@ -389,5 +391,35 @@
 
     .settings-tooltip {
         max-width: 15em;
+    }
+
+    .settings-card-container {
+        flex-direction: column;
+        gap: 1em;
+    }
+
+    .settings-card {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 1em;
+        padding: 0.7em 1em;
+    }
+
+    .settings-card-icon {
+        font-size: 2em;
+    }
+
+    .settings-card-title {
+        text-align: left;
+        margin-top: 0;
+    }
+
+    .settings-card-desc,
+    .settings-card-hint {
+        text-align: left;
+    }
+
+    .settings-content .long-inputs .settings-multi-input {
+        width: 11em;
     }
 }

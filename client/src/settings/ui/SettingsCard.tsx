@@ -10,10 +10,12 @@ export default function SettingsCard({ icon, title, desc, ...props }: Props) {
             <div className="settings-card-icon">
                 <FontAwesomeIcon icon={icon} />
             </div>
-            <div className="settings-card-title">{title}</div>
-            <div className="settings-card-desc">{desc}</div>
+            <div className="settings-card-aside">
+                <div className="settings-card-title">{title}</div>
+                <div className="settings-card-desc">{desc}</div>
 
-            {props.hint && <div className="settings-card-hint">{props.hint}</div>}
+                {props.hint && <div className="settings-card-hint">{props.hint}</div>}
+            </div>
         </div>
     );
 }

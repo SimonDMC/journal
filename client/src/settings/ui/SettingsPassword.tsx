@@ -22,15 +22,21 @@ export default function SettingsPassword(props: {
         } else props.actionFail();
     }
 
+    const words = props.label.split(" ");
+    const last = words.pop();
+
     return (
         <div className="settings-row settings-password-row">
             <div className="left">
-                {props.label}
-                {props.desc && (
-                    <InfoIcon className="info-icon">
-                        <div className="settings-tooltip">{props.desc}</div>
-                    </InfoIcon>
-                )}
+                {words.length > 0 && words.join(" ") + " "}
+                <span className="unbreakable">
+                    {last}
+                    {props.desc && (
+                        <InfoIcon className="info-icon">
+                            <div className="settings-tooltip">{props.desc}</div>
+                        </InfoIcon>
+                    )}
+                </span>
             </div>
             <div className="right">
                 <input

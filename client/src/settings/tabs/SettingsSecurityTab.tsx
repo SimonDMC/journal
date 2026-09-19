@@ -24,7 +24,7 @@ export default function SettingsSecurityTab() {
                 <>
                     <SettingsPassword
                         label="Set Codeword"
-                        desc="Set a codeword that you'll have to type every time you open Journal"
+                        desc="Set a codeword that you'll have to type every time you open Journal. Make sure you remember it!"
                         mainPlaceholder="Codeword"
                         confirmPlaceholder="Confirm Codeword"
                         actionLabel="Set"

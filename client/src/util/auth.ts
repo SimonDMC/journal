@@ -14,12 +14,12 @@ export function isSecondaryAuthed() {
     // secondary auth is enabled but not initialized
     if (
         settings.getString("security.secondary_auth") == "codeword" &&
-        settings.getString("data.codeword_hash") == undefined
+        !settings.getString("data.codeword_hash")
     )
         return true;
     if (
         settings.getString("security.secondary_auth") == "passkey" &&
-        settings.getSetting("data.passkey") == undefined
+        !settings.getSetting("data.passkey")
     )
         return true;
 
