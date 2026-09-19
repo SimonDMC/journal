@@ -1,6 +1,5 @@
 import "../Settings.css";
 import { useState } from "react";
-import SettingsContent from "../ui/SettingsContent";
 import { AccountScreen } from "../../types/settings";
 import AccountManagement from "./account/AccountManagement";
 import AccountCreateOrLogin from "./account/AccountCreateOrLogin";
@@ -8,6 +7,7 @@ import AccountCreate from "./account/AccountCreate";
 import AccountLogin from "./account/AccountLogin";
 import { isLoggedIn } from "../util/account";
 import AccountImportKey from "./account/AccountImportKey";
+import AccountForgotPassword from "./account/AccountForgotPassword";
 
 export default function SettingsGeneralTab() {
     const [accountScreen, setAccountScreen] = useState(
@@ -38,5 +38,7 @@ export default function SettingsGeneralTab() {
         return <AccountManagement setAccountScreen={setAccountScreen} />;
     }
 
-    return <SettingsContent>{accountScreen}</SettingsContent>;
+    if (accountScreen == AccountScreen.FORGOT_PASSWORD) {
+        return <AccountForgotPassword setAccountScreen={setAccountScreen} />;
+    }
 }

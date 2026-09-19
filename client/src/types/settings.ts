@@ -4,4 +4,5 @@ export enum AccountScreen {
     LOGIN,
     IMPORT_KEY,
     MANAGEMENT,
+    FORGOT_PASSWORD,
 }

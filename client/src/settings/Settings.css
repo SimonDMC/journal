@@ -262,6 +262,7 @@
     display: flex;
     width: 100%;
     gap: 1.5em;
+    margin-bottom: 0.3em;
 }
 
 .settings-card {
@@ -349,6 +350,20 @@
     .right {
         font-size: 0.85em;
         line-height: 1.2;
+    }
+}
+
+.align-end {
+    align-items: flex-end;
+}
+
+.note {
+    color: #666;
+    font-size: 0.8em;
+
+    a {
+        cursor: pointer;
+        text-decoration: underline;
     }
 }
 

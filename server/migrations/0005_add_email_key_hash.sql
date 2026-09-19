@@ -2,6 +2,8 @@
 
 ALTER TABLE Users ADD email TEXT;
 ALTER TABLE Users ADD key_hash TEXT;
+ALTER TABLE Users ADD reset_token TEXT;
+ALTER TABLE Users ADD reset_token_sent_at DATETIME;
 
 CREATE UNIQUE INDEX username_idx ON Users(username);
 CREATE UNIQUE INDEX email_idx ON Users(email);

@@ -62,8 +62,12 @@ export default function AccountLogin(props: {
                         />
                     </div>
                 </div>
-                <div className="settings-multi-input-row">
-                    <div></div>
+                <div className="settings-multi-input-row align-end">
+                    <div className="note">
+                        <a onClick={() => props.setAccountScreen(AccountScreen.FORGOT_PASSWORD)}>
+                            Forgot password?
+                        </a>
+                    </div>
                     <button className="settings-button" onClick={() => attemptLogin()}>
                         Login
                     </button>

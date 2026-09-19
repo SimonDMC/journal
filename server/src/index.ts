@@ -14,6 +14,8 @@ import {
 import { qrHashHandle } from "./routes/qr-hash";
 import { keyHashHandle } from "./routes/key-hash";
 import { setKeyHashHandle } from "./routes/migrations/set-key-hash";
+import { forgotPasswordHandle } from "./routes/forgot-password";
+import { resetPasswordHandle } from "./routes/reset-password";
 
 type Route = [
     method: string,
@@ -29,6 +31,8 @@ const routes: Route[] = [
     ["POST", /^server-sync$/, serverSyncHandle],
     ["POST", /^logout$/, logoutHandle],
     ["POST", /^change-password$/, changePasswordHandle],
+    ["POST", /^forgot-password$/, forgotPasswordHandle],
+    ["POST", /^reset-password$/, resetPasswordHandle],
     ["POST", /^create-account$/, createAccountHandle],
     ["GET", /^qr-hash$/, qrHashHandle],
     ["GET", /^key-hash$/, keyHashHandle],

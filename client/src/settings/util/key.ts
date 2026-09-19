@@ -186,7 +186,7 @@ export async function decryptQRCode(data: Uint8Array) {
     }
 
     if (res.status == 401) {
-        errorToast("Your session is invalid. This shouldn't happen!");
+        errorToast("Your session is invalid. Please log out and log in again.");
         return false;
     }
 
