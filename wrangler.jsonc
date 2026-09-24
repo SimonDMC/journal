@@ -23,4 +23,22 @@
     "triggers": {
         "crons": ["0 0 * * MON"],
     },
+    "ratelimits": [
+        {
+            "name": "RL_EXPENSIVE",
+            "namespace_id": "10008001",
+            "simple": {
+                "limit": 10,
+                "period": 60,
+            },
+        },
+        {
+            "name": "RL_CHEAP",
+            "namespace_id": "10008002",
+            "simple": {
+                "limit": 100,
+                "period": 60,
+            },
+        },
+    ],
 }

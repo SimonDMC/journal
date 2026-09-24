@@ -12,8 +12,12 @@ export const setKeyHashHandle = async (request: Request, env: Env): Promise<Resp
         return new Response("Bad request", { status: 400 });
     }
 
-    if (body.keyHash === undefined) {
+    if (!body.keyHash) {
         return new Response("Bad request", { status: 400 });
+    }
+
+    if (body.keyHash.length > 64) {
+        return new Response("Request too large", { status: 413 });
     }
 
     const keyHash = body.keyHash;

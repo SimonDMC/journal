@@ -23,6 +23,14 @@ export async function postAPI(path: string, body: object): Promise<Response> {
         errorToast("Outdated version, incompatible with API. Update or keep using only locally.");
     }
 
+    if (res.status == 413) {
+        errorToast("One or more parameters are too large.");
+    }
+
+    if (res.status == 429) {
+        errorToast("Too many requests. Try again later.");
+    }
+
     return res;
 }
 

@@ -42,6 +42,7 @@ export default function AccountCreate(props: {
                     <div className="left">Email</div>
                     <div className="right">
                         <input
+                            type="email"
                             className="settings-multi-input"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -59,7 +60,17 @@ export default function AccountCreate(props: {
                         <input
                             className="settings-multi-input"
                             value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            maxLength={32}
+                            onChange={(e) => {
+                                // allow only alphanumerics, dashes and underscores in username
+                                if (!/^[a-zA-Z0-9_-]*$/.test(e.currentTarget.value)) {
+                                    setUsername(
+                                        e.currentTarget.value.replaceAll(/[^a-zA-Z0-9_-]/g, ""),
+                                    );
+                                } else {
+                                    setUsername(e.target.value);
+                                }
+                            }}
                             onKeyDown={(e) => {
                                 if (e.key == "Enter")
                                     ((e.target as HTMLElement).nextSibling as HTMLElement).focus();

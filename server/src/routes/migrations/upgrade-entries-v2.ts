@@ -1,4 +1,5 @@
 import { auth } from "../../auth";
+import { MAX_ENTRY_COUNT, MAX_ENTRY_SIZE } from "../../config";
 import type { Entry } from "../../types";
 import { MAX_ROWS } from "../upload";
 
@@ -6,6 +7,11 @@ export const upgradeEntriesV2PullHandle = async (request: Request, env: Env): Pr
     // auth
     const user_id = await auth(request, env);
     if (!user_id) return new Response("Unauthorized", { status: 401 });
+
+    const { success } = await env.RL_EXPENSIVE.limit({ key: `upgrade-entries-v2-pull-${user_id}` });
+    if (!success) {
+        return new Response("Too many requests", { status: 429 });
+    }
 
     // get unmigrated data from legacy entries table
     const data = await env.DB.prepare(
@@ -22,6 +28,11 @@ export const upgradeEntriesV2PushHandle = async (request: Request, env: Env): Pr
     const user_id = await auth(request, env);
     if (!user_id) return new Response("Unauthorized", { status: 401 });
 
+    const { success } = await env.RL_EXPENSIVE.limit({ key: `upgrade-entries-v2-push-${user_id}` });
+    if (!success) {
+        return new Response("Too many requests", { status: 429 });
+    }
+
     // get content from request body
     let entries: Entry[];
     try {
@@ -30,9 +41,19 @@ export const upgradeEntriesV2PushHandle = async (request: Request, env: Env): Pr
         return new Response("Bad request", { status: 400 });
     }
 
-    if (entries === undefined) {
+    if (!entries) {
         return new Response("Bad request", { status: 400 });
     }
+
+    if (entries.length > MAX_ENTRY_COUNT) {
+        return new Response("Request too large", { status: 413 });
+    }
+
+    entries.forEach((e) => {
+        if (e.date.length > 10 || (e.hash?.length ?? 0) > 28 || e.data.length > MAX_ENTRY_SIZE) {
+            return new Response("Request too large", { status: 413 });
+        }
+    });
 
     // Split the results into chunks
     for (let i = 0; i < entries.length; i += MAX_ROWS) {

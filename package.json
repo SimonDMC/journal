@@ -43,7 +43,7 @@
         "@cloudflare/vite-plugin": "^1.32.3",
         "@tanstack/react-router": "^1.170.32",
         "@tanstack/router-plugin": "^1.168.35",
-        "@types/bun": "^1.4.0",
+        "@types/bun": "^1.4.2",
         "@types/cookie": "^0.6.0",
         "@types/node": "^20.19.43",
         "@types/qrcode": "^1.5.6",

@@ -21,6 +21,12 @@ export const loginHandle = async (request: Request, env: Env): Promise<Response>
     const username = body.username;
     const password = body.password;
 
+    // rate limit
+    const { success } = await env.RL_EXPENSIVE.limit({ key: `login-${username}` });
+    if (!success) {
+        return new Response("Too many requests", { status: 429 });
+    }
+
     // check if valid login
     const user = await env.DB.prepare("SELECT password, id FROM Users WHERE username = ?")
         .bind(username)

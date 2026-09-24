@@ -1,4 +1,5 @@
 import { auth } from "../auth";
+import { MAX_ENTRY_SIZE } from "../config";
 import { olderThan } from "../version";
 
 type RequestContent = {
@@ -14,6 +15,12 @@ export const setEntryHandle = async (request: Request, env: Env): Promise<Respon
     const user_id = await auth(request, env);
     if (!user_id) return new Response("Unauthorized", { status: 401 });
 
+    // rate limit
+    const { success } = await env.RL_CHEAP.limit({ key: `set-entry-${user_id}` });
+    if (!success) {
+        return new Response("Too many requests", { status: 429 });
+    }
+
     // get date from URL
     const url = new URL(request.url);
     const date = url.pathname.split("/")[3];
@@ -26,8 +33,12 @@ export const setEntryHandle = async (request: Request, env: Env): Promise<Respon
         return new Response("Bad request", { status: 400 });
     }
 
-    if (body.data === undefined) {
+    if (!body.data) {
         return new Response("Bad request", { status: 400 });
+    }
+
+    if (date.length > 10 || (body.hash?.length ?? 0) > 28 || body.data.length > MAX_ENTRY_SIZE) {
+        return new Response("Request too large", { status: 413 });
     }
 
     const data = body.data;

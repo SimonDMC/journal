@@ -56,7 +56,7 @@ export async function syncDatabase() {
     }
 
     const json = (await clientSyncResponse.json()) as ClientSyncResponse;
-    console.log(json);
+    console.log("Sync result:", json);
 
     // 3. Save all missing entries locally
     try {

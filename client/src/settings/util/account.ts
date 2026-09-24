@@ -50,6 +50,8 @@ export async function createAccount(email: string, username: string, password: s
             // save key to localstorage
             const json = JSON.stringify([...key]);
             localStorage.setItem("journal-key", json);
+            // save username to localstorage
+            localStorage.setItem("journal-username", username);
 
             syncDatabase();
             return true;
