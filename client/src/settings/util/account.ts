@@ -101,6 +101,19 @@ export async function unlinkAccount() {
     localStorage.removeItem("journal-key");
 }
 
+export async function deleteAccount() {
+    try {
+        await postAPI("/delete-account", {});
+    } catch (e) {
+        console.error(e);
+        errorToast("Couldn't reach server. Are you connected to the internet?");
+        return;
+    }
+    localStorage.removeItem("journal-username");
+    localStorage.removeItem("journal-key");
+    successToast("Your account has been deleted successfully.");
+}
+
 export async function forgotPassword(email: string) {
     try {
         const res = await postAPI("/forgot-password", { email });

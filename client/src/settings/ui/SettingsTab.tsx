@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import "../Settings.css";
 
 export default function SettingsTab(props: {
@@ -8,7 +9,7 @@ export default function SettingsTab(props: {
 }) {
     return (
         <div
-            className={`settings-tab ${props.selected == props.id ? "selected" : ""}`}
+            className={clsx("settings-tab", props.selected == props.id && "selected")}
             onClick={() => props.setSelected(props.id)}
         >
             {props.label}

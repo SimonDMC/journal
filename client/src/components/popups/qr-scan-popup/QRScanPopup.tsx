@@ -1,10 +1,11 @@
-import { CloseOpenPopupEvent, eventTarget, QRCodeScanOpenEvent } from "../../util/events";
+import { CloseOpenPopupEvent, eventTarget, QRCodeScanOpenEvent } from "../../../util/events";
 import "./QRScanPopup.css";
+import "../Popups.css";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useSettings } from "../../settings/util/state";
+import { useSettings } from "../../../settings/util/state";
+import { decryptQRCode } from "../../../settings/util/key";
 import jsQR from "jsqr";
-import { decryptQRCode } from "../../settings/util/key";
 
 export default function QRScanPopup() {
     const [open, setOpen] = useState(false);
@@ -122,6 +123,7 @@ export default function QRScanPopup() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 5 }}
                     transition={{ duration: 0.2 }}
+                    className="popup-bg"
                     id="qr-scan-bg"
                     onClick={(e) => {
                         if ((e.target as HTMLElement).id == "qr-scan-bg") dismissPopup();

@@ -1,13 +1,13 @@
-import "./Settings.css";
+import "../../settings/Settings.css";
 import { useEffect, useState } from "react";
-import SettingsTab from "./ui/SettingsTab";
+import SettingsTab from "../../settings/ui/SettingsTab";
 import { AnimatePresence, motion } from "framer-motion";
-import { useSettings } from "./util/state";
-import SettingsGeneralTab from "./tabs/SettingsGeneralTab";
-import SettingsSecurityTab from "./tabs/SettingsSecurityTab";
-import SettingsDebugTab from "./tabs/SettingsDebugTab";
-import SettingsAccountTab from "./tabs/SettingsAccountTab";
-import { eventTarget, CloseOpenPopupEvent } from "../util/events";
+import { useSettings } from "../../settings/util/state";
+import SettingsGeneralTab from "../../settings/tabs/SettingsGeneralTab";
+import SettingsSecurityTab from "../../settings/tabs/SettingsSecurityTab";
+import SettingsDebugTab from "../../settings/tabs/SettingsDebugTab";
+import SettingsAccountTab from "../../settings/tabs/SettingsAccountTab";
+import { eventTarget, CloseOpenPopupEvent } from "../../util/events";
 
 export default function SettingsPopup() {
     const [selected, setSelected] = useState("general");
@@ -35,7 +35,7 @@ export default function SettingsPopup() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 5 }}
                     transition={{ duration: 0.2 }}
-                    className="settings-bg"
+                    className="popup-bg"
                     onClick={closePopup}
                 >
                     <div className="settings-body">

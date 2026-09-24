@@ -4,6 +4,7 @@ import { postAPI } from "../../services/api";
 import { encryptEntry, hashEntry } from "../../util/crypto";
 import { today } from "../../util/time";
 import { errorToast, successToast } from "../../util/toast";
+import { isLoggedIn } from "./account";
 
 export async function exportEntries() {
     const entries = await db.entries.toArray();
@@ -92,4 +93,29 @@ export async function uploadEntries() {
         reader.readAsText(file);
     };
     inputEl.click();
+}
+
+export async function wipeLocalDatabase() {
+    await db.entries.clear();
+    successToast("Local database wiped successfully.");
+}
+
+export async function wipeAllData() {
+    if (isLoggedIn()) {
+        try {
+            await postAPI("/logout", {});
+        } catch (e) {
+            console.error(e);
+            errorToast(
+                "Couldn't reach server. Are you connected to the internet? This is necessary for unlinking your account.",
+            );
+            return false;
+        }
+    }
+
+    await db.entries.clear();
+    localStorage.clear();
+    sessionStorage.clear();
+    successToast("All data has been wiped successfully.");
+    return true;
 }

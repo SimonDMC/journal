@@ -56,3 +56,10 @@ export class QRCodeScanOpenEvent extends Event {
         super(QRCodeScanOpenEvent.eventId);
     }
 }
+
+export class OpenPrivacyPopupEvent extends Event {
+    static eventId = "open-privacy-popup";
+    constructor() {
+        super(OpenPrivacyPopupEvent.eventId);
+    }
+}

@@ -1,6 +1,5 @@
 import { syncDatabase } from "../../database/sync";
-import { wipeLocalDatabase } from "../util/debug";
-import { uploadEntries } from "../util/entries";
+import { uploadEntries, wipeLocalDatabase } from "../util/entries";
 import { decryptTextAndLog } from "../../util/crypto";
 import { formatTimestampShort, getYear } from "../../util/time";
 import { forceReload, getCurrentVersion } from "../../util/update";

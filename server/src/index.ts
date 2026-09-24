@@ -16,6 +16,7 @@ import { keyHashHandle } from "./routes/key-hash";
 import { setKeyHashHandle } from "./routes/migrations/set-key-hash";
 import { forgotPasswordHandle } from "./routes/forgot-password";
 import { resetPasswordHandle } from "./routes/reset-password";
+import { deleteAccountHandle } from "./routes/delete";
 
 type Route = [
     method: string,
@@ -34,6 +35,7 @@ const routes: Route[] = [
     ["POST", /^forgot-password$/, forgotPasswordHandle],
     ["POST", /^reset-password$/, resetPasswordHandle],
     ["POST", /^create-account$/, createAccountHandle],
+    ["POST", /^delete-account$/, deleteAccountHandle],
     ["GET", /^qr-hash$/, qrHashHandle],
     ["GET", /^key-hash$/, keyHashHandle],
 

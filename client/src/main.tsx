@@ -15,7 +15,7 @@ import { getCurrentVersion, installApp } from "./util/update";
 import { NotFound } from "./routes/-not-found";
 import { isLoggedIn } from "./settings/util/account";
 import { eventTarget, CloseOpenPopupEvent } from "./util/events";
-import Popups from "./components/Popups";
+import Popups from "./components/popups/Popups";
 
 // Create a new router instance
 export const router = createRouter({

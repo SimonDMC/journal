@@ -1,8 +1,9 @@
-import { CloseOpenPopupEvent, eventTarget, QRCodeOpenEvent } from "../../util/events";
+import { CloseOpenPopupEvent, eventTarget, QRCodeOpenEvent } from "../../../util/events";
 import "./QRPopup.css";
+import "../Popups.css";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useSettings } from "../../settings/util/state";
+import { useSettings } from "../../../settings/util/state";
 
 export default function QRPopup() {
     const [open, setOpen] = useState(false);
@@ -53,6 +54,7 @@ export default function QRPopup() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 5 }}
                     transition={{ duration: 0.2 }}
+                    className="popup-bg"
                     id="qr-bg"
                     onClick={(e) => {
                         if ((e.target as HTMLElement).id == "qr-bg") dismissPopup();

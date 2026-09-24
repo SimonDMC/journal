@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import "./SearchResult.css";
 import parse from "html-react-parser";
+import clsx from "clsx";
 
 export type SearchResults = {
     results: SearchResultType[];
@@ -41,7 +42,7 @@ function fixupText(text: string) {
 export default function SearchResult(props: SearchResultProps) {
     return (
         <div
-            className={`result ${props.active && "active"}`}
+            className={clsx("result", props.active && "active")}
             onMouseOver={() => props.setActiveIndex!(props.id)}
         >
             <div className="date">{props.date}</div>
@@ -49,7 +50,7 @@ export default function SearchResult(props: SearchResultProps) {
                 <Link
                     to="/entry"
                     search={{ date: props.date, query: result.query, index: result.index }}
-                    className={`match ${result.fromEnd && "reverse"}`}
+                    className={clsx("match", result.fromEnd && "reverse")}
                     key={result.index}
                 >
                     {!result.fromStart && !result.fromEnd && <span className="ellipsis">...</span>}

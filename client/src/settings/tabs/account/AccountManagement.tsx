@@ -6,7 +6,7 @@ import SettingsButton from "../../ui/SettingsButton";
 import SettingsPassword from "../../ui/SettingsPassword";
 import SettingsSeparator from "../../ui/SettingsSeparator";
 import SettingsWarn from "../../ui/SettingsWarn";
-import { login, getUserName, unlinkAccount } from "../../util/account";
+import { login, getUserName, unlinkAccount, deleteAccount } from "../../util/account";
 import { downloadKey, showQRCode } from "../../util/key";
 import { changePassword, changePasswordMismatched } from "../../util/password";
 import { useSettings } from "../../util/state";
@@ -31,8 +31,33 @@ export default function AccountManagement(props: {
         }
     }
 
-    async function unlinkAndLogout() {
+    async function confirmUnlink() {
+        if (
+            !confirm(
+                // if we have a login required popup, it might mean the account is deleted. for that
+                // reason, tailor the info message a bit towards possible account deletion
+                useSettings.getState().getBoolean("alert.login_required")
+                    ? `Are you sure you want to unlink the account ${getUserName()} from this device? If this account is deleted, your entries will remain saved only in your browser. Otherwise, they will also remain on the server, but they will no longer sync. If you aren't logged in on any other device, you'll likely lose access to this account!`
+                    : `Are you sure you want to unlink the account ${getUserName()} from this device? Your entries will remain saved in your browser, and on the server, but they will no longer sync. If you aren't logged in on any other device, you'll likely lose access to this account!`,
+            )
+        ) {
+            return;
+        }
+
         await unlinkAccount();
+        props.setAccountScreen(AccountScreen.CREATE_OR_LOGIN);
+    }
+
+    async function confirmDelete() {
+        if (
+            !confirm(
+                `Are you sure you want to DELETE the account ${getUserName()}? Your entries will remain saved only in your browser. If you're logged into this account on other devices, you'll have to click "Unlink Account" on each of them. This action is irreversible.`,
+            )
+        ) {
+            return;
+        }
+
+        await deleteAccount();
         props.setAccountScreen(AccountScreen.CREATE_OR_LOGIN);
     }
 
@@ -106,7 +131,15 @@ export default function AccountManagement(props: {
                 label="Unlink Account"
                 desc="Remove the account from this device. You will keep your entries locally, but they will no longer be synced with your other devices."
                 actionLabel="Unlink"
-                action={unlinkAndLogout}
+                danger={true}
+                action={confirmUnlink}
+            />
+            <SettingsButton
+                label="Delete Account"
+                desc="Delete your account from the server. You will keep your entries locally, but they will no longer be synced with your other devices."
+                actionLabel="Delete"
+                danger={true}
+                action={confirmDelete}
             />
         </SettingsContent>
     );

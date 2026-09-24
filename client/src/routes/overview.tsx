@@ -13,6 +13,7 @@ import { eventTarget, OfflineModeEvent } from "../util/events";
 import { useSettings } from "../settings/util/state";
 import { checkForUpdateIfDesired, getCurrentVersion } from "../util/update";
 import { infoToast } from "../util/toast";
+import clsx from "clsx";
 
 export const Route = createFileRoute("/overview")({
     component: Overview,
@@ -108,7 +109,7 @@ function Overview() {
                         to="/entry"
                         search={{ date: oneYearAgo }}
                         id="one-year-ago"
-                        className={`nav-link ${oneYearAgoExists || "inactive"}`}
+                        className={clsx("nav-link", oneYearAgoExists || "inactive")}
                     >
                         One Year Ago
                     </Link>

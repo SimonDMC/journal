@@ -1,6 +1,7 @@
-import { CloseOpenPopupEvent, eventTarget, UpdateReadyEvent } from "../../util/events";
-import { getCurrentVersion } from "../../util/update";
+import { CloseOpenPopupEvent, eventTarget, UpdateReadyEvent } from "../../../util/events";
+import { getCurrentVersion } from "../../../util/update";
 import "./UpdatePopup.css";
+import "../Popups.css";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -97,6 +98,7 @@ export default function UpdatePopup() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 5 }}
                     transition={{ duration: 0.2 }}
+                    className="popup-bg"
                     id="up-bg"
                 >
                     <div className="up-body">
