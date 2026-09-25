@@ -1,6 +1,6 @@
 {
     "name": "Journal",
-    "description": "Until I can preserve my memories indefinitely, this will have to do.",
+    "description": "A delightful web app for keeping a daily journal.",
     "icons": [
         {
             "src": "pwa-default.png",

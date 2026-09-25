@@ -7,7 +7,7 @@ complains about your Node.js version, it might be out of date.
 
 ## Running using a dev server
 
-To run the app with a dev server, run `npm run dev` to start the app at http://localhost:5173. The
+To run the app with a dev server, run `npm run dev` to start the app at http://localhost:10008. The
 development server serves both the frontend, via Vite, and backend (accessible through `/api/*`) via
 Miniflare (Cloudflare Workers runtime).
 
