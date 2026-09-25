@@ -88,7 +88,7 @@ export default function PrivacyPopup() {
                             anonymized reports, but none of them are linked to you.
                         </p>
                         <p>
-                            Journal is <a href="https://github.com/SimonDMC/Journal">open source</a>
+                            Journal is <a href="https://github.com/SimonDMC/journal">open source</a>
                             , so you can audit exactly what is stored and how.
                         </p>
                         <h2>II. Your rights</h2>
