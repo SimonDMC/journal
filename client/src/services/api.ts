@@ -10,7 +10,7 @@ import { getCurrentVersion } from "../util/update";
  */
 export async function postAPI(path: string, body: object): Promise<Response> {
     const url = new URL(`${window.location.origin}${API_URL}${path}`);
-    url.searchParams.set("appv", getCurrentVersion() ?? "0.0.0");
+    url.searchParams.set("appv", getCurrentVersion() ?? __BUILD_INFO__.version);
     const res = await fetch(url, {
         method: "POST",
         headers: {
@@ -41,7 +41,7 @@ export async function postAPI(path: string, body: object): Promise<Response> {
  */
 export async function getAPI(path: string): Promise<Response> {
     const url = new URL(`${window.location.origin}${API_URL}${path}`);
-    url.searchParams.set("appv", getCurrentVersion() ?? "0.0.0");
+    url.searchParams.set("appv", getCurrentVersion() ?? __BUILD_INFO__.version);
     const res = await fetch(url);
 
     if (res.status == 410) {

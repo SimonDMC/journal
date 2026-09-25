@@ -5,7 +5,9 @@ export const deleteAccountHandle = async (request: Request, env: Env): Promise<R
     const user_id = await auth(request, env);
     if (!user_id) return new Response("Unauthorized", { status: 401 });
 
-    await env.DB.prepare("DELETE FROM Entries WHERE user_id = ?").bind(user_id).run();
+    await env.DB.prepare("DELETE FROM Entries_v1 WHERE user_id = ?").bind(user_id).run();
+    await env.DB.prepare("DELETE FROM Entries_v2 WHERE user_id = ?").bind(user_id).run();
+    await env.DB.prepare("DELETE FROM Sessions WHERE user_id = ?").bind(user_id).run();
     await env.DB.prepare("DELETE FROM Users WHERE id = ?").bind(user_id).run();
     return new Response("OK", {
         headers: {

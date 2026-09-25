@@ -11,6 +11,7 @@ import { generateAndSaveKey, showKeyHash, forceUploadKey } from "../util/key";
 import SettingsWarn from "../ui/SettingsWarn";
 import { useEffect, useState } from "react";
 import SettingsStatus from "../ui/SettingsStatus";
+import SettingsToggle from "../ui/SettingsToggle";
 
 export default function SettingsDebugTab() {
     const [persisted, setPersisted] = useState(false);
@@ -63,7 +64,7 @@ export default function SettingsDebugTab() {
             />
             <SettingsButton
                 label="Import Key"
-                desc="Import a key, used to encrypt and decrypt entries when talking to the server, from a .KEY file"
+                desc="Import an encryption key from a .KEY file; bypasses the incorrect key check"
                 actionLabel="Upload"
                 action={forceUploadKey}
             />
@@ -79,6 +80,11 @@ export default function SettingsDebugTab() {
                 placeholder="Text"
                 actionLabel="Decrypt"
                 action={decryptTextAndLog}
+            />
+            <SettingsToggle
+                label="Suppress All Errors"
+                settingKey="debug.suppress_toasts"
+                desc="Prevent error and warning toasts from appearing. Useful if you're intentionally running an outdated version and getting spammed with API errors."
             />
             <SettingsSeparator />
             <div className="settings-text build-info">

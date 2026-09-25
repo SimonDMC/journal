@@ -21,7 +21,7 @@ export const createAccountHandle = async (request: Request, env: Env): Promise<R
         !body.username ||
         !body.password ||
         !body.keyHash ||
-        !/a-zA-Z0-9_-/.test(body.username)
+        !/^[a-zA-Z0-9_-]+$/.test(body.username)
     ) {
         return new Response("Bad request", { status: 400 });
     }

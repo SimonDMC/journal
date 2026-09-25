@@ -53,11 +53,6 @@ export default function SettingsGeneralTab() {
                 actionLabel="Check"
                 action={checkForUpdateManually}
             />
-            <SettingsToggle
-                label="Suppress All Errors"
-                settingKey="general.suppress_toasts"
-                desc="Prevent error and warning toasts from appearing. Useful if you're intentionally running an outdated version and getting spammed with API errors."
-            />
             <SettingsSeparator />
             <SettingsToggle label="Show Debug Tab" settingKey="general.show_debug" />
         </SettingsContent>

@@ -18,6 +18,12 @@ export const resetPasswordHandle = async (request: Request, env: Env): Promise<R
         return new Response("Bad request", { status: 400 });
     }
 
+    // rate limit
+    const { success } = await env.RL_EXPENSIVE.limit({ key: `reset-password-${body.email}` });
+    if (!success) {
+        return new Response("Too many requests", { status: 429 });
+    }
+
     const user = await env.DB.prepare("SELECT * FROM Users WHERE email = ?").bind(body.email).all();
 
     if (user.results.length === 0) {
@@ -40,5 +46,12 @@ export const resetPasswordHandle = async (request: Request, env: Env): Promise<R
         .bind(await bcrypt.hash(body.password, 10), null, body.email)
         .run();
 
-    return new Response("OK");
+    // clear all sessions
+    await env.DB.prepare("DELETE FROM sessions WHERE user_id = ?").bind(user.results[0].id).all();
+
+    return new Response("OK", {
+        headers: {
+            "Set-Cookie": "session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+        },
+    });
 };

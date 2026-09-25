@@ -37,4 +37,8 @@
     a {
         text-decoration: underline;
     }
+
+    * {
+        user-select: text;
+    }
 }

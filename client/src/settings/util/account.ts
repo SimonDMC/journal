@@ -2,6 +2,7 @@ import { syncDatabase } from "../../database/sync";
 import { postAPI } from "../../services/api";
 import { generateKey, hashKey } from "../../util/crypto";
 import { errorToast, successToast } from "../../util/toast";
+import { useSettings } from "./state";
 
 /**
  * Get whether a user is logged in or not
@@ -78,7 +79,11 @@ export async function login(username: string, password: string) {
             return false;
         }
 
-        if (res.ok) return true;
+        if (res.ok) {
+            // clear needs login popup
+            useSettings.getState().setSetting("alert.login_required", false);
+            return true;
+        }
 
         errorToast("Unexpected error while logging in. Try again later.");
         return false;
@@ -103,71 +108,24 @@ export async function unlinkAccount() {
 
 export async function deleteAccount() {
     try {
-        await postAPI("/delete-account", {});
+        const res = await postAPI("/delete-account", {});
+
+        if (res.status == 401) {
+            errorToast("Couldn't delete your account. Are you logged in?");
+            return false;
+        }
+
+        if (!res.ok) {
+            errorToast("An unexpected error occurred trying to delete your account.");
+            return false;
+        }
     } catch (e) {
         console.error(e);
         errorToast("Couldn't reach server. Are you connected to the internet?");
-        return;
+        return false;
     }
     localStorage.removeItem("journal-username");
     localStorage.removeItem("journal-key");
     successToast("Your account has been deleted successfully.");
-}
-
-export async function forgotPassword(email: string) {
-    try {
-        const res = await postAPI("/forgot-password", { email });
-        if (res.ok) {
-            successToast("Password reset link sent. Check your inbox!");
-            return true;
-        }
-
-        if (res.status == 404) {
-            errorToast("No account with that email exists.");
-            return false;
-        }
-
-        errorToast("An unexpected error occurred. Try again later.");
-        return false;
-    } catch (e) {
-        console.error(e);
-        errorToast("Couldn't reach server. Are you connected to the internet?");
-        return false;
-    }
-}
-
-export async function resetPassword(email: string, token: string, password: string) {
-    try {
-        const res = await postAPI("/reset-password", { email, token, password });
-        if (res.ok) {
-            successToast(
-                "Password reset successfully. Return to the Journal tab and log in with this password.",
-            );
-            return true;
-        }
-
-        if (res.status == 404) {
-            errorToast("No account with that email exists.");
-            return false;
-        }
-
-        if (res.status == 401) {
-            errorToast(
-                "This password reset link is invalid. Perhaps you clicked 'Send Link' multiple times and opened an older one.",
-            );
-            return false;
-        }
-
-        if (res.status == 406) {
-            errorToast("This password reset link has expired. Generate a new one and try again.");
-            return false;
-        }
-
-        errorToast("An unexpected error occurred. Try again later.");
-        return false;
-    } catch (e) {
-        console.error(e);
-        errorToast("Couldn't reach server. Are you connected to the internet?");
-        return false;
-    }
+    return true;
 }

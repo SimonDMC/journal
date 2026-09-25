@@ -113,9 +113,15 @@ export async function wipeAllData() {
         }
     }
 
+    if (window.caches) {
+        const caches = await window.caches.keys();
+        for (const cache of caches) {
+            await window.caches.delete(cache);
+        }
+    }
+
     await db.entries.clear();
     localStorage.clear();
     sessionStorage.clear();
-    successToast("All data has been wiped successfully.");
     return true;
 }

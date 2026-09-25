@@ -16,7 +16,7 @@ import { keyHashHandle } from "./routes/key-hash";
 import { setKeyHashHandle } from "./routes/migrations/set-key-hash";
 import { forgotPasswordHandle } from "./routes/forgot-password";
 import { resetPasswordHandle } from "./routes/reset-password";
-import { deleteAccountHandle } from "./routes/delete";
+import { deleteAccountHandle } from "./routes/delete-account";
 
 type Route = [
     method: string,

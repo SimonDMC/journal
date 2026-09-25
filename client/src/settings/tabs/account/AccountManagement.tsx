@@ -57,8 +57,8 @@ export default function AccountManagement(props: {
             return;
         }
 
-        await deleteAccount();
-        props.setAccountScreen(AccountScreen.CREATE_OR_LOGIN);
+        const success = await deleteAccount();
+        if (success) props.setAccountScreen(AccountScreen.CREATE_OR_LOGIN);
     }
 
     return (

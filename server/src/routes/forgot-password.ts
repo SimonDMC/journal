@@ -16,6 +16,12 @@ export const forgotPasswordHandle = async (request: Request, env: Env): Promise<
         return new Response("Bad request", { status: 400 });
     }
 
+    // rate limit
+    const { success } = await env.RL_EXPENSIVE.limit({ key: `forgot-password-${body.email}` });
+    if (!success) {
+        return new Response("Too many requests", { status: 429 });
+    }
+
     const email = body.email;
 
     const user = await env.DB.prepare("SELECT username FROM Users WHERE email = ?")
@@ -43,7 +49,7 @@ export const forgotPasswordHandle = async (request: Request, env: Env): Promise<
         html: `
             <p>Hello, ${username}.</p>
             <p>
-                Someone (probably you) has recently requested to reset their password for Journal.<br>
+                Someone (probably you) has recently requested to reset your account's password for Journal.<br>
                 If it was you, open this link and choose a new password: <a href=${resetLink}>${resetLink}</a>. 
                 The link is valid for 60 minutes.<br>
                 If it wasn't you, you can safely ignore this email.

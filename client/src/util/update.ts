@@ -150,6 +150,9 @@ export async function installApp(version: string) {
 
     await Promise.all(fetchPromises);
     console.log(`Installed version ${version}!`);
+    // it would perhaps make intuitive sense to change the journal-version localStorage value here,
+    // but this function only *downloads and installs* the version, doesn't apply it yet. there may
+    // be multiple versions installed at a time, but only the oldest one persisted is used
 }
 
 export async function forceReload() {
@@ -158,13 +161,13 @@ export async function forceReload() {
         for (const cache of caches) {
             await window.caches.delete(cache);
         }
-
-        const res = await fetch("/versions.json");
-        const json = await res.json();
-        const version = json.current.version;
-
-        await installApp(version);
-        localStorage.setItem("journal-version", version);
-        window.location.reload();
     }
+
+    const res = await fetch("/versions.json");
+    const json = await res.json();
+    const version = json.current.version;
+
+    await installApp(version);
+    localStorage.setItem("journal-version", version);
+    window.location.reload();
 }

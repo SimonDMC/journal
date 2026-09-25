@@ -1,8 +1,8 @@
 import "../styles/reset-password.css";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { resetPassword } from "../settings/util/account";
 import { errorToast } from "../util/toast";
+import { resetPassword } from "../settings/util/password";
 
 type ResetPasswordSearchParams = {
     email: string;

@@ -16,11 +16,11 @@ export function successToast(message: string) {
 }
 
 export function warningToast(message: string) {
-    if (useSettings.getState().getSetting("general.suppress_toasts")) return;
+    if (useSettings.getState().getSetting("debug.suppress_toasts")) return;
     toast.warn(message, toastOptions);
 }
 
 export function errorToast(message: string) {
-    if (useSettings.getState().getSetting("general.suppress_toasts")) return;
+    if (useSettings.getState().getSetting("debug.suppress_toasts")) return;
     toast.error(message, toastOptions);
 }

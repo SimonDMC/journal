@@ -34,7 +34,10 @@ declare module "@tanstack/react-router" {
 
 // Download app if it's the user's first time opening it
 if (!getCurrentVersion()) {
-    installApp(__BUILD_INFO__.version);
+    const version = __BUILD_INFO__.version;
+    installApp(version);
+    localStorage.setItem("journal-version", version);
+    console.log("Applied version", version);
 }
 
 // Figure out if we need a bottom mobile PWA margin

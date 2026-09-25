@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { AccountScreen } from "../../../types/settings";
 import SettingsContent from "../../ui/SettingsContent";
-import { forgotPassword } from "../../util/account";
+import { forgotPassword } from "../../util/password";
 
 export default function AccountForgotPassword(props: {
     setAccountScreen: React.Dispatch<React.SetStateAction<AccountScreen>>;

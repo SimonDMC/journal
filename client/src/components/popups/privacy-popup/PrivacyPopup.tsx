@@ -93,8 +93,8 @@ export default function PrivacyPopup() {
                         </p>
                         <h2>II. Your rights</h2>
                         <p>
-                            If you want to delete everything stored about you on the servers, you
-                            may use the Delete Account feature under Settings &gt; Account &gt;
+                            If you want to delete everything stored about you on Journal's servers,
+                            you may use the Delete Account feature under Settings &gt; Account &gt;
                             Delete Account. This process automatically deletes your account and all
                             entries associated with it.
                         </p>
