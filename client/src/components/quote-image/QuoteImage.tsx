@@ -7,11 +7,11 @@ import { CopyIcon } from "../icons/CopyIcon";
 import { CheckmarkIcon } from "../icons/CheckmarkIcon";
 import { QuoteStartIcon } from "../icons/QuoteStartIcon";
 import { QuoteEndIcon } from "../icons/QuoteEndIcon";
-import { eventTarget, QuoteImageOpenEvent } from "../../util/events";
+import { CloseOpenPopupEvent, eventTarget, QuoteImageOpenEvent } from "../../util/events";
 import { getRouteApi } from "@tanstack/react-router";
 import { MONTH_NAMES } from "../../util/time";
 import { AnimatePresence, motion } from "framer-motion";
-import { getUserName } from "../../state/settings";
+import { getUserName } from "../../settings/util/account";
 
 type QuoteImageParams = {
     content?: string;
@@ -42,9 +42,13 @@ export default function QuoteImage(params: { open: boolean; setOpen: (open: bool
         };
         eventTarget.addEventListener(QuoteImageOpenEvent.eventId, quoteImageOpenHandler);
 
+        const closeOpenPopupHandler = () => params.setOpen(false);
+        eventTarget.addEventListener(CloseOpenPopupEvent.eventId, closeOpenPopupHandler);
+
         // remove listener on unmount
         return () => {
             eventTarget.removeEventListener(QuoteImageOpenEvent.eventId, quoteImageOpenHandler);
+            eventTarget.removeEventListener(CloseOpenPopupEvent.eventId, closeOpenPopupHandler);
         };
     }, []);
 
@@ -98,7 +102,9 @@ export default function QuoteImage(params: { open: boolean; setOpen: (open: bool
                             <button onClick={downloadImage}>
                                 <DownloadIcon />
                             </button>
-                            <button onClick={copyImage}>{copying ? <CheckmarkIcon /> : <CopyIcon />}</button>
+                            <button onClick={copyImage}>
+                                {copying ? <CheckmarkIcon /> : <CopyIcon />}
+                            </button>
                         </div>
                         <div className="quoteImageBorder">
                             <div id="quoteImage">

@@ -9,30 +9,20 @@ self.addEventListener("fetch", (event) => {
     const url = new URL(event.request.url);
 
     // Always fetch version meta from the network
-    if (url.pathname === "/versions.json" || url.pathname == "/asset-list.json") {
-        event.respondWith(fetch(event.request));
-        return;
-    }
+    if (url.pathname === "/versions.json" || url.pathname == "/asset-list.json") return;
 
     // Don't cache API requests
-    if (url.pathname.startsWith("/api/")) {
-        event.respondWith(fetch(event.request));
-        return;
-    }
+    if (url.pathname.startsWith("/api/")) return;
 
     // Don't cache non-HTTP (chrome-extension://) requests
-    if (!event.request.url.startsWith("http")) {
-        event.respondWith(fetch(event.request));
-        return;
-    }
+    if (!event.request.url.startsWith("http")) return;
 
     // Don't cache local requests while developing
     if (
-        url.host == "localhost:5173" ||
+        url.host == "localhost:10008" ||
         url.pathname == "/__scheduled" ||
         url.pathname == "/cdn-cgi/handler/scheduled"
     ) {
-        event.respondWith(fetch(event.request));
         return;
     }
 
@@ -41,7 +31,10 @@ self.addEventListener("fetch", (event) => {
         caches
             .keys()
             // The version to use is the oldest available, since on install it wipes the old ones
-            .then((names) => caches.open(names[0]))
+            .then((names) => {
+                if (names.length == 0) throw new Error("No cache exists.");
+                return caches.open(names[0]);
+            })
             .then(async (cache) => {
                 const cachedResponse = await cache.match(event.request, {
                     ignoreVary: true,
@@ -65,10 +58,13 @@ self.addEventListener("fetch", (event) => {
                 }
                 // For asset URLs, proceed with normal fetch-and-cache
                 const networkResponse = await fetch(event.request);
-                if (event.request.method === "GET") {
+                if (event.request.method === "GET" && networkResponse.ok) {
                     cache.put(event.request, networkResponse.clone());
                 }
                 return networkResponse;
+            })
+            .catch((e) => {
+                return fetch(event.request);
             }),
     );
 });

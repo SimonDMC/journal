@@ -1,4 +1,5 @@
 import { auth } from "../auth";
+import { MAX_ENTRY_COUNT, MAX_ENTRY_SIZE } from "../config";
 import type { Entry } from "../types";
 import { olderThan } from "../version";
 
@@ -13,7 +14,13 @@ export const uploadHandle = async (request: Request, env: Env): Promise<Response
     const user_id = await auth(request, env);
     if (!user_id) return new Response("Unauthorized", { status: 401 });
 
-    // get content from request body
+    // rate limit
+    const { success } = await env.RL_EXPENSIVE.limit({ key: `upload-${user_id}` });
+    if (!success) {
+        return new Response("Too many requests", { status: 429 });
+    }
+
+    // get entries from request body
     let entries: Entry[];
     try {
         entries = (await request.json()) as Entry[];
@@ -21,9 +28,19 @@ export const uploadHandle = async (request: Request, env: Env): Promise<Response
         return new Response("Bad request", { status: 400 });
     }
 
-    if (entries === undefined) {
+    if (!entries) {
         return new Response("Bad request", { status: 400 });
     }
+
+    if (entries.length > MAX_ENTRY_COUNT) {
+        return new Response("Request too large", { status: 413 });
+    }
+
+    entries.forEach((e) => {
+        if (e.date.length > 10 || (e.hash?.length ?? 0) > 28 || e.data.length > MAX_ENTRY_SIZE) {
+            return new Response("Request too large", { status: 413 });
+        }
+    });
 
     // wipe existing entries
     await env.DB.prepare("DELETE FROM Entries_v2 WHERE user_id = ?;").bind(user_id).run();

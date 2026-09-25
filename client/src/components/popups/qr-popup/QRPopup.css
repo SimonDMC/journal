@@ -1,0 +1,31 @@
+.qr-body {
+    background-color: black;
+    border: 2px solid #333;
+    font-size: 1.5em;
+    padding: 1em 1.5em;
+    border-radius: 0.3em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: min(15em, 95vw);
+}
+
+.qr-body img {
+    width: 100%;
+    border-radius: 0.3em;
+    image-rendering: crisp-edges;
+}
+
+.qr-body p {
+    margin-top: 0.8em;
+    text-align: center;
+    line-height: 1.1;
+    font-size: 0.9em;
+    color: #ccc;
+
+    &.danger {
+        font-weight: 600;
+        color: #cc0000;
+    }
+}

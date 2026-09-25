@@ -1,5 +1,4 @@
 // you can bind whatever events and listeners to this guy!
-// EVENTUALLY MIGRATE TO USE ZUSTAND
 export const eventTarget = new EventTarget();
 
 type UpdateReadyDetail = {
@@ -26,16 +25,41 @@ export class QuoteImageOpenEvent extends CustomEvent<QuoteImageOpenDetail> {
     }
 }
 
-export class KeyCreateEvent extends Event {
-    static eventId = "key-create";
-    constructor() {
-        super(KeyCreateEvent.eventId);
-    }
-}
-
 export class OfflineModeEvent extends Event {
     static eventId = "offline-mode";
     constructor() {
         super(OfflineModeEvent.eventId);
+    }
+}
+
+export class CloseOpenPopupEvent extends Event {
+    static eventId = "close-open-popup";
+    constructor() {
+        super(CloseOpenPopupEvent.eventId);
+    }
+}
+
+type QRCodeOpenDetail = {
+    url: string;
+};
+
+export class QRCodeOpenEvent extends CustomEvent<QRCodeOpenDetail> {
+    static eventId = "qr-code-open";
+    constructor(detail: QRCodeOpenDetail) {
+        super(QRCodeOpenEvent.eventId, { detail });
+    }
+}
+
+export class QRCodeScanOpenEvent extends Event {
+    static eventId = "qr-code-scan-open";
+    constructor() {
+        super(QRCodeScanOpenEvent.eventId);
+    }
+}
+
+export class OpenPrivacyPopupEvent extends Event {
+    static eventId = "open-privacy-popup";
+    constructor() {
+        super(OpenPrivacyPopupEvent.eventId);
     }
 }

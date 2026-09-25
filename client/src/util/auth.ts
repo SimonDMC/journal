@@ -1,14 +1,10 @@
 import type { UseNavigateResult } from "@tanstack/router-core";
-import { errorToast } from "./toast";
-import { router } from "../main";
-import { useSettings } from "../state/settings";
-import { postAPI } from "../services/api";
+import { useSettings } from "../settings/util/state";
 
 export enum RouteType {
     Redirect,
-    Unauthed,
     SecondaryAuth,
-    Authed,
+    App,
 }
 
 export function isSecondaryAuthed() {
@@ -18,12 +14,12 @@ export function isSecondaryAuthed() {
     // secondary auth is enabled but not initialized
     if (
         settings.getString("security.secondary_auth") == "codeword" &&
-        settings.getString("data.codeword_hash") == undefined
+        !settings.getString("data.codeword_hash")
     )
         return true;
     if (
         settings.getString("security.secondary_auth") == "passkey" &&
-        settings.getSetting("data.passkey") == undefined
+        !settings.getSetting("data.passkey")
     )
         return true;
 
@@ -39,53 +35,21 @@ export function isSecondaryAuthed() {
  */
 export function enforceAuth(navigate: UseNavigateResult<string>, route: RouteType) {
     const settings = useSettings.getState();
-    if (localStorage.getItem("journal-logged-in") && isSecondaryAuthed()) {
-        if (route != RouteType.Authed) {
+    if (isSecondaryAuthed()) {
+        if (route != RouteType.App) {
             navigate({ to: "/overview" });
             return false;
         }
     } else if (
-        localStorage.getItem("journal-logged-in") &&
         settings.getString("security.secondary_auth") == "codeword" &&
         !isSecondaryAuthed()
     ) {
         navigate({ to: "/codeword" });
         return false;
-    } else if (
-        localStorage.getItem("journal-logged-in") &&
-        settings.getString("security.secondary_auth") == "passkey" &&
-        !isSecondaryAuthed()
-    ) {
+    } else if (settings.getString("security.secondary_auth") == "passkey" && !isSecondaryAuthed()) {
         navigate({ to: "/passkey" });
         return false;
-    } else {
-        if (route != RouteType.Unauthed) {
-            navigate({ to: "/login" });
-            return false;
-        }
     }
 
     return true;
-}
-
-async function logoutWithoutNav() {
-    try {
-        await postAPI("/logout", {});
-    } catch (e) {
-        console.error(e);
-        errorToast("Couldn't reach server.");
-        return;
-    }
-    localStorage.removeItem("journal-logged-in");
-    sessionStorage.removeItem("journal-codeword");
-}
-
-export async function logout(navigate: UseNavigateResult<string>) {
-    await logoutWithoutNav();
-    navigate({ to: "/login" });
-}
-
-export async function logoutImperatively() {
-    await logoutWithoutNav();
-    router.navigate({ to: "/login" });
 }

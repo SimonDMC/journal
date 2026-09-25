@@ -1,10 +1,8 @@
 import "../styles/codeword.css";
 import { useEffect } from "react";
-import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { enforceAuth, logout, RouteType } from "../util/auth";
+import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useSettings } from "../state/settings";
+import { useSettings } from "../settings/util/state";
 
 export const Route = createFileRoute("/codeword")({
     component: Codeword,
@@ -63,9 +61,6 @@ function Codeword() {
                 onKeyDown={inputKeyDown}
             />
             <span id="codeword-display">0</span>
-            <a onClick={() => logout(navigate)} className="logout-icon">
-                <FontAwesomeIcon icon={faArrowRightFromBracket} />
-            </a>
         </main>
     );
 }

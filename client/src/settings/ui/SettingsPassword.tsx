@@ -1,0 +1,69 @@
+import { useState } from "react";
+import { InfoIcon } from "../../components/icons/InfoIcon";
+import "../Settings.css";
+
+export default function SettingsPassword(props: {
+    label: string;
+    desc?: string;
+    mainPlaceholder?: string;
+    confirmPlaceholder?: string;
+    actionLabel: string;
+    action: (password: string) => void;
+    actionFail: () => void;
+}) {
+    const [mainInput, setMainInput] = useState("");
+    const [confirmInput, setConfirmInput] = useState("");
+
+    function applyAction() {
+        if (mainInput == confirmInput && mainInput !== "") {
+            props.action(mainInput);
+            setMainInput("");
+            setConfirmInput("");
+        } else props.actionFail();
+    }
+
+    const words = props.label.split(" ");
+    const last = words.pop();
+
+    return (
+        <div className="settings-row settings-password-row">
+            <div className="left">
+                {words.length > 0 && words.join(" ") + " "}
+                <span className="unbreakable">
+                    {last}
+                    {props.desc && (
+                        <InfoIcon className="info-icon">
+                            <div className="settings-tooltip">{props.desc}</div>
+                        </InfoIcon>
+                    )}
+                </span>
+            </div>
+            <div className="right">
+                <input
+                    type="password"
+                    placeholder={props.mainPlaceholder}
+                    className="settings-password"
+                    value={mainInput}
+                    onChange={(e) => setMainInput(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key == "Enter")
+                            ((e.target as HTMLElement).nextSibling as HTMLElement).focus();
+                    }}
+                />
+                <input
+                    type="password"
+                    placeholder={props.confirmPlaceholder}
+                    className="settings-password"
+                    value={confirmInput}
+                    onChange={(e) => setConfirmInput(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key == "Enter") applyAction();
+                    }}
+                />
+                <button className="settings-button" onClick={applyAction}>
+                    {props.actionLabel}
+                </button>
+            </div>
+        </div>
+    );
+}

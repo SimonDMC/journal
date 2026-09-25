@@ -1,0 +1,63 @@
+.up-body {
+    background-color: black;
+    border: 2px solid #333;
+    font-size: 1.5em;
+    padding: 1em 1.5em;
+    border-radius: 0.3em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: min(18em, 95vw);
+}
+
+.up-body h1 {
+    font-weight: 600;
+    font-size: 1.2em;
+}
+
+.up-body .version {
+    text-align: center;
+    margin-bottom: 0.8em;
+}
+
+.up-body .version .monospace {
+    font-family: monospace;
+    margin: 0 0.4em;
+    font-size: 1.2em;
+}
+
+.up-body .changelog {
+    align-self: flex-start;
+}
+
+.up-body .changelog-wrap {
+    max-height: 10em;
+    overflow-y: auto;
+    margin-bottom: 1em;
+    align-self: flex-start;
+}
+
+.up-body ul {
+    list-style-type: initial;
+    margin-left: 1em;
+}
+
+.up-body button {
+    width: fit-content;
+    border: 2px solid #333;
+    padding: 0.2em 0.6em;
+    border-radius: 0.3em;
+    transition: background-color 0.2s;
+}
+
+.up-body .button-row {
+    display: flex;
+    gap: 0.5em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .up-body button:hover {
+        background-color: #1b1b1b;
+    }
+}

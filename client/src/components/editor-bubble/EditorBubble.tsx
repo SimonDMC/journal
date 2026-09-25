@@ -3,7 +3,7 @@ import Select, { type SelectInstance } from "react-select";
 import { useEffect, useState, type RefObject } from "react";
 import { moods } from "../../util/extras";
 import { today } from "../../util/time";
-import { useSettings } from "../../state/settings";
+import { useSettings } from "../../settings/util/state";
 
 interface Option {
     readonly value: number;

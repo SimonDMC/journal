@@ -9,13 +9,40 @@ import { getCurrentVersion } from "../util/update";
  * @returns promise with the request
  */
 export async function postAPI(path: string, body: object): Promise<Response> {
-    const res = await fetch(`${API_URL}${path}?appv=${getCurrentVersion()}`, {
+    const url = new URL(`${window.location.origin}${API_URL}${path}`);
+    url.searchParams.set("appv", getCurrentVersion() ?? __BUILD_INFO__.version);
+    const res = await fetch(url, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
     });
+
+    if (res.status == 410) {
+        errorToast("Outdated version, incompatible with API. Update or keep using only locally.");
+    }
+
+    if (res.status == 413) {
+        errorToast("One or more parameters are too large.");
+    }
+
+    if (res.status == 429) {
+        errorToast("Too many requests. Try again later.");
+    }
+
+    return res;
+}
+
+/**
+ * Send a GET request to the Journal API, with the app version embedded
+ * @param path request path
+ * @returns promise with the request
+ */
+export async function getAPI(path: string): Promise<Response> {
+    const url = new URL(`${window.location.origin}${API_URL}${path}`);
+    url.searchParams.set("appv", getCurrentVersion() ?? __BUILD_INFO__.version);
+    const res = await fetch(url);
 
     if (res.status == 410) {
         errorToast("Outdated version, incompatible with API. Update or keep using only locally.");

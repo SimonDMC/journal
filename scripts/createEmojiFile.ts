@@ -1,7 +1,4 @@
 // Transforms an emoji file from discord's format to CKEditor format
-// Also removes all emojis with a different skin tone because I find
-// them somewhat unnecessary and removing them brings down the file
-// size 255kB -> 108kB
 
 // Discord emoji extraction guide (Aug 2026):
 // 1. Open chrome devtools network tab

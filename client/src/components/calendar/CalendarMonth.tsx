@@ -1,9 +1,14 @@
 import { dayAdjustedTime, today } from "../../util/time";
 import { Link } from "@tanstack/react-router";
+import clsx from "clsx";
 
 // monthIndex represents the month offset from today. e.g. if it's 2026-02, +3 would represent
 // 2026-05, -1 would represent 2026-01.
-export default function CalendarMonth(props: { monthIndex: number; entries: string[]; selectedDay: string }) {
+export default function CalendarMonth(props: {
+    monthIndex: number;
+    entries: string[];
+    selectedDay: string;
+}) {
     const todayMonth = dayAdjustedTime.getMonth();
     const todayYear = dayAdjustedTime.getFullYear();
     const rawMonth = todayMonth + props.monthIndex;
@@ -38,7 +43,9 @@ export default function CalendarMonth(props: { monthIndex: number; entries: stri
                 ))}
 
                 {Array.from(Array(daysInMonth).keys()).map((_, i) => {
-                    const currentDay = `${actualYear}-${(actualMonth + 1).toString().padStart(2, "0")}-${(i + 1)
+                    const currentDay = `${actualYear}-${(actualMonth + 1).toString().padStart(2, "0")}-${(
+                        i + 1
+                    )
                         .toString()
                         .padStart(2, "0")}`;
 
@@ -58,7 +65,12 @@ export default function CalendarMonth(props: { monthIndex: number; entries: stri
                     }
 
                     return (
-                        <Link to="/entry" search={{ date: currentDay }} className={`day ${classes.join(" ")}`} key={i}>
+                        <Link
+                            to="/entry"
+                            search={{ date: currentDay }}
+                            className={clsx("day", classes.join(" "))}
+                            key={i}
+                        >
                             {i + 1}
                         </Link>
                     );
@@ -66,9 +78,11 @@ export default function CalendarMonth(props: { monthIndex: number; entries: stri
 
                 {Array.from(Array(42 - daysInMonth - firstOffset).keys()).map((_, i) => (
                     <span
-                        className={`offset ${
-                            firstOffset + daysInMonth + i < Math.ceil((firstOffset + daysInMonth) / 7) * 7 ? "row-1" : ""
-                        }`}
+                        className={clsx(
+                            "offset",
+                            firstOffset + daysInMonth + i <
+                                Math.ceil((firstOffset + daysInMonth) / 7) * 7 && "row-1",
+                        )}
                         key={i}
                     ></span>
                 ))}

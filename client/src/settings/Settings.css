@@ -1,0 +1,421 @@
+.settings-body {
+    background-color: black;
+    border: 2px solid #333;
+    font-size: 1.5em;
+    border-radius: 0.3em;
+    width: min(30em, 95vw);
+    height: min(20em, 95vh);
+    display: flex;
+}
+
+.settings-tabs {
+    height: 100%;
+    padding: 1em;
+    width: 8em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em;
+    color: #ccc;
+    border-right: 2px solid #222;
+    flex-shrink: 0;
+}
+
+.settings-tab {
+    cursor: pointer;
+    padding: 0.05em 0.3em;
+    border-radius: 5px;
+    background-color: transparent;
+    transition: background-color 0.2s;
+}
+
+.settings-tab:hover,
+.settings-tab.selected {
+    background-color: #222;
+}
+
+.settings-content {
+    padding: 1em 1.5em;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    overflow-y: scroll;
+    scrollbar-width: none;
+}
+
+.settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.settings-content input {
+    background: 0 0;
+    border: 2px solid #222;
+    border-radius: 0.3em;
+    outline: none;
+    width: 10em;
+    margin-bottom: 0.3em;
+    padding: 0 0.3em;
+    font-size: 0.9em;
+}
+
+.settings-content input.collapse {
+    margin-bottom: 0.1em;
+}
+
+.settings-row .toggle-wrap {
+    width: 2.7em;
+    height: 1.6em;
+    background-color: #333;
+    border-radius: 3em;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: background-color 0.2s;
+    font-size: 0.7em;
+}
+
+.settings-row .toggle-wrap:has(input:checked) {
+    background-color: #777;
+}
+
+.settings-row .toggle-wrap input {
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    position: absolute;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.settings-row .toggle-wrap .circle {
+    width: 1.3em;
+    height: 1.3em;
+    border-radius: 3em;
+    background-color: #fff;
+    margin-left: 0.1em;
+    transition: transform 0.2s;
+}
+
+.settings-row .toggle-wrap input:checked + .circle {
+    transform: translateX(1.2em);
+}
+
+.settings-row .info-wrap {
+    position: relative;
+    padding: 0 0.2em;
+    padding-bottom: 0.1em;
+    height: 1em;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
+.settings-row .info-icon {
+    color: #555;
+    width: 0.7em;
+}
+
+.settings-row .unbreakable {
+    white-space: nowrap;
+}
+
+.settings-row .right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.settings-tooltip {
+    white-space: normal;
+    position: fixed;
+    font-size: 0.8em;
+    max-width: 25em;
+    width: max-content;
+    line-height: 1.1em;
+    background-color: #222;
+    padding: 0.4em 0.6em;
+    border-radius: 0.3em;
+    z-index: 1;
+    /* x + 0.5em to account for tooltip drift to the left (?), y - 1.1 to move tooltip up */
+    translate: calc(-50% + 0.5em) calc(-50% - 1.1em);
+    box-shadow: 0 0 0.5em #00000088;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        opacity 0.2s,
+        translate 0.2s;
+    /* offset by parent scroll (not in translate to prevent interpolation) */
+    transform: translate(0, calc(var(--scroll) * -1));
+}
+
+.settings-row .info-wrap:hover .settings-tooltip {
+    opacity: 1;
+    /* make it bottom-aligned instead of center-aligned */
+    translate: calc(-50% + 0.5em) calc(-50% - 1.2em);
+}
+
+.settings-tooltip::after {
+    content: " ";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -0.5em;
+    border-width: 0.5em;
+    border-style: solid;
+    border-color: #222 transparent transparent transparent;
+    translate: 0 -1px;
+}
+
+.settings-button {
+    width: fit-content;
+    color: #ccc;
+    border: 2px solid #333;
+    font-size: 0.9em;
+    padding: 0.05em 0.4em;
+    border-radius: 0.3em;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: #111;
+    }
+
+    &.danger {
+        color: #a00;
+        border: 2px solid #300;
+
+        &:hover {
+            background-color: #100;
+        }
+    }
+}
+
+.settings-password-row {
+    align-items: flex-start;
+}
+
+.settings-separator {
+    height: 2px;
+    min-height: 2px;
+    width: 100%;
+    margin: 0.5em 0;
+    background-color: #222;
+}
+
+.settings-select {
+    font-family: inherit;
+    font-size: 0.9em;
+    color: #ccc;
+    border: 2px solid #333;
+    border-radius: 0.3em;
+    padding: 0.15em 0.2em;
+    background-color: transparent;
+}
+
+.settings-select option {
+    background-color: #000;
+}
+
+.settings-text {
+    color: #ccc;
+    line-height: 1.35em;
+
+    &.small {
+        font-size: 0.85em;
+    }
+
+    .cross {
+        display: inline-block;
+        color: #bb0000;
+        scale: 1.3;
+        margin-left: 0.2em;
+    }
+
+    .check {
+        display: inline-block;
+        color: #00bb00;
+        translate: 0 0.05em;
+    }
+
+    &.danger {
+        line-height: 1.2;
+        color: #dd0000;
+        text-align: right;
+    }
+}
+
+.build-info {
+    user-select: text;
+}
+
+.build-info code {
+    font-size: 1.2em;
+    background-color: #222;
+    padding: 0.1em 0.3em;
+    border-radius: 0.2em;
+}
+
+.settings-card-container {
+    display: flex;
+    width: 100%;
+    gap: 1.5em;
+    margin-bottom: 0.3em;
+}
+
+.settings-card {
+    background-color: #222;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1em 0.5em;
+    border-radius: 0.5em;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: #333;
+    }
+}
+
+.settings-card-icon {
+    font-size: 1.5em;
+}
+
+.settings-card-title {
+    margin-top: 0.4em;
+    line-height: 1.2;
+    text-align: center;
+}
+
+.settings-card-desc {
+    margin-top: 0.3em;
+    font-size: 0.7em;
+    text-align: center;
+    opacity: 0.5;
+    line-height: 1.3;
+}
+
+.settings-card-hint {
+    font-size: 0.7em;
+    line-height: 1.1;
+    margin-top: 0.9em;
+    font-weight: 600;
+    color: #ccc;
+    text-align: center;
+}
+
+.settings-multi-input-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.settings-multi-input-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.settings-content .long-inputs .settings-multi-input {
+    width: 13.5em;
+}
+
+.settings-back-button {
+    width: min-content;
+    font-size: 1.2em;
+    border: none;
+    margin-bottom: 0.3em;
+}
+
+.settings-warn {
+    border: 2px solid #ffff0066;
+    background-color: #ffff0018;
+    border-radius: 0.3em;
+    padding: 0.8em;
+    display: flex;
+    gap: 0.7em;
+
+    .left {
+        color: #ffff00;
+        font-size: 1.5em;
+        margin-top: 0.1em;
+
+        svg {
+            display: block;
+        }
+    }
+
+    .right {
+        font-size: 0.85em;
+        line-height: 1.2;
+    }
+}
+
+.align-end {
+    align-items: flex-end;
+}
+
+.note {
+    color: #666;
+    font-size: 0.8em;
+
+    a {
+        cursor: pointer;
+        text-decoration: underline;
+    }
+}
+
+@media (max-width: 600px) {
+    .settings-body {
+        flex-direction: column;
+        font-size: 1.2em;
+        height: 60vh;
+    }
+
+    .settings-tabs {
+        height: min-content;
+        width: 100%;
+        flex-direction: row;
+        border-right: none;
+        border-bottom: 2px solid #222;
+        justify-content: center;
+    }
+
+    .settings-text {
+        font-size: 0.9em;
+    }
+
+    .settings-tooltip {
+        max-width: 15em;
+    }
+
+    .settings-card-container {
+        flex-direction: column;
+        gap: 0.5em;
+    }
+
+    .settings-card {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 1em;
+        padding: 0.7em 1em;
+    }
+
+    .settings-card-icon {
+        font-size: 2em;
+    }
+
+    .settings-card-title {
+        text-align: left;
+        margin-top: 0;
+    }
+
+    .settings-card-desc,
+    .settings-card-hint {
+        text-align: left;
+    }
+
+    .settings-content .long-inputs .settings-multi-input {
+        width: 11em;
+    }
+}

@@ -10,6 +10,12 @@ export const changePasswordHandle = async (request: Request, env: Env): Promise<
     const user_id = await auth(request, env);
     if (!user_id) return new Response("Unauthorized", { status: 401 });
 
+    // rate limit
+    const { success } = await env.RL_EXPENSIVE.limit({ key: `change-password-${user_id}` });
+    if (!success) {
+        return new Response("Too many requests", { status: 429 });
+    }
+
     let body: RequestContent;
     try {
         body = (await request.json()) as RequestContent;
