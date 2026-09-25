@@ -101,7 +101,7 @@ export default function AccountManagement(props: {
             )}
             {settingsState.getBoolean("alert.key_irrecoverability") && (
                 <SettingsWarn>
-                    By design, your encryption is key never shared with the server and thus{" "}
+                    By design, your encryption key is never shared with the server and thus{" "}
                     <b>cannot be recovered</b>. It is strongly recommended to make a local backup by
                     clicking "Download Key."
                 </SettingsWarn>

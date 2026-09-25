@@ -50,7 +50,7 @@ self.addEventListener("fetch", (event) => {
                     let index = await cache.match("/");
 
                     if (!index) {
-                        const indexPage = await fetch(event.request);
+                        const indexPage = await fetch("/");
                         await cache.put("/", indexPage.clone());
                         return indexPage;
                     }
@@ -64,7 +64,7 @@ self.addEventListener("fetch", (event) => {
                 return networkResponse;
             })
             .catch((e) => {
-                return fetch(event.request);
+                return fetch(url.pathname.includes(".") ? event.request : "/");
             }),
     );
 });

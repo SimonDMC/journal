@@ -134,8 +134,6 @@ export async function installApp(version: string) {
         console.log("Couldn't fetch asset list.");
         return;
     }
-    // also download root html page
-    json.assets.push(`/?v=${version}`);
 
     const cache = await caches.open(`journal-cache-${version}`);
     const fetchPromises = json.assets.map(async (assetUrl: string) => {
@@ -147,6 +145,14 @@ export async function installApp(version: string) {
             console.error(`Failed to download ${assetUrl}`, err);
         }
     });
+
+    // also download root html page
+    try {
+        const response = await fetch(`/?v=${version}`);
+        await cache.put("/", response.clone());
+    } catch (err) {
+        console.error(`Failed to download root page`, err);
+    }
 
     await Promise.all(fetchPromises);
     console.log(`Installed version ${version}!`);
