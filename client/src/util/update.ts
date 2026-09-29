@@ -116,6 +116,7 @@ export function compareVersions(versionA: string, versionB: string): boolean {
 
     for (let i = 0; i < subversions; i++) {
         if ((subversionsA[i] ?? 0) < (subversionsB[i] ?? 0)) return true;
+        if ((subversionsA[i] ?? 0) > (subversionsB[i] ?? 0)) return false;
     }
     return false;
 }
