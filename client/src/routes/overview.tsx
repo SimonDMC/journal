@@ -86,7 +86,7 @@ function Overview() {
             const lastYear = new Date(dayAdjustedTime);
             lastYear.setFullYear(lastYear.getFullYear() - 1);
             const lastYearString = lastYear.toISOString().substring(0, 10);
-            if (entryDates.find((entry) => entry !== lastYearString)) setOneYearAgoExists(true);
+            if (entryDates.find((entry) => entry === lastYearString)) setOneYearAgoExists(true);
             setOneYearAgo(lastYearString);
         }
     }, [entryDates]);
