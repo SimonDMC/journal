@@ -56,7 +56,7 @@ function Overview() {
 
             // one year ago
             if (e.key === "y" && oneYearAgoExists) {
-                const lastYear = document.getElementById("lastYear") as HTMLAnchorElement;
+                const lastYear = document.getElementById("one-year-ago") as HTMLAnchorElement;
                 lastYear.click();
             }
 
