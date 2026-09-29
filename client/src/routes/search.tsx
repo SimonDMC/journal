@@ -136,7 +136,9 @@ function Search() {
         }
 
         if (event.key == "Enter") {
-            if (event.ctrlKey) {
+            const isMac = navigator.platform.toLowerCase().includes("mac");
+            const isModifierPressed = isMac ? event.metaKey : event.ctrlKey;
+            if (isModifierPressed) {
                 document.getElementById("plot-button")?.click();
             } else {
                 const activeResult = document.querySelector(
