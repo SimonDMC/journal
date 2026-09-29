@@ -11,6 +11,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { enforceAuth, RouteType } from "../util/auth";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import BackArrow from "../components/back-arrow/BackArrow";
+import { commaFormat } from "../util/format";
 
 export type JournalEntry = {
     date: string;
@@ -280,9 +281,8 @@ function Search() {
                     <FontAwesomeIcon icon={faChartLine} />
                 </Link>
                 <p id="result-count">
-                    {searchQuery.length < 3
-                        ? ""
-                        : `${results.length} result${results.length === 1 ? "" : "s"}`}
+                    {searchQuery.length >= 3 &&
+                        `${commaFormat(results.length)} result${results.length === 1 ? "" : "s"}`}
                 </p>
                 <div className="results">
                     {results.results.map((result, index) => (

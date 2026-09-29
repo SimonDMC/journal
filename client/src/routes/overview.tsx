@@ -14,6 +14,7 @@ import { useSettings } from "../settings/util/state";
 import { checkForUpdateIfDesired, getCurrentVersion } from "../util/update";
 import { infoToast } from "../util/toast";
 import clsx from "clsx";
+import { commaFormat } from "../util/format";
 
 export const Route = createFileRoute("/overview")({
     component: Overview,
@@ -90,9 +91,6 @@ function Overview() {
             setOneYearAgo(lastYearString);
         }
     }, [entryDates]);
-
-    // https://stackoverflow.com/a/2901298
-    const commaFormat = (x: number) => x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
     return (
         <main>
