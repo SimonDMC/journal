@@ -44,7 +44,7 @@ function Entry() {
     const moodSelectRef: RefObject<SelectInstance | null> = useRef(null);
     const { date, query, index } = Route.useSearch();
 
-    const [initialContent, setInitialContent] = useState("");
+    const [initialData, setInitialData] = useState<Entry | undefined>(undefined);
     const [quoteImageOpen, setQuoteImageOpen] = useState(false);
     const [editorLoaded, setEditorLoaded] = useState(false);
     const [mood, setMood] = useState<number | null>(null);
@@ -61,7 +61,7 @@ function Entry() {
             }
 
             contentRef.current = data.content;
-            setInitialContent(data.content);
+            setInitialData(data);
         });
     }, [date, navigate]);
 
@@ -85,6 +85,7 @@ function Entry() {
                     (document.activeElement as HTMLElement).blur();
                 } else if (!event.shiftKey) {
                     // or exit, if nothing is blocking esc key
+                    saveRemotelyIfModified();
                     router.history.back();
                 }
             }
@@ -141,7 +142,7 @@ function Entry() {
             document.removeEventListener("keydown", keyDown);
             eventTarget.removeEventListener(QuoteImageOpenEvent.eventId, quoteImageOpenHandler);
         };
-    }, [quoteImageOpen, mood]);
+    }, [quoteImageOpen, mood, initialData]);
 
     async function handleContentChange(newContent: string) {
         contentRef.current = newContent;
@@ -199,15 +200,33 @@ function Entry() {
 
     async function saveOnClientAndServer() {
         await saveLocally();
-        const saveButton = document.getElementById("save-button") as HTMLButtonElement;
-        saveButton.innerText = "Saved!";
-        setTimeout(() => {
-            saveButton.innerText = "Save";
-        }, 1000);
+        const saveButton = document.getElementById("save-button") as HTMLButtonElement | undefined;
+        if (saveButton) {
+            saveButton.innerText = "Saved!";
+            setTimeout(() => {
+                saveButton.innerText = "Save";
+            }, 1000);
+        }
 
         // TODO: this returns a boolean but we do nothing with it (?) might be better to show it was
         // only saved locally
         if (isLoggedIn()) saveEntryOnServer(date);
+    }
+
+    async function saveRemotelyIfModified() {
+        if (!isLoggedIn()) return;
+
+        // when exiting entry page, save the entry on the server if it was modified during the
+        // course of having it open
+        const currentEntry = { ...(await db.entries.get(date)), content: contentRef.current };
+        if (mood && currentEntry.extras) currentEntry.extras.mood = mood;
+        if (JSON.stringify(initialData) != JSON.stringify(currentEntry)) {
+            console.log(initialData, currentEntry);
+
+            console.log("Entry was modified; saving remotely");
+            // since server save pulls from local db, we need to save locally first
+            saveOnClientAndServer();
+        }
     }
 
     return (
@@ -217,7 +236,7 @@ function Entry() {
             <div className="content">
                 {editorLoaded && <div className="line"></div>}
                 <Editor
-                    content={initialContent}
+                    initialContent={initialData?.content ?? ""}
                     setContent={handleContentChange}
                     saveLocally={saveLocally}
                     setLoaded={setEditorLoaded}
@@ -226,7 +245,7 @@ function Entry() {
                 <div className="line-clip"></div>
             </div>
             <div className="date">{formatDate(date)}</div>
-            <BackArrow />
+            <BackArrow clickAction={saveRemotelyIfModified} />
             <EditorBubble
                 saveEntry={saveOnClientAndServer}
                 saveLocally={saveLocally}

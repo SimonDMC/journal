@@ -28,7 +28,7 @@ import { today } from "../../util/time";
 const entryRoute = getRouteApi("/entry");
 
 export default function Editor(props: {
-    content: string;
+    initialContent: string;
     setContent: (newContent: string) => void;
     saveLocally: () => Promise<void>;
     setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
@@ -45,11 +45,11 @@ export default function Editor(props: {
     }, [props.saveLocally]);
 
     useEffect(() => {
-        if (editorRef.current && props.content) {
+        if (editorRef.current && props.initialContent) {
             focusContent();
-            editorRef.current.setData(handleLineBreaks(props.content)); // update editor when content changes
+            editorRef.current.setData(handleLineBreaks(props.initialContent)); // update editor when content changes
         }
-    }, [props.content]);
+    }, [props.initialContent]);
 
     const editorConfig = {
         licenseKey: "GPL",
@@ -178,7 +178,7 @@ export default function Editor(props: {
                 // propagate edits to parent
                 model.on("change:data", setEditorContent);
 
-                const content = handleLineBreaks(props.content);
+                const content = handleLineBreaks(props.initialContent);
                 editor.setData(content);
                 focusContent();
             }}
